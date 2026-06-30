@@ -12,7 +12,7 @@ import ProtectedRoute from "@/guards/ProtectedRoute";
 import AuthRoute from "@/guards/AuthRoute";
 
 // Public pages
-import Landing from "@/pages/landing";
+// import Landing from "@/pages/landing";
 import HomePage from "@/pages/home";
 import CreatorsPage from "@/pages/creators";
 import AllStreamsPage from "@/pages/all-streams";
@@ -62,6 +62,7 @@ import ProfilePage from "@/pages/profile";
 import ProfileFollowingPage from "@/pages/profile/following";
 import ProfileWalletPage from "@/pages/profile/wallet";
 import { useEffect } from "react";
+import Landing from "./pages/landing/Landing";
 
 function NotFound() {
   return (
