@@ -18,7 +18,7 @@ export default function Landing() {
     const verified = localStorage.getItem("isVerified");
 
     if (verified === "true") {
-      navigate("/home");
+      navigate("/");
     } else {
       setIsOpen(true);
     }
@@ -27,7 +27,7 @@ export default function Landing() {
   const handleVerify = () => {
     localStorage.setItem("isVerified", "true");
     setIsOpen(false);
-    navigate("/home");
+    navigate("/");
   };
 
   const handleBounce = () => {

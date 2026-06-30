@@ -11,7 +11,7 @@ export default function ProtectedRoute() {
   const authed = isAuthenticated || Boolean(getToken());
 
   if (!hasHydrated) return <BrysonLoader />;
-  if (!authed) return <Navigate to="/home" replace />;
+  if (!authed) return <Navigate to="/" replace />;
 
   return <Outlet />;
 }

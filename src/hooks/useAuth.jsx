@@ -80,7 +80,7 @@ export const useChangePassword = () => {
       toast.success(res?.message || "Password changed successfully");
       clearAll();
       logout();
-      replace("/home");
+      replace("/");
     },
     onError: (err) => toast.error(getErrorMessage(err)),
   });
@@ -98,7 +98,7 @@ export const useLogout = () => {
       clearAll();
       queryClient.clear();
       toast.info("Logged out successfully");
-      replace("/home");
+      replace("/");
     },
     onError: (err) => toast.error(getErrorMessage(err)),
   });

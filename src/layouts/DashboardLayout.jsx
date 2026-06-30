@@ -110,7 +110,7 @@ const navItems =
 
           {/* Back to Home */}
           {/* <button
-            onClick={() => router.push("/home")}
+            onClick={() => router.push("/")}
             className="flex items-center gap-2 text-zinc-400 hover:text-white mb-10 text-[10px] font-bold uppercase tracking-[0.2em] transition-all"
           >
             <ArrowLeft size={14} />

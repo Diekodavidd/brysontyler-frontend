@@ -163,7 +163,7 @@ transition-all
       <nav className="fixed top-0 w-full z-50 bg-black/95 backdrop-blur-lg border-b border-yellow-500">
 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">          <div
 className="flex items-center gap-3 cursor-pointer"
-            onClick={() => navigate("/home")}
+            onClick={() => navigate("/")}
           >
 <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-zinc-900 border border-zinc-700 flex items-center justify-center shrink-0">    
 <span className="text-yellow-400 text-sm font-black">BT</span>

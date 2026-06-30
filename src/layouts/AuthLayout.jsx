@@ -32,7 +32,7 @@ export default function AuthLayout() {
             </button>
 
             <button
-              onClick={() => router.push("/home")}
+              onClick={() => router.push("/")}
               className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-zinc-300 transition hover:border-yellow-400/40 hover:text-yellow-400"
             >
               <Home size={14} />

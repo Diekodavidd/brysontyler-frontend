@@ -29,7 +29,7 @@ export default function ProfileLayout() {
           </div>
 
           <button
-            onClick={() => router.push("/home")}
+            onClick={() => router.push("")}
             className="flex items-center gap-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 rounded-xl text-xs font-bold uppercase tracking-widest transition-all"
           >
             <Home size={14} />

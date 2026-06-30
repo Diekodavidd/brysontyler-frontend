@@ -131,7 +131,7 @@
     "group": "auth"
   },
   {
-    "route": "/home",
+    "route": "/",
     "importPath": "@/pages/home",
     "name": "HomePage",
     "group": null

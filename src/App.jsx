@@ -70,7 +70,7 @@ function NotFound() {
       <div className="text-6xl font-black tracking-tight text-yellow-500">404</div>
       <p className="text-zinc-400">This page doesn&apos;t exist.</p>
       <Link
-        to="/home"
+        to="/"
         className="rounded-xl bg-yellow-500 px-6 py-3 text-sm font-bold text-black transition hover:bg-yellow-400"
       >
         Back to Home
@@ -87,8 +87,8 @@ export default function App() {
   }, [location.pathname]);
   return (
     <Routes>
-      <Route path="/" element={<Landing />} />
-      <Route path="/home" element={<HomePage />} />
+      {/* <Route path="/" element={<Landing />} /> */}
+      <Route path="/" element={<HomePage />} />
       <Route path="/creators" element={<CreatorsPage />} />
       <Route path="/all-streams" element={<AllStreamsPage />} />
       <Route path="/live/:id" element={<LivePage />} />
@@ -96,7 +96,7 @@ export default function App() {
 
       {/* ---------- Auth group (AuthLayout) ---------- */}
       <Route element={<AuthLayout />}>
-        {/* Redirect to /home if already signed in */}
+        {/* Redirect to / if already signed in */}
         <Route element={<AuthRoute />}>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
