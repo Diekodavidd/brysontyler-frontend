@@ -4,14 +4,43 @@ import {
   Trash2,
   Key,
   X,
+  ShieldCheck,
+  User,
+  Calendar,
 } from "lucide-react";
+
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
+import { useAuthStore } from "@/store/useAuthStore";
+import { useChangePassword } from "@/hooks/useAuth";
 import { toast } from "react-toastify";
 
 export default function Security() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const user = useAuthStore((state) => state.user);
+
+const { mutate, isPending } =
+  useChangePassword();
+
+
+const [passwords, setPasswords] = useState({
+  currentPassword: "",
+  newPassword: "",
+});
+
+const handlePasswordChange = () => {
+  mutate(passwords, {
+    onSuccess: () => {
+      setPasswords({
+        currentPassword: "",
+        newPassword: "",
+      });
+
+      setShowPasswordModal(false);
+    },
+  });
+};
 
   return (
     <div className="space-y-8">
@@ -25,38 +54,197 @@ export default function Security() {
         </p>
       </div>
 
-      <div className="space-y-6">
-        <div className="bg-black p-6 rounded-2xl border border-white/5 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="bg-zinc-800 p-3 rounded-xl">
-              <Key
-                size={20}
-                className="text-yellow-500"
-              />
-            </div>
+    <div className="space-y-6">
 
-            <div>
-              <p className="font-bold">
-                Account Password
-              </p>
+  <div className="bg-zinc-900 border border-white/5 rounded-3xl p-6">
 
-              <p className="text-xs text-zinc-500">
-                Last changed 3 months ago
-              </p>
-            </div>
-          </div>
+    <div className="flex items-center gap-4">
 
-          <button
-            onClick={() =>
-              setShowPasswordModal(true)
-            }
-            className="bg-zinc-800 hover:bg-zinc-700 px-6 py-2 rounded-xl font-bold text-sm transition-all"
-          >
-            CHANGE
-          </button>
-        </div>
+      <div className="w-14 h-14 rounded-2xl bg-yellow-500/10 flex items-center justify-center">
 
-        <div className="border border-red-500/20 bg-red-500/5 p-6 rounded-2xl">
+        <User className="text-yellow-400"/>
+
+      </div>
+
+      <div>
+
+        <h2 className="font-black text-xl">
+          {user?.name}
+        </h2>
+
+        <p className="text-zinc-500">
+          {user?.email}
+        </p>
+
+      </div>
+
+    </div>
+
+    <div className="grid md:grid-cols-3 gap-5 mt-8">
+
+      <div>
+
+        <p className="text-xs uppercase text-zinc-500">
+          Role
+        </p>
+
+        <p className="font-bold capitalize">
+          {user?.role}
+        </p>
+
+      </div>
+
+      <div>
+
+        <p className="text-xs uppercase text-zinc-500">
+          Member Since
+        </p>
+
+        <p className="font-bold">
+          {new Date(
+            user?.createdAt
+          ).toLocaleDateString()}
+        </p>
+
+      </div>
+
+      <div>
+
+        <p className="text-xs uppercase text-zinc-500">
+          Account Status
+        </p>
+
+        <p className="text-green-400 font-bold">
+          Active
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+  </div>
+
+  <div className="bg-zinc-900 border border-white/5 rounded-3xl p-6">
+
+<div className="flex justify-between items-center">
+
+<div>
+
+<h3 className="font-black">
+Password
+</h3>
+
+<p className="text-zinc-500">
+Change your account password.
+</p>
+
+</div>
+
+<button
+onClick={() =>
+setShowPasswordModal(true)
+}
+className="px-6 py-3 rounded-xl bg-yellow-500 text-black font-black"
+>
+
+Change Password
+
+</button>
+
+</div>
+
+</div>
+
+<div className="bg-zinc-900 border border-white/5 rounded-3xl p-6">
+
+<div className="flex items-center gap-4">
+
+<ShieldCheck className="text-green-400"/>
+
+<div>
+
+<h3 className="font-black">
+Verification
+</h3>
+
+<p className="text-zinc-500">
+
+KYC Status:
+
+<span className="ml-2 font-bold capitalize">
+
+{user?.kycStatus}
+
+</span>
+
+</p>
+
+{/* <p className="text-zinc-500 mt-2">
+
+Creator Verification:
+
+<span className="ml-2 font-bold">
+
+{user?.creatorVerification?.verified
+? "Verified"
+: "Pending"}
+
+</span>
+
+</p> */}
+
+</div>
+
+</div>
+
+</div>
+
+<Input
+type="password"
+placeholder="Current Password"
+value={passwords.currentPassword}
+onChange={(e)=>
+
+setPasswords({
+
+...passwords,
+
+currentPassword:e.target.value
+
+})
+
+}
+/>
+
+<Input
+type="password"
+placeholder="New Password"
+value={passwords.newPassword}
+onChange={(e)=>
+
+setPasswords({
+
+...passwords,
+
+newPassword:e.target.value
+
+})
+
+}
+/>
+
+<Button
+isLoading={isPending}
+onClick={handlePasswordChange}
+className="w-full bg-yellow-500 text-black py-3"
+>
+
+Update Password
+
+</Button>
+
+<div className="border border-red-500/20 bg-red-500/5 p-6 rounded-2xl">
           <div className="flex items-center gap-3 text-red-500 mb-4">
             <ShieldAlert size={20} />
 
@@ -81,7 +269,6 @@ export default function Security() {
             DELETE ACCOUNT
           </button>
         </div>
-      </div>
 
       {/* Password Modal */}
 

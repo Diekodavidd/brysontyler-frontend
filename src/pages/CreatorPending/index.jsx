@@ -17,7 +17,7 @@ export default function CreatorPendingPage() {
 
       <div>
         <h1 className="text-4xl font-black uppercase">
-          Application Submitted
+You're Almost Ready!
         </h1>
 
         <p className="mt-4 text-zinc-400 leading-7">
@@ -49,18 +49,25 @@ export default function CreatorPendingPage() {
               24 - 48 Hours
             </strong>
           </p>
+      
+ 
         </div>
+        
       </div>
+       <p className="text-zinc-300">
+    You can continue exploring your creator dashboard while we review your application.
+    Publishing premium content and receiving subscriptions will become available once your account has been approved.
+  </p>
 
-      <Button
-        className="w-full"
-        onClick={() => router.push("/home")}
-      >
-        <span className="flex items-center justify-center gap-2">
-          <Home size={18} />
-          Back Home
-        </span>
-      </Button>
+     <Button
+  className="w-full"
+  onClick={() => router.push("/dashboard")}
+>
+  <span className="flex items-center justify-center gap-2">
+    <Home size={18} />
+    Continue to Dashboard
+  </span>
+</Button>
     </div>
   );
 }

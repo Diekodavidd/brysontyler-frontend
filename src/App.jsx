@@ -86,7 +86,6 @@ export default function App() {
   }, [location.pathname]);
   return (
     <Routes>
-      {/* ---------- Public ---------- */}
       <Route path="/" element={<Landing />} />
       <Route path="/home" element={<HomePage />} />
       <Route path="/creators" element={<CreatorsPage />} />

@@ -10,6 +10,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { useFanDashboard, useFanHistory, usePayments, useSubscriptions } from "../../hooks/useFan";
+import { useAuthStore } from "../../store/useAuthStore";
 
 export default function FanDashboardPage() {
 //   const cards = [
@@ -62,7 +63,11 @@ const { data: dashboard } = useFanDashboard();
 const { data: subscriptionsData } = useSubscriptions();
 const { data: history } = useFanHistory();
 const { data: payments } = usePayments();
+  const user = useAuthStore((state) => state.user);
 
+
+
+console.log("Dashboard response:", dashboard);
 
 const cards = [
   {
@@ -91,6 +96,9 @@ const cards = [
   },
 ];
 
+
+  if (!user) return null;
+
   return (
     <div className="space-y-10">
 
@@ -105,7 +113,7 @@ const cards = [
          <h1 className="text-5xl font-black">
   Welcome back,
   <br />
-  {dashboard?.fan?.name}
+  {user.name}
 </h1>
 
           <p className="text-zinc-500 mt-3">

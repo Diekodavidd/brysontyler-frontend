@@ -2,59 +2,43 @@ import { useMemo, useState } from "react";
 import {
   Users,
   Search,
-  Trash2,
   Mail,
   Shield,
 } from "lucide-react";
 
+import { useSubscribers } from "@/hooks/useSubscribers";
+
 export default function SubscribersPage() {
   const [search, setSearch] = useState("");
 
-  const [subscribers, setSubscribers] = useState([
-    {
-      id: 1,
-      name: "Alex Rivers",
-      email: "alex@example.com",
-      tier: "Premium",
-      joined: "2026-01-12",
-    },
-    {
-      id: 2,
-      name: "Jordan Smith",
-      email: "jsmith@demo.com",
-      tier: "Standard",
-      joined: "2026-03-05",
-    },
-    {
-      id: 3,
-      name: "Taylor Swift",
-      email: "taylor@btp.com",
-      tier: "VIP",
-      joined: "2026-04-20",
-    },
-  ]);
+  const {
+    data: subscribers = [],
+    isLoading,
+  } = useSubscribers();
 
   const filteredSubscribers = useMemo(() => {
-    return subscribers.filter(
-      (subscriber) =>
-        subscriber.name
-          .toLowerCase()
+    return subscribers.filter((subscriber) => {
+      const creator =
+        subscriber.fanId || subscriber.user || {};
+
+      return (
+        creator.name
+          ?.toLowerCase()
           .includes(search.toLowerCase()) ||
-        subscriber.email
-          .toLowerCase()
-          .includes(search.toLowerCase()) ||
-        subscriber.tier
-          .toLowerCase()
+        creator.email
+          ?.toLowerCase()
           .includes(search.toLowerCase())
-    );
-  }, [search, subscribers]);
+      );
+    });
+  }, [subscribers, search]);
 
-  const handleDelete = (id) => {
-    setSubscribers((prev) =>
-      prev.filter((subscriber) => subscriber.id !== id)
+  if (isLoading) {
+    return (
+      <div className="h-[70vh] flex items-center justify-center">
+        Loading subscribers...
+      </div>
     );
-  };
-
+  }
   return (
     <>
       <header className="mb-12 flex justify-between items-center">
@@ -83,34 +67,46 @@ export default function SubscribersPage() {
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-        {[
-          {
-            label: "Active Revenue",
-            val: "$12.4k",
-          },
-          {
-            label: "Churn Rate",
-            val: "2.4%",
-          },
-          {
-            label: "Growth",
-            val: "+14%",
-          },
-        ].map((stat) => (
-          <div
-            key={stat.label}
-            className="bg-zinc-900 border border-white/5 p-8 rounded-3xl"
-          >
-            <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest">
-              {stat.label}
-            </p>
 
-            <h3 className="text-3xl font-black mt-2">
-              {stat.val}
-            </h3>
-          </div>
-        ))}
-      </div>
+  <div className="bg-zinc-900 border border-white/5 p-8 rounded-3xl">
+    <p className="text-zinc-500 text-xs uppercase tracking-widest">
+      Total Subscribers
+    </p>
+
+    <h3 className="text-3xl font-black mt-3">
+      {subscribers.length}
+    </h3>
+  </div>
+
+  <div className="bg-zinc-900 border border-white/5 p-8 rounded-3xl">
+    <p className="text-zinc-500 text-xs uppercase tracking-widest">
+      Active
+    </p>
+
+    <h3 className="text-3xl font-black mt-3">
+      {
+        subscribers.filter(
+          (sub) => sub.status === "active"
+        ).length
+      }
+    </h3>
+  </div>
+
+  <div className="bg-zinc-900 border border-white/5 p-8 rounded-3xl">
+    <p className="text-zinc-500 text-xs uppercase tracking-widest">
+      Monthly Revenue
+    </p>
+
+    <h3 className="text-3xl font-black mt-3">
+      $
+      {subscribers.reduce(
+        (sum, sub) => sum + (sub.amount || 0),
+        0
+      )}
+    </h3>
+  </div>
+
+</div>
 
       <div className="bg-zinc-900 border border-white/5 rounded-3xl overflow-hidden">
         <div className="p-6 border-b border-white/5 flex items-center gap-4">
@@ -151,63 +147,106 @@ export default function SubscribersPage() {
           </thead>
 
           <tbody className="divide-y divide-white/5">
-            {filteredSubscribers.length > 0 ? (
-              filteredSubscribers.map((subscriber) => (
-                <tr
-                  key={subscriber.id}
-                  className="hover:bg-white/5"
-                >
-                  <td className="px-8 py-6">
-                    <p className="font-bold">
-                      {subscriber.name}
-                    </p>
 
-                    <p className="text-xs text-zinc-500">
-                      {subscriber.email}
-                    </p>
-                  </td>
+  {filteredSubscribers.length ? (
 
-                  <td className="px-8 py-6 text-sm">
-                    {subscriber.tier}
-                  </td>
+    filteredSubscribers.map((subscriber) => {
 
-                  <td className="px-8 py-6 text-sm text-zinc-400">
-                    {subscriber.joined}
-                  </td>
+      const fan = subscriber.fanId || {};
 
-                  <td className="px-8 py-6 text-right space-x-2">
-                    <button className="p-2 hover:bg-zinc-800 rounded-lg transition-colors">
-                      <Mail size={16} />
-                    </button>
+      return (
 
-                    <button className="p-2 hover:bg-zinc-800 rounded-lg transition-colors">
-                      <Shield size={16} />
-                    </button>
+      <tr
+  key={subscriber._id}
+  className="hover:bg-white/5 transition"
+>
+  <td className="px-8 py-6">
+    <div className="flex items-center gap-4">
+      <img
+        src={
+          fan.profileImage ||
+          "https://ui-avatars.com/api/?name=" +
+            encodeURIComponent(fan.name)
+        }
+        alt={fan.name}
+        className="w-12 h-12 rounded-full object-cover"
+      />
 
-                    <button
-                      onClick={() =>
-                        handleDelete(
-                          subscriber.id
-                        )
-                      }
-                      className="p-2 hover:bg-red-500/10 text-red-500 rounded-lg transition-colors"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td
-                  colSpan={4}
-                  className="py-16 text-center text-zinc-500"
-                >
-                  No subscribers found.
-                </td>
-              </tr>
-            )}
-          </tbody>
+      <div>
+        <p className="font-bold">
+          {fan.name}
+        </p>
+
+        <p className="text-xs text-zinc-500">
+          {fan.email}
+        </p>
+      </div>
+    </div>
+  </td>
+
+  <td className="px-8 py-6">
+    <span className="px-3 py-1 rounded-full bg-yellow-500/10 text-yellow-400 text-xs font-bold">
+      ${subscriber.amount}/mo
+    </span>
+  </td>
+
+  <td className="px-8 py-6 text-zinc-400">
+    {new Date(
+      subscriber.createdAt
+    ).toLocaleDateString()}
+  </td>
+
+  <td className="px-8 py-6 text-right">
+    <div className="flex justify-end gap-2">
+      <button className="p-2 rounded-xl bg-zinc-800 hover:bg-zinc-700">
+        <Mail size={16} />
+      </button>
+
+      <button className="p-2 rounded-xl bg-zinc-800 hover:bg-zinc-700">
+        <Shield size={16} />
+      </button>
+    </div>
+  </td>
+</tr>
+
+      );
+    })
+
+  ) : (
+
+    <tr>
+
+      <td
+        colSpan={4}
+        className="py-16 text-center text-zinc-500"
+      >
+        No subscribers yet.
+      </td>
+
+    </tr>
+
+  )}
+
+  {/* {subscribers.map((subscriber) => (
+  <tr key={subscriber._id}>
+    <td>
+      <p>{subscriber.fanId.name}</p>
+      <p>{subscriber.fanId.email}</p>
+    </td>
+
+    <td>${subscriber.amount}</td>
+
+    <td>{subscriber.status}</td>
+
+    <td>
+      {new Date(
+        subscriber.createdAt
+      ).toLocaleDateString()}
+    </td>
+  </tr>
+))} */}
+
+</tbody>
         </table>
       </div>
     </>

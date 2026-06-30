@@ -20,17 +20,105 @@ import {
 } from "lucide-react";
 import { useDeleteContent, useMyContent, useUpdateContent, useUploadContent } from "../../../hooks/useContent";
 
+
 export default function ContentPage() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
 
   const fileInputRef = useRef(null);
 
-const [uploads, setUploads] = useState([]);
+  const [uploads, setUploads] = useState([]);
+  const [previewItem, setPreviewItem] = useState(null);
+  const [editingItem, setEditingItem] = useState(null);
+  const [deleteItem, setDeleteItem] = useState(null);
 
-const [previewItem, setPreviewItem] = useState(null);
-const [editingItem, setEditingItem] = useState(null);
-const [deleteItem, setDeleteItem] = useState(null);
+  // ----------------------------
+  // React Query Hooks
+  // ----------------------------
+
+  const {
+    data: content = [],
+    isLoading,
+  } = useMyContent();
+
+  const uploadMutation = useUploadContent();
+  const updateMutation = useUpdateContent();
+  const deleteMutation = useDeleteContent();
+
+  // ----------------------------
+  // Stats
+  // ----------------------------
+
+  const stats = [
+    {
+      title: "Premium Videos",
+      value: content.filter(
+        (item) => item.type === "video"
+      ).length,
+      color: "text-yellow-400",
+    },
+    {
+      title: "Photo Sets",
+      value: content.filter(
+        (item) => item.type === "image"
+      ).length,
+      color: "text-sky-400",
+    },
+    {
+      title: "Subscribers Only",
+      value: content.filter(
+        (item) => item.visibility === "Subscribers"
+      ).length,
+      color: "text-pink-400",
+    },
+    {
+      title: "Premium Content",
+      value: content.filter(
+        (item) => item.visibility === "Premium"
+      ).length,
+      color: "text-emerald-400",
+    },
+  ];
+
+  // ----------------------------
+  // Loading
+  // ----------------------------
+
+  if (isLoading) {
+    return (
+      <div className="h-[70vh] flex items-center justify-center text-zinc-500">
+        Loading Content...
+      </div>
+    );
+  }
+
+  // ----------------------------
+  // Empty State
+  // ----------------------------
+
+  if (!content.length) {
+    return (
+      <div className="rounded-[40px] border border-dashed border-zinc-700 p-20 text-center">
+        <CloudUpload
+          size={80}
+          className="mx-auto text-yellow-400 mb-8"
+        />
+
+        <h2 className="text-4xl font-black">
+          Your Studio is Empty
+        </h2>
+
+        <p className="text-zinc-500 mt-5 max-w-lg mx-auto leading-7">
+          Upload your first premium photo or video and
+          start earning from subscribers immediately.
+        </p>
+      </div>
+    );
+  }
+
+  // ----------------------------
+  // Handlers
+  // ----------------------------
 
 const handleFileChange = (e) => {
   const files = Array.from(e.target.files || []);
@@ -51,109 +139,7 @@ const handleFileChange = (e) => {
   setUploads((prev) => [...prev, ...mapped]);
 };
 
-const removeUpload = (id) => {
-  setUploads((prev) =>
-    prev.filter((item) => item.id !== id)
-  );
-};
 
-  const stats = [
-    {
-      title: "Videos",
-      value: 18,
-      color: "text-yellow-400",
-    },
-    {
-      title: "Images",
-      value: 42,
-      color: "text-blue-400",
-    },
-    {
-      title: "Views",
-      value: "286K",
-      color: "text-green-400",
-    },
-    {
-      title: "Revenue",
-      value: "₦1.2M",
-      color: "text-pink-400",
-    },
-  ];
-
-//   const content = [
-//   {
-//     id: 1,
-//     title: "Studio Session #12",
-//     type: "video",
-//     status: "Published",
-//     visibility: "Premium",
-//     views: "24.6K",
-//     likes: "5.4K",
-//     comments: 218,
-//     revenue: "₦184K",
-//     uploaded: "Jun 24, 2026",
-//     thumbnail:"https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800"
-// },
-
-//   {
-//     id: 2,
-//     title: "Behind The Scenes",
-//     type: "image",
-//     status: "Draft",
-//     visibility: "Subscribers",
-//         likes: "5.4K",
-//     views: "0",
-//     revenue: "₦0",
-//         comments: 218,
-
-//         uploaded: "Jun 24, 2026",
-//     thumbnail:
-//       "https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=800",
-//   },
-
-//   {
-//     id: 3,
-//     title: "Exclusive Photoshoot",
-//     type: "image",
-//     status: "Published",
-//     visibility: "Premium",
-//     views: "12.8K",
-//     revenue: "₦72K",
-//         uploaded: "Jun 24, 2026",
-//     comments: 218,
-
-//     thumbnail:
-//       "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=800",
-//   },
-
-//   {
-//     id: 4,
-//     title: "Live Performance",
-//     type: "video",
-//     status: "Published",
-//     visibility: "Free",
-//     views: "98K",
-//     revenue: "₦0",   
-//      uploaded: "Jun 24, 2026",
-//     comments: 218,
-
-//     thumbnail:
-//       "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=800",
-//   },
-// ];
-
-
-const { data: content = [], isLoading } =
-    useMyContent();
-
-const uploadMutation =
-    useUploadContent();
-
-const updateMutation =
-    useUpdateContent();
-
-const deleteMutation =
-    useDeleteContent();
 
     
   return (
@@ -165,23 +151,19 @@ const deleteMutation =
 
         <div>
 
-          <p className="uppercase tracking-[0.3em] text-xs text-yellow-400 font-black">
+       <p className="uppercase tracking-[0.3em] text-xs text-yellow-400 font-black">
+Creator Studio
+</p>
 
-            Creator Studio
+<h1 className="text-6xl font-black mt-3">
+Your Content
+</h1>
 
-          </p>
-
-          <h1 className="text-5xl font-black mt-2">
-
-            Content Library
-
-          </h1>
-
-          <p className="text-zinc-500 mt-3">
-
-            Upload and manage all your exclusive productions.
-
-          </p>
+<p className="text-zinc-500 mt-4 max-w-2xl leading-7">
+Everything your fans purchase lives here.
+Upload premium experiences, edit visibility,
+track performance and manage your library.
+</p>
 
         </div>
 
@@ -294,7 +276,8 @@ const deleteMutation =
     {uploads.length > 0 && (
 
       <button
-        className="h-12 px-6 rounded-xl bg-yellow-400 text-black font-black flex items-center gap-2"
+      className="h-12 rounded-2xl bg-zinc-800 hover:bg-yellow-500 hover:text-black transition-all"
+        // className="h-12 px-6 rounded-xl bg-yellow-400 text-black font-black flex items-center gap-2"
       onClick={() => {
 
 uploads.forEach((upload) => {
@@ -359,13 +342,13 @@ setUploads([]);
 
     <h3 className="text-2xl font-black">
 
-      Drag files here
+      Upload Premium Content
 
     </h3>
 
     <p className="text-zinc-500 mt-3">
 
-      or click to browse
+      Videos • Images • Up to 4K Resolution
 
     </p>
 
@@ -531,14 +514,24 @@ setUploads([]);
       .map((item) => (
 
         <div
-          key={item.id}
-          className="group rounded-[30px] overflow-hidden bg-zinc-900 border border-white/5 hover:border-yellow-500/30 transition-all"
-        >
+          key={item._id}
+className="group overflow-hidden rounded-[34px]
+bg-gradient-to-b
+from-zinc-900
+to-black
+border
+border-white/5
+hover:border-yellow-500/40
+hover:-translate-y-2
+transition-all
+duration-300"        >
 
           {/* Thumbnail */}
 
           <div className="relative aspect-video overflow-hidden">
+<div className="absolute inset-0 bg-gradient-to-t from-black via-black/10 to-transparent" />
 
+<div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition bg-yellow-500/10" />
             <img
               src={item.fileUrl}
               alt=""
@@ -597,81 +590,49 @@ setUploads([]);
 
             </div>
 
-          <div className="grid grid-cols-2 gap-5 mt-6">
+        <div className="grid grid-cols-2 gap-5 mt-6">
 
-    <div>
+<div>
+<p className="text-[10px] uppercase tracking-widest text-zinc-500">
+Revenue
+</p>
 
-        <p className="text-zinc-500 text-xs uppercase">
+<p className="text-xl font-black text-green-400">
+{item.revenue}
+</p>
+</div>
 
-            Views
+<div>
+<p className="text-[10px] uppercase tracking-widest text-zinc-500">
+Views
+</p>
 
-        </p>
+<p className="text-xl font-black">
+{item.views}
+</p>
+</div>
 
-        <p className="font-black">
+<div>
+<p className="text-[10px] uppercase tracking-widest text-zinc-500">
+Likes
+</p>
 
-            {item.views}
+<p className="flex items-center gap-2 font-bold">
+<Heart className="text-red-400" size={15}/>
+{item.likes}
+</p>
+</div>
 
-        </p>
+<div>
+<p className="text-[10px] uppercase tracking-widest text-zinc-500">
+Comments
+</p>
 
-    </div>
-
-    <div>
-
-        <p className="text-zinc-500 text-xs uppercase">
-
-            Revenue
-
-        </p>
-
-        <p className="font-black text-green-400">
-
-            {item.revenue}
-
-        </p>
-
-    </div>
-
-    <div>
-
-        <p className="text-zinc-500 text-xs uppercase">
-
-            Likes
-
-        </p>
-
-        <div className="flex items-center gap-2">
-
-            <Heart
-                size={14}
-                className="text-red-400"
-            />
-
-            {item.likes}
-
-        </div>
-
-    </div>
-
-    <div>
-
-        <p className="text-zinc-500 text-xs uppercase">
-
-            Comments
-
-        </p>
-
-        <div className="flex items-center gap-2">
-
-            <MessageCircle
-                size={14}
-                className="text-blue-400"
-            />
-
-            {item.comments}
-
-        </div>
-
-    </div>
+<p className="flex items-center gap-2 font-bold">
+<MessageCircle className="text-sky-400" size={15}/>
+{item.comments}
+</p>
+</div>
 
 </div>
 
@@ -869,17 +830,13 @@ Cancel
 
 <button
 
-className="h-12 rounded-xl bg-yellow-400 text-black font-bold"
+className="h-12 rounded-2xl bg-yellow-500 text-black hover:bg-yellow-400 transition-all"
 onClick={() => {
 
 updateMutation.mutate({
-
-id: editingItem.id,
-
-payload: editingItem,
-
+  id: editingItem._id,
+  payload: editingItem,
 });
-
 setEditingItem(null);
 
 }}
@@ -931,11 +888,10 @@ Cancel
 
 <button
 
-className="h-12 rounded-xl bg-red-500 text-white font-bold"
+className="h-12 rounded-2xl bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition-all"
 onClick={() => {
 
-deleteMutation.mutate(deleteItem.id);
-
+deleteMutation.mutate(deleteItem._id);Y
 setDeleteItem(null);
 
 }}
@@ -954,6 +910,10 @@ Delete
 )}
 
 
+
+
     </div>
+
+    
   );
 }
