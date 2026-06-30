@@ -12,7 +12,7 @@ import ProtectedRoute from "@/guards/ProtectedRoute";
 import AuthRoute from "@/guards/AuthRoute";
 
 // Public pages
-import Landing from "@/pages/Landing";
+import Landing from "@/pages/landing";
 import HomePage from "@/pages/home";
 import CreatorsPage from "@/pages/creators";
 import AllStreamsPage from "@/pages/all-streams";
