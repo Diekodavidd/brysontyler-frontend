@@ -1,0 +1,211 @@
+[
+  {
+    "route": "/",
+    "importPath": "@/pages/Landing",
+    "name": "Landing"
+  },
+  {
+    "route": "/admin",
+    "importPath": "@/pages/admin",
+    "name": "AdminPage",
+    "group": null
+  },
+  {
+    "route": "/admin/payouts",
+    "importPath": "@/pages/admin/payouts",
+    "name": "AdminPayoutsPage",
+    "group": null
+  },
+  {
+    "route": "/admin/pending-creators",
+    "importPath": "@/pages/admin/pending-creators",
+    "name": "AdminPendingCreatorsPage",
+    "group": null
+  },
+  {
+    "route": "/admin/security",
+    "importPath": "@/pages/admin/security",
+    "name": "AdminSecurityPage",
+    "group": null
+  },
+  {
+    "route": "/admin/settings",
+    "importPath": "@/pages/admin/settings",
+    "name": "AdminSettingsPage",
+    "group": null
+  },
+  {
+    "route": "/all-streams",
+    "importPath": "@/pages/all-streams",
+    "name": "AllStreamsPage",
+    "group": null
+  },
+  {
+    "route": "/CoverImage",
+    "importPath": "@/pages/CoverImage",
+    "name": "CoverImagePage",
+    "group": "auth"
+  },
+  {
+    "route": "/CreatorPending",
+    "importPath": "@/pages/CreatorPending",
+    "name": "CreatorPendingPage",
+    "group": "auth"
+  },
+  {
+    "route": "/CreatorProfilePage",
+    "importPath": "@/pages/CreatorProfilePage",
+    "name": "CreatorProfilePagePage",
+    "group": "auth"
+  },
+  {
+    "route": "/creators",
+    "importPath": "@/pages/creators",
+    "name": "CreatorsPage",
+    "group": null
+  },
+  {
+    "route": "/CreatorVerification",
+    "importPath": "@/pages/CreatorVerification",
+    "name": "CreatorVerificationPage",
+    "group": "auth"
+  },
+  {
+    "route": "/dashboard",
+    "importPath": "@/pages/dashboard",
+    "name": "DashboardPage",
+    "group": null
+  },
+  {
+    "route": "/dashboard/content",
+    "importPath": "@/pages/dashboard/content",
+    "name": "DashboardContentPage",
+    "group": null
+  },
+  {
+    "route": "/dashboard/messages",
+    "importPath": "@/pages/dashboard/messages",
+    "name": "DashboardMessagesPage",
+    "group": null
+  },
+  {
+    "route": "/dashboard/settings",
+    "importPath": "@/pages/dashboard/settings",
+    "name": "DashboardSettingsPage",
+    "group": null
+  },
+  {
+    "route": "/dashboard/settings/identity-docs",
+    "importPath": "@/pages/dashboard/settings/identity-docs",
+    "name": "DashboardSettingsIdentityDocsPage",
+    "group": null
+  },
+  {
+    "route": "/dashboard/settings/notifications",
+    "importPath": "@/pages/dashboard/settings/notifications",
+    "name": "DashboardSettingsNotificationsPage",
+    "group": null
+  },
+  {
+    "route": "/dashboard/settings/security",
+    "importPath": "@/pages/dashboard/settings/security",
+    "name": "DashboardSettingsSecurityPage",
+    "group": null
+  },
+  {
+    "route": "/dashboard/settings/subscription",
+    "importPath": "@/pages/dashboard/settings/subscription",
+    "name": "DashboardSettingsSubscriptionPage",
+    "group": null
+  },
+  {
+    "route": "/dashboard/subscribers",
+    "importPath": "@/pages/dashboard/subscribers",
+    "name": "DashboardSubscribersPage",
+    "group": null
+  },
+  {
+    "route": "/forgot-password",
+    "importPath": "@/pages/forgot-password",
+    "name": "ForgotPasswordPage",
+    "group": "auth"
+  },
+  {
+    "route": "/home",
+    "importPath": "@/pages/home",
+    "name": "HomePage",
+    "group": null
+  },
+  {
+    "route": "/Kyc",
+    "importPath": "@/pages/Kyc",
+    "name": "KycPage",
+    "group": "auth"
+  },
+  {
+    "route": "/KycComplete",
+    "importPath": "@/pages/KycComplete",
+    "name": "KycCompletePage",
+    "group": "auth"
+  },
+  {
+    "route": "/live/:id",
+    "importPath": "@/pages/live",
+    "name": "LivePage",
+    "group": null
+  },
+  {
+    "route": "/login",
+    "importPath": "@/pages/login",
+    "name": "LoginPage",
+    "group": "auth"
+  },
+  {
+    "route": "/onboarding",
+    "importPath": "@/pages/onboarding",
+    "name": "OnboardingPage",
+    "group": null
+  },
+  {
+    "route": "/profile",
+    "importPath": "@/pages/profile",
+    "name": "ProfilePage",
+    "group": null
+  },
+  {
+    "route": "/profile/following",
+    "importPath": "@/pages/profile/following",
+    "name": "ProfileFollowingPage",
+    "group": null
+  },
+  {
+    "route": "/profile/wallet",
+    "importPath": "@/pages/profile/wallet",
+    "name": "ProfileWalletPage",
+    "group": null
+  },
+  {
+    "route": "/ProfileImage",
+    "importPath": "@/pages/ProfileImage",
+    "name": "ProfileImagePage",
+    "group": "auth"
+  },
+  {
+    "route": "/reset-password/:token",
+    "importPath": "@/pages/reset-password",
+    "name": "ResetPasswordPage",
+    "group": "auth"
+  },
+  {
+    "route": "/signup",
+    "importPath": "@/pages/signup",
+    "name": "SignupPage",
+    "group": "auth"
+  },
+  {
+    "route": "/verify-email",
+    "importPath": "@/pages/verify-email",
+    "name": "VerifyEmailPage",
+    "group": "auth"
+  }
+]
