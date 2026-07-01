@@ -10,8 +10,10 @@ import {
   Wallet,
   History,
   Bell,
+  CreditCard,
   MessageSquare,
   LogOut,
+  Radio,
   ArrowLeft,
 } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -43,6 +45,16 @@ const fanNavItems = [
     icon: Home,
   },
   {
+    name: "Membership",
+    path: "/dashboard/membership",
+    icon: Heart,
+  },
+  {
+    name: "Live",
+    path: "/dashboard/live",
+    icon: Radio,
+  },
+  {
     name: "Subscriptions",
     path: "/dashboard/subscriptions",
     icon: Heart,
@@ -52,6 +64,11 @@ const fanNavItems = [
     path: "/dashboard/wallet",
     icon: Wallet,
   },
+  {
+    name: "Messages",
+    path: "/dashboard/messages",
+    icon: MessageSquare,
+},
   {
     name: "History",
     path: "/dashboard/history",
@@ -76,6 +93,11 @@ const creatorNavItems = [
     icon: Video,
   },
   {
+    name: "Go Live",
+    path: "/dashboard/live",
+    icon: Radio,
+  },
+  {
     name: "Subscribers",
     path: "/dashboard/subscribers",
     icon: Users,
@@ -84,6 +106,26 @@ const creatorNavItems = [
     name: "Messages",
     path: "/dashboard/messages",
     icon: MessageSquare,
+  },
+  {
+    name: "Wallet",
+    path: "/dashboard/wallet",
+    icon: Wallet,
+  },
+  {
+    name: "Analytics",
+    path: "/dashboard/analytics",
+    icon: BarChart3,
+  },
+  {
+    name: "Collaborations",
+    path: "/dashboard/collaborations",
+    icon: Heart,
+  },
+  {
+    name: "Payouts",
+    path: "/dashboard/payouts",
+    icon: CreditCard,
   },
   {
     name: "Settings",

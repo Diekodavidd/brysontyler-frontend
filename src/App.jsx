@@ -10,7 +10,7 @@ import ProfileLayout from "@/layouts/ProfileLayout";
 // Guards
 import ProtectedRoute from "@/guards/ProtectedRoute";
 import AuthRoute from "@/guards/AuthRoute";
-
+import { useAuthStore } from "@/store/useAuthStore";
 // Public pages
 // import Landing from "@/pages/landing";
 import HomePage from "@/pages/home";
@@ -44,10 +44,16 @@ import AdminSettingsPage from "@/pages/admin/settings";
 import DashboardPage from "@/pages/dashboard";
 import DashboardContentPage from "@/pages/dashboard/content";
 import DashBoardSubscriptionsPage from "@/pages/dashboard/subscriptions"
+import DashBoardMembershipPage from "@/pages/dashboard/membership"
 import DashboardMessagesPage from "@/pages/dashboard/messages";
 import DashboardSubscribersPage from "@/pages/dashboard/subscribers";
 import DashboardHistoryPage from "@/pages/dashboard/history";
-import DashBoardWalletPage from "@/pages/dashboard/wallet";
+import DashboardLivePage from "@/pages/dashboard/live";
+import DashboardAnalyticsPage from "@/pages/dashboard/analytics";
+import DashboardPayoutsPage from "@/pages/dashboard/payouts";
+import DashboardCollaborationsPage from "@/pages/dashboard/collaboration";
+import DashBoardWalletPage from "@/pages/dashboard/wallet/fan";
+import CreatorWalletPage from "@/pages/dashboard/wallet/creator";
 import DashboardSettingsPage from "@/pages/dashboard/settings";
 import DashboardSettingsNotificationsPage from "@/pages/dashboard/settings/notifications";
 import DashboardSettingsSecurityPage from "@/pages/dashboard/settings/security";
@@ -63,6 +69,7 @@ import ProfileFollowingPage from "@/pages/profile/following";
 import ProfileWalletPage from "@/pages/profile/wallet";
 import { useEffect } from "react";
 import Landing from "./pages/landing/Landing";
+import LiveRoomPage from "./pages/dashboard/live/room";
 
 function NotFound() {
   return (
@@ -81,6 +88,7 @@ function NotFound() {
 
 export default function App() {
   const location = useLocation();
+  const auth = useAuthStore();
 
   useEffect(() => {
     console.log("ROUTE CHANGED:", location.pathname);
@@ -136,8 +144,22 @@ export default function App() {
     <Route path="messages" element={<DashboardMessagesPage />} />
     <Route path="subscribers" element={<DashboardSubscribersPage />} />
     <Route path="subscriptions" element={<DashBoardSubscriptionsPage />} />
-    <Route path="wallet" element={<DashBoardWalletPage />} />
+    <Route path="membership" element={<DashBoardMembershipPage />} />
+    <Route path="analytics" element={<DashboardAnalyticsPage />} />
+    <Route path="payouts" element={<DashboardPayoutsPage />} />
+    <Route path="collaborations" element={<DashboardCollaborationsPage />} />
+    {/* <Route path="wallet" element={<DashBoardWalletPage />} /> */}
+    <Route
+  path="wallet"
+  element={
+    auth.user?.role === "creator"
+      ? <CreatorWalletPage />
+      : <DashBoardWalletPage />
+  }
+/>
     <Route path="history" element={<DashboardHistoryPage />} />
+    <Route path="live" element={<DashboardLivePage />} />
+<Route  path="live/:id" element={<LiveRoomPage />}/>
 
     <Route path="settings" element={<DashboardSettingsLayout />}>
       <Route index element={<DashboardSettingsPage />} />

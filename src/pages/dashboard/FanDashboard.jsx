@@ -13,52 +13,6 @@ import { useFanDashboard, useFanHistory, usePayments, useSubscriptions } from ".
 import { useAuthStore } from "../../store/useAuthStore";
 
 export default function FanDashboardPage() {
-//   const cards = [
-//     {
-//       title: "Active Subscriptions",
-//       value: "4",
-//       icon: Users,
-//       color: "text-yellow-400",
-//     },
-//     {
-//       title: "Wallet Balance",
-//       value: "$145",
-//       icon: Wallet,
-//       color: "text-green-400",
-//     },
-//     {
-//       title: "Coins",
-//       value: "2,850",
-//       icon: Coins,
-//       color: "text-orange-400",
-//     },
-//     {
-//       title: "Liked Videos",
-//       value: "81",
-//       icon: Heart,
-//       color: "text-pink-400",
-//     },
-//   ];
-
-  const watching = [
-    {
-      creator: "Bryson Tyler",
-      title: "Late Night Studio Session",
-      progress: 72,
-    },
-    {
-      creator: "Sarah Mills",
-      title: "Behind The Scenes",
-      progress: 36,
-    },
-  ];
-
-//   const subscriptions = [
-//     "Bryson Tyler",
-//     "Lena Rose",
-//     "Michael Ace",
-//     "David Luxe",
-//   ];
 const { data: dashboard } = useFanDashboard();
 const { data: subscriptionsData } = useSubscriptions();
 const { data: history } = useFanHistory();
@@ -71,8 +25,8 @@ console.log("Dashboard response:", dashboard);
 
 const cards = [
   {
-    title: "Subscriptions",
-    value: dashboard?.stats?.totalSubscriptions || 0,
+    title: "Membership",
+    value: dashboard?.stats?.totalSubscriptions || "FREE",
     icon: Users,
     color: "text-yellow-400",
   },
@@ -96,6 +50,41 @@ const cards = [
   },
 ];
 
+const watching =
+  subscriptionsData?.subscriptions?.slice(0, 2).map((sub) => ({
+    id: sub.creatorId._id,
+    creator: sub.creatorId.name,
+    title: `Watch new content from ${sub.creatorId.name}`,
+    progress: 100,
+    live: sub.creatorId?.isLive || false,
+  })) || [];
+
+const notifications = [];
+if (user?.membership?.plan && user.membership.plan !== "FREE") {
+  notifications.push({
+    icon: "👑",
+    text: `Your ${user.membership.plan} membership is active.`,
+  });
+}
+subscriptionsData?.subscriptions?.forEach((sub) => {
+  notifications.push({
+    icon: "⭐",
+    text: `You're subscribed to ${sub.creatorId.name}.`,
+  });
+});
+payments?.payments?.slice(0, 2).forEach((payment) => {
+  notifications.push({
+    icon: "💳",
+    text: `Payment of $${payment.amount} was successful.`,
+  });
+});
+
+if (notifications.length === 0) {
+  notifications.push({
+    icon: "🎉",
+    text: "You're all caught up.",
+  });
+}
 
   if (!user) return null;
 
@@ -198,13 +187,17 @@ const cards = [
 
                   <div>
 
-                    <h3 className="font-bold">
-                      {item.title}
-                    </h3>
+                    <h3>
+  {item.live
+    ? `🔴 Watch ${item.creator} Live`
+    : `Watch new videos from ${item.creator}`}
+</h3>
 
-                    <p className="text-sm text-zinc-500">
-                      {item.creator}
-                    </p>
+                  <p className="text-zinc-500">
+  {item.live
+    ? "Streaming now"
+    : "Latest uploads available"}
+</p>
 
                   </div>
 
@@ -300,19 +293,34 @@ const cards = [
 
           <div className="space-y-5">
 
-            <p className="text-zinc-400">
-              🔥 Bryson Tyler uploaded a new video.
-            </p>
+{notifications.length ? (
 
-            <p className="text-zinc-400">
-              💰 Your wallet has been credited.
-            </p>
+notifications.map((note,index)=>(
+<div
+    key={index}
+    className="flex items-start gap-3 pb-4 border-b border-white/5"
+>
 
-            <p className="text-zinc-400">
-              ❤️ Lena Rose is live now.
-            </p>
+<span className="text-xl">
+    {note.icon}
+</span>
 
-          </div>
+<p className="text-zinc-300">
+    {note.text}
+</p>
+
+</div>
+))
+
+) : (
+
+<p className="text-zinc-500">
+You're all caught up.
+</p>
+
+)}
+
+</div>
 
         </div>
 

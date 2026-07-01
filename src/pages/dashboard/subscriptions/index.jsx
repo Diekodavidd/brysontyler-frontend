@@ -11,20 +11,37 @@ import {
   useSubscriptions,
   useCancelSubscription,
 } from "@/hooks/useSubscription";
+import { X, UserPlus } from "lucide-react";
+import { useCreators } from "@/hooks/useCreator";
 import { useNavigate } from "react-router-dom";
 
 export default function FanSubscriptionsPage() {
   const [search, setSearch] = useState("");
+  const [showCreators, setShowCreators] =
+  useState(false);
 
 const navigate = useNavigate();
 
 const { data, isLoading } = useSubscriptions();
+const { data: creatorsData } =
+  useCreators();
 
 const { mutate: cancelSubscription } =
   useCancelSubscription();
 
 
 const subscriptions = data?.subscriptions || [];
+const creators =
+  creatorsData?.creators || [];
+
+const availableCreators =
+  creators.filter(
+    (creator) =>
+      !subscriptions.some(
+        (sub) =>
+          sub.creatorId?._id === creator._id
+      )
+  );
  const filtered = useMemo(() => {
   return subscriptions.filter((sub) =>
     sub.creatorId?.name
@@ -82,10 +99,12 @@ if (isLoading) {
 
         </div>
 
-        <button className="px-6 py-3 rounded-2xl bg-yellow-500 hover:bg-yellow-400 text-black font-black transition">
-          Discover More Creators
-        </button>
-
+      <button
+  onClick={() => setShowCreators(true)}
+  className="px-6 py-3 rounded-2xl bg-yellow-500 hover:bg-yellow-400 text-black font-black transition"
+>
+  Discover More Creators
+</button>
       </div>
 
       {/* Stats */}
@@ -272,7 +291,92 @@ ${item.amount}/month
         ))}
 
       </div>
+{showCreators && (
+  <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center">
 
+    <div className="w-[92%] max-w-6xl h-[85vh] bg-zinc-950 rounded-3xl border border-white/10 flex flex-col overflow-hidden">
+
+      <div className="flex justify-between items-center p-8 border-b border-white/10">
+
+        <div>
+
+          <h2 className="text-3xl font-black">
+            Discover Creators
+          </h2>
+
+          <p className="text-zinc-500 mt-2">
+            Find new creators to subscribe to.
+          </p>
+
+        </div>
+
+        <button
+          onClick={() =>
+            setShowCreators(false)
+          }
+        >
+          <X size={28} />
+        </button>
+
+      </div>
+
+      <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6 p-8 overflow-y-auto">
+
+        {availableCreators.map((creator) => (
+
+          <div
+            key={creator._id}
+            className="rounded-3xl bg-zinc-900 border border-white/5 p-6 hover:border-yellow-500/40 transition"
+          >
+
+            <div className="w-20 h-20 rounded-full bg-yellow-500 text-black flex items-center justify-center text-2xl font-black">
+
+              {creator.name
+                ?.split(" ")
+                .map((n) => n[0])
+                .join("")
+                .slice(0, 2)}
+
+            </div>
+
+            <h3 className="text-2xl font-black mt-6">
+              {creator.name}
+            </h3>
+
+            <p className="text-zinc-500 mt-2 line-clamp-2">
+              {creator.bio || "No bio available."}
+            </p>
+
+            <div className="flex gap-3 mt-8">
+
+              <button
+                onClick={() =>
+                  navigate(`/creator/${creator._id}`)
+                }
+                className="flex-1 bg-yellow-500 text-black py-3 rounded-2xl font-black"
+              >
+                View
+              </button>
+
+              <button
+                className="flex items-center justify-center gap-2 flex-1 border border-white/10 rounded-2xl py-3 hover:border-yellow-500"
+              >
+                <UserPlus size={18} />
+                Subscribe
+              </button>
+
+            </div>
+
+          </div>
+
+        ))}
+
+      </div>
+
+    </div>
+
+  </div>
+)}
     </div>
   );
 }
