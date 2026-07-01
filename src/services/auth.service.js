@@ -59,3 +59,5 @@ export const startKYC = () => {
     undefined
   );
 };
+
+export const getMe = () => httpGet("/auth/me");

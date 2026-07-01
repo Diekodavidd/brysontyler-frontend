@@ -145,3 +145,14 @@ export const useStartKYC = () => {
     onError: (err) => toast.error(getErrorMessage(err)),
   });
 };
+
+export const useMe = () =>
+  useQuery({
+    queryKey: ["me"],
+    queryFn: getMe,
+  });
+
+  import { httpPatch } from "@/lib/http";
+
+export const updateProfile = (payload) =>
+    httpPatch("/auth/profile", payload);

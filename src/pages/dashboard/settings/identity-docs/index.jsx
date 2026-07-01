@@ -1,167 +1,251 @@
-import { useState } from "react";
+import { useAuthStore } from "@/store/useAuthStore";
 import {
-  Upload,
-  FileText,
-  Trash2,
-  Globe,
   ShieldCheck,
-  AlertCircle,
+  Clock3,
+  AlertTriangle,
+  BadgeCheck,
+  Globe,
+  ExternalLink,
 } from "lucide-react";
+import { useRestartKYC } from "@/hooks/useKYC";
+import { useQueryClient } from "@tanstack/react-query";
+import { getMe } from "@/services/auth.service";
+import { useEffect } from "react";
+
+
+
 
 export default function IdentityDocsPage() {
-  const [documents, setDocuments] = useState([
-    {
-      id: 1,
-      name: "Passport_Front.jpg",
-      type: "Passport",
-      status: "verified",
-      date: "2026-05-12",
-    },
-    {
-      id: 2,
-      name: "National_ID_Back.pdf",
-      type: "National ID",
-      status: "pending",
-      date: "2026-06-14",
-    },
-  ]);
 
-  const handleFileUpload = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      const newDoc = {
-        id: Date.now(),
-        name: e.target.files[0].name,
-        type: "General ID",
-        status: "pending",
-        date: new Date().toISOString().split("T")[0],
-      };
+  const queryClient = useQueryClient();
 
-      setDocuments([...documents, newDoc]);
+  const user = useAuthStore((state) => state.user);
+
+  const setUser = useAuthStore(
+    (state) => state.setUser
+  );
+
+  const didit = user?.didit;
+  const creator = user?.creatorVerification;
+
+  const {
+    mutate: restartVerification,
+    isPending,
+  } = useRestartKYC();
+
+  useEffect(() => {
+    async function refreshUser() {
+      try {
+        const freshUser = await getMe();
+        setUser(freshUser);
+      } catch (err) {
+        console.error(err);
+      }
     }
-  };
+
+    refreshUser();
+  }, [setUser]);
+
+  const status = (didit?.status || "not_started")
+  .toLowerCase()
+  .replace(/\s+/g, "_");
+
+    console.log("didit:", didit);
+console.log("status:", status);
+
+const badges = {
+  approved: {
+    text: "Verified",
+    color: "text-green-400 bg-green-500/10 border-green-500/20",
+    icon: ShieldCheck,
+  },
+
+  active: {
+    text: "Verified",
+    color: "text-green-400 bg-green-500/10 border-green-500/20",
+    icon: ShieldCheck,
+  },
+
+  pending: {
+    text: "Pending Review",
+    color: "text-yellow-400 bg-yellow-500/10 border-yellow-500/20",
+    icon: Clock3,
+  },
+
+  rejected: {
+    text: "Rejected",
+    color: "text-red-400 bg-red-500/10 border-red-500/20",
+    icon: AlertTriangle,
+  },
+
+  not_started: {
+    text: "Not Started",
+    color: "text-zinc-400 bg-zinc-800 border-zinc-700",
+    icon: Globe,
+  },
+};
+
+const badge = badges[status] || badges.not_started;
+
+const Icon = badge.icon;
 
   return (
-    <div className="max-w-4xl">
-      <div className="flex justify-between items-end mb-8">
-        <div>
-          <h2 className="text-2xl font-black text-white uppercase tracking-tighter">
-            Identity Verification
-          </h2>
+    <div className="space-y-8">
 
-          <p className="text-zinc-500 text-sm mt-2">
-            Global compliance verification for international creators.
-          </p>
-        </div>
+      <div>
 
-        <div className="flex items-center gap-2 bg-[#0a0a0a] px-4 py-2 rounded-full border border-white/5">
-          <Globe size={14} className="text-zinc-500" />
-
-          <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest">
-            Region: International
-          </span>
-        </div>
-      </div>
-
-      {/* Upload Area */}
-      <div className="border border-dashed border-white/10 bg-[#0a0a0a] rounded-2xl p-8 mb-8 text-center hover:border-yellow-500/50 transition-colors">
-        <input
-          type="file"
-          id="fileUpload"
-          className="hidden"
-          onChange={handleFileUpload}
-        />
-
-        <label
-          htmlFor="fileUpload"
-          className="cursor-pointer flex flex-col items-center"
-        >
-          <Upload className="text-yellow-500 mb-4" size={32} />
-
-          <span className="text-white font-bold text-sm">
-            Submit International ID
-          </span>
-
-          <span className="text-zinc-500 text-[10px] mt-1 uppercase tracking-widest">
-            Passport, National ID, or Resident Permit
-          </span>
-        </label>
-      </div>
-
-      {/* Documents Table */}
-      <div className="bg-[#0a0a0a] border border-white/10 rounded-2xl overflow-hidden">
-        <table className="w-full text-left">
-          <thead>
-            <tr className="border-b border-white/10 text-zinc-500 text-[10px] uppercase tracking-widest">
-              <th className="px-6 py-4">Document</th>
-              <th className="px-6 py-4">Type</th>
-              <th className="px-6 py-4">Status</th>
-              <th className="px-6 py-4 text-right">Action</th>
-            </tr>
-          </thead>
-
-          <tbody className="text-sm">
-            {documents.map((doc) => (
-              <tr
-                key={doc.id}
-                className="border-b border-white/5 hover:bg-white/[0.02]"
-              >
-                <td className="px-6 py-4 flex items-center gap-3 text-white font-medium">
-                  <FileText
-                    size={16}
-                    className="text-zinc-600"
-                  />
-                  {doc.name}
-                </td>
-
-                <td className="px-6 py-4 text-zinc-400 text-xs">
-                  {doc.type}
-                </td>
-
-                <td className="px-6 py-4">
-                  <span
-                    className={`flex items-center gap-1.5 font-bold uppercase text-[9px] ${
-                      doc.status === "verified"
-                        ? "text-emerald-500"
-                        : "text-amber-500"
-                    }`}
-                  >
-                    {doc.status === "verified" ? (
-                      <ShieldCheck size={12} />
-                    ) : (
-                      <AlertCircle size={12} />
-                    )}
-
-                    {doc.status}
-                  </span>
-                </td>
-
-                <td className="px-6 py-4 text-right">
-                  <button
-                    onClick={() =>
-                      setDocuments(
-                        documents.filter(
-                          (d) => d.id !== doc.id
-                        )
-                      )
-                    }
-                    className="text-zinc-600 hover:text-red-500 transition-colors"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Notice */}
-      <div className="mt-6 p-4 bg-yellow-500/5 border border-yellow-500/10 rounded-xl">
-        <p className="text-[10px] text-yellow-500/70 font-bold uppercase tracking-widest leading-relaxed text-center">
-          Note: International documents are processed via secure
-          third-party providers. Processing may take 24–48 hours.
+        <p className="text-yellow-400 uppercase tracking-[.3em] text-xs font-black">
+          Verification
         </p>
+
+        <h1 className="text-4xl font-black mt-2">
+          Identity Center
+        </h1>
+
+        <p className="text-zinc-500 mt-3">
+          View your creator verification and identity status.
+        </p>
+
       </div>
+
+      {/* STATUS */}
+
+      <div className="rounded-3xl border border-white/5 bg-zinc-900 p-8">
+
+        <div className="flex justify-between items-center">
+
+          <div>
+
+            <h2 className="text-2xl font-black">
+              Verification Status
+            </h2>
+
+            <p className="text-zinc-500 mt-2">
+              Current DIDIT verification
+            </p>
+
+          </div>
+
+          <div
+            className={`flex items-center gap-2 rounded-full border px-5 py-2 font-bold ${badge.color}`}
+          >
+
+            <Icon size={18} />
+
+            {badge.text}
+
+          </div>
+
+        </div>
+
+      </div>
+
+      {/* CREATOR INFO */}
+
+      <div className="grid md:grid-cols-2 gap-6">
+
+        <div className="rounded-3xl bg-zinc-900 border border-white/5 p-7">
+
+          <p className="text-xs uppercase tracking-widest text-zinc-500">
+            Stage Name
+          </p>
+
+          <h3 className="text-2xl font-black mt-3">
+            {creator?.stageName || "-"}
+          </h3>
+
+        </div>
+
+        <div className="rounded-3xl bg-zinc-900 border border-white/5 p-7">
+
+          <p className="text-xs uppercase tracking-widest text-zinc-500">
+            Category
+          </p>
+
+          <h3 className="text-2xl font-black mt-3">
+            {creator?.category || "-"}
+          </h3>
+
+        </div>
+
+      </div>
+
+      {/* SOCIAL LINKS */}
+
+      <div className="rounded-3xl border border-white/5 bg-zinc-900 p-8">
+
+        <h2 className="text-xl font-black mb-6">
+          Submitted Social Links
+        </h2>
+
+        <div className="space-y-4">
+
+          {creator?.socialLinks?.length ? (
+
+            creator.socialLinks.map((link, index) => (
+
+              <a
+                key={index}
+                href={link}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center justify-between rounded-2xl bg-black/40 px-5 py-4 hover:bg-black/60 transition"
+              >
+
+                <span className="truncate">
+                  {link}
+                </span>
+
+                <ExternalLink size={18} />
+
+              </a>
+
+            ))
+
+          ) : (
+
+            <p className="text-zinc-500">
+              No social links submitted.
+            </p>
+
+          )}
+
+        </div>
+
+      </div>
+
+      {/* DIDIT */}
+
+      <div className="mt-8 flex justify-end">
+
+  {status !== "approved" && (
+
+   <button
+ onClick={() => {
+
+    restartVerification(
+        {
+            callback:
+                `${window.location.origin}/dashboard/settings/identity-docs`,
+        },
+        {
+            onSuccess: ({ verificationUrl }) => {
+                window.location.href = verificationUrl;
+            },
+            onError: console.error,
+        }
+    );
+
+}}
+  className="rounded-2xl bg-yellow-500 px-6 py-3 font-black text-black"
+>
+  Continue Verification
+</button>
+
+  )}
+
+</div>
+
     </div>
   );
 }

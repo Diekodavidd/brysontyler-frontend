@@ -33,7 +33,25 @@ const totalRevenue = activeSubscribers.reduce(
 const verified =
   user?.creatorVerification?.verified;
 
+const recentActivity = [
+  ...content.slice(0, 3).map((item) => ({
+    id: item._id,
+    title: "New Content Uploaded",
+    subtitle: item.title,
+    color: "bg-yellow-500",
+    time: new Date(item.createdAt).toLocaleDateString(),
+  })),
 
+  ...activeSubscribers.slice(0, 3).map((sub) => ({
+    id: sub._id,
+    title: "New Subscriber",
+    subtitle: sub.fanId?.name,
+    color: "bg-green-500",
+    time: new Date(sub.createdAt).toLocaleDateString(),
+  })),
+].sort(
+  (a, b) => new Date(b.time) - new Date(a.time)
+);
   const stats = [
   {
     title: "Subscribers",
@@ -453,71 +471,40 @@ const verified =
 
       <div className="space-y-5">
 
-        {[
-          {
-            title: "New Premium Subscriber",
-            subtitle: "John D subscribed to VIP",
-            color: "bg-green-500",
-            time: "2 mins ago",
-          },
-          {
-            title: "Private Tip Received",
-            subtitle: "$120 received",
-            color: "bg-yellow-500",
-            time: "15 mins ago",
-          },
-          {
-            title: "Video Finished Processing",
-            subtitle: "Luxury Weekend.mp4",
-            color: "bg-sky-500",
-            time: "48 mins ago",
-          },
-          {
-            title: "Livestream Scheduled",
-            subtitle: "Tonight • 9PM",
-            color: "bg-pink-500",
-            time: "Today",
-          },
-          {
-            title: "Subscription Renewed",
-            subtitle: "VIP Monthly",
-            color: "bg-purple-500",
-            time: "Today",
-          },
-        ].map((item) => (
+        {recentActivity.length ? (
+  recentActivity.map((item) => (
+    <div
+      key={item.id}
+      className="flex items-center justify-between border-b border-white/5 pb-5 last:border-0"
+    >
+      <div className="flex items-center gap-5">
 
-          <div
-            key={item.title}
-            className="flex items-center justify-between border-b border-white/5 pb-5 last:border-0"
-          >
+        <div
+          className={`h-4 w-4 rounded-full ${item.color}`}
+        />
 
-            <div className="flex items-center gap-5">
+        <div>
+          <h3 className="font-bold">
+            {item.title}
+          </h3>
 
-              <div
-                className={`h-4 w-4 rounded-full ${item.color}`}
-              />
+          <p className="text-zinc-500 text-sm">
+            {item.subtitle}
+          </p>
+        </div>
 
-              <div>
+      </div>
 
-                <h3 className="font-bold">
-                  {item.title}
-                </h3>
-
-                <p className="text-zinc-500 text-sm">
-                  {item.subtitle}
-                </p>
-
-              </div>
-
-            </div>
-
-            <span className="text-xs text-zinc-500">
-              {item.time}
-            </span>
-
-          </div>
-
-        ))}
+      <span className="text-xs text-zinc-500">
+        {item.time}
+      </span>
+    </div>
+  ))
+) : (
+  <p className="text-zinc-500 text-center py-10">
+    No recent activity.
+  </p>
+)}
 
       </div>
 
@@ -552,52 +539,38 @@ const verified =
 
       <div className="space-y-5">
 
-        {[
-          {
-            title: "Private Vacation",
-            views: "84K",
-            revenue: "$4,120",
-          },
-          {
-            title: "Late Night Stream",
-            views: "53K",
-            revenue: "$2,810",
-          },
-          {
-            title: "Members Only",
-            views: "29K",
-            revenue: "$1,640",
-          },
-        ].map((video) => (
+        {content.length ? (
+  content.slice(0, 5).map((video) => (
+    <div
+      key={video._id}
+      className="flex justify-between items-center rounded-2xl bg-black/40 p-5"
+    >
 
-          <div
-            key={video.title}
-            className="flex justify-between items-center rounded-2xl bg-black/40 p-5"
-          >
+      <div>
 
-            <div>
+        <h3 className="font-bold">
+          {video.title}
+        </h3>
 
-              <h3 className="font-bold">
-                {video.title}
-              </h3>
+        <p className="text-zinc-500 text-sm mt-1">
+          {video.protection?.premium
+            ? "Premium"
+            : "Free"}
+        </p>
 
-              <p className="text-zinc-500 text-sm mt-1">
+      </div>
 
-                {video.views} Views
+      <span className="text-yellow-400 font-bold capitalize">
+        {video.status || "Published"}
+      </span>
 
-              </p>
-
-            </div>
-
-            <span className="text-yellow-400 font-black">
-
-              {video.revenue}
-
-            </span>
-
-          </div>
-
-        ))}
+    </div>
+  ))
+) : (
+  <div className="py-12 text-center text-zinc-500">
+    No content uploaded yet.
+  </div>
+)}
 
       </div>
 
@@ -632,7 +605,7 @@ const verified =
 
           <p className="text-yellow-400 text-sm">
 
-            VERIFIED
+            {verified ? "VERIFIED" : "PENDING REVIEW"}
 
           </p>
 
@@ -648,7 +621,7 @@ const verified =
             Profile
           </span>
 
-          <span>100%</span>
+          <span>{user?.profileCompleted ? "100%" : "70%"}</span>
 
         </div>
 
@@ -658,7 +631,7 @@ const verified =
             Uploads
           </span>
 
-          <span>1,204</span>
+          <span>{content.length}</span>
 
         </div>
 
@@ -668,7 +641,7 @@ const verified =
             Subscribers
           </span>
 
-          <span>124,892</span>
+          <span>{activeSubscribers.length}</span>
 
         </div>
 
@@ -680,79 +653,57 @@ const verified =
 
     {/* GROWTH */}
 
-    <section className="rounded-[32px] border border-white/5 bg-zinc-900 p-8">
+   <section className="rounded-[32px] border border-white/5 bg-zinc-900 p-8">
 
-      <h2 className="font-black text-xl mb-6">
+  <h2 className="font-black text-xl mb-8">
+    Audience Summary
+  </h2>
 
-        Audience Growth
+  <div className="space-y-6">
 
-      </h2>
+    <div className="flex justify-between">
 
-      <div className="space-y-5">
+      <span className="text-zinc-500">
+        Total Subscribers
+      </span>
 
-        <div>
+      <span className="font-bold">
+        {activeSubscribers.length}
+      </span>
 
-          <div className="flex justify-between text-sm mb-2">
+    </div>
 
-            <span>Total Growth</span>
+    <div className="flex justify-between">
 
-            <span className="text-green-400">
-              +18%
-            </span>
+      <span className="text-zinc-500">
+        Uploaded Content
+      </span>
 
-          </div>
+      <span className="font-bold">
+        {content.length}
+      </span>
 
-          <div className="h-2 rounded-full bg-black">
+    </div>
 
-            <div className="w-[82%] h-full rounded-full bg-green-500"/>
+    <div className="flex justify-between">
 
-          </div>
+      <span className="text-zinc-500">
+        Premium Posts
+      </span>
 
-        </div>
+      <span className="font-bold">
+        {
+          content.filter(
+            c => c.protection?.premium
+          ).length
+        }
+      </span>
 
-        <div>
+    </div>
 
-          <div className="flex justify-between text-sm mb-2">
+  </div>
 
-            <span>Engagement</span>
-
-            <span className="text-yellow-400">
-              94%
-            </span>
-
-          </div>
-
-          <div className="h-2 rounded-full bg-black">
-
-            <div className="w-[94%] h-full rounded-full bg-yellow-500"/>
-
-          </div>
-
-        </div>
-
-        <div>
-
-          <div className="flex justify-between text-sm mb-2">
-
-            <span>Retention</span>
-
-            <span className="text-sky-400">
-              89%
-            </span>
-
-          </div>
-
-          <div className="h-2 rounded-full bg-black">
-
-            <div className="w-[89%] h-full rounded-full bg-sky-500"/>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </section>
+</section>
 
 
 
@@ -768,21 +719,36 @@ const verified =
 
       <p className="leading-8 text-zinc-400">
 
-        Your premium subscribers are most active between
-        <span className="font-bold text-yellow-400">
-          {" "}8PM — 11PM{" "}
-        </span>
+You currently have
 
-        local time.
+<span className="font-bold text-yellow-400">
+{" "}
+{activeSubscribers.length}
+{" "}
+</span>
 
-        Uploading during this period increases purchases by
+active subscribers and
 
-        <span className="font-bold text-green-400">
-          {" "}32%
-        </span>.
+<span className="font-bold text-yellow-400">
+{" "}
+{content.length}
+{" "}
+</span>
 
-      </p>
+published content.
 
+{content.length === 0 &&
+" Upload your first premium post to begin attracting subscribers."}
+
+{content.length > 0 &&
+activeSubscribers.length === 0 &&
+" Share your creator page to begin building your audience."}
+
+{content.length > 0 &&
+activeSubscribers.length > 0 &&
+" Keep publishing consistently to maintain subscriber growth."}
+
+</p>
     </section>
 
   </div>

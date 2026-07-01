@@ -6,9 +6,16 @@ import {
 } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
+import { useUpdateCreatorProfile } from "@/hooks/useKYC";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function CreatorVerificationPage() {
   const router = useRouter();
+  const setUser = useAuthStore((state) => state.setUser);
+const user = useAuthStore((state) => state.user);
+
+const { mutateAsync: saveProfile } =
+  useUpdateCreatorProfile();
 
   const [form, setForm] = useState({
     stageName: "",
@@ -28,18 +35,24 @@ export default function CreatorVerificationPage() {
     });
   };
 
-  const handleSubmit = async () => {
-    try {
-      setLoading(true);
+const handleSubmit = async () => {
+  try {
+    setLoading(true);
 
-      // TODO:
-      // await submitCreatorVerification(form);
+    const data = await saveProfile(form);
 
-      router.push("/CreatorPending");
-    } finally {
-      setLoading(false);
-    }
-  };
+    setUser({
+      ...user,
+      creatorVerification:
+        data.creatorVerification,
+    });
+
+    router.push("/CreatorPending");
+
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="space-y-8">
