@@ -14,16 +14,23 @@ async function request(url, method, payload, config = {}) {
   // Allow absolute URLs to pass through
   const fullUrl = /^https?:\/\//.test(url) ? url : `${API_BASE}${url}`;
   const token = getToken();
+    const isFormData = payload instanceof FormData;
 
   try {
     const res = await fetch(fullUrl, {
       method,
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        ...(config.headers || {}),
-      },
-      body: payload ? JSON.stringify(payload) : undefined,
+
+headers: {
+  ...(isFormData ? {} : { "Content-Type": "application/json" }),
+  ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  ...(config.headers || {}),
+},
+
+body: payload
+  ? isFormData
+    ? payload
+    : JSON.stringify(payload)
+  : undefined,
       signal: controller.signal,
       ...config,
     });

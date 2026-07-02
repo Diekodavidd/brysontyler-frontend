@@ -108,186 +108,167 @@ Watch All Streams
 </button>
 
 </motion.div>
+<div className="grid lg:grid-cols-5 gap-8 items-center">
 
-<div className="grid lg:grid-cols-3 gap-8">
+  {/* Studio Preview */}
 
-<div
+  <motion.div
+    initial={{ opacity: 0, x: -40 }}
+    whileInView={{ opacity: 1, x: 0 }}
+    viewport={{ once: true }}
+    className="lg:col-span-3"
+  >
 
-onClick={()=>push(`/live/${liveCreators[0].id}`)}
+    <div className="rounded-[34px] overflow-hidden border border-white/10 bg-zinc-900">
 
-className="lg:col-span-2 relative h-[600px] rounded-[34px] overflow-hidden cursor-pointer group"
+      {/* Fake Video */}
 
->
+      <div className="relative aspect-video bg-gradient-to-br from-zinc-800 via-black to-zinc-900">
 
-<Image
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(239,68,68,.12),transparent_60%)]" />
 
-fill
+        <div className="absolute top-6 left-6 flex gap-3">
 
-src={liveCreators[0].image}
+          <span className="bg-red-600 px-5 py-2 rounded-full text-xs font-black tracking-widest flex items-center gap-2">
 
-alt={liveCreators[0].name}
+            <Radio size={14} />
 
-className="object-cover group-hover:scale-110 transition-all duration-[2500ms]"
+            LIVE
 
-/>
+          </span>
 
-<div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent"/>
+          <span className="bg-black/40 backdrop-blur-xl px-5 py-2 rounded-full text-sm">
 
-<div className="absolute top-8 left-8 flex gap-3">
+            2.3k Watching
 
-<div className="px-5 py-2 rounded-full bg-red-600 text-xs font-black tracking-[0.3em]">
+          </span>
 
-LIVE
+        </div>
 
-</div>
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
 
-<div className="px-5 py-2 rounded-full bg-black/40 backdrop-blur-xl">
+          <div className="w-24 h-24 rounded-full bg-yellow-400 flex items-center justify-center">
 
-<Eye className="inline mr-2" size={15}/>
+            <Play
+              size={42}
+              fill="black"
+              className="text-black ml-1"
+            />
 
-{liveCreators[0].viewers}
+          </div>
 
-Watching
+          <h3 className="mt-8 text-4xl font-black">
 
-</div>
+            Premium Live Studio
 
-</div>
+          </h3>
 
-<div className="absolute bottom-10 left-10">
+          <p className="mt-4 text-zinc-400">
 
-<div className="flex items-center gap-3">
+            HD Streaming • Live Chat • Tips • PPV
 
-<h2 className="text-5xl font-black">
-
-{liveCreators[0].name}
-
-</h2>
-
-{liveCreators[0].verified &&
-
-<CheckCircle2 className="text-sky-400 fill-sky-400"/>
-
-}
-
-</div>
-
-<p className="mt-4 text-zinc-300">
-
-{liveCreators[0].duration}
-
-</p>
-
-<button className="mt-8 px-8 py-4 rounded-2xl bg-yellow-400 text-black font-black flex items-center gap-3 hover:scale-105 transition-all">
-
-<Play fill="currentColor"/>
-
-Join Stream
-
-</button>
-
-</div>
-
-</div>
-
-        {/* Right Side Live Cards */}
-
-        <div className="flex flex-col gap-8">
-
-          {liveCreators.slice(1).map((creator, index) => (
-
-            <motion.div
-              key={creator.id}
-              initial={{ opacity: 0, x: 40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.2 }}
-              onClick={() => push(`/live/${creator.id}`)}
-              className="relative h-[285px] rounded-[28px] overflow-hidden cursor-pointer group border border-white/10 hover:border-red-500/40 transition-all duration-500"
-            >
-
-              <Image
-                src={creator.image}
-                alt={creator.name}
-                fill
-                className="object-cover group-hover:scale-110 transition-all duration-[2000ms]"
-              />
-
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
-
-              {/* Hover Glow */}
-
-              <div className="absolute inset-0 bg-red-500/0 group-hover:bg-red-500/10 transition-all duration-500" />
-
-              {/* Top */}
-
-              <div className="absolute top-5 left-5 right-5 flex justify-between items-center">
-
-                <div className="px-4 py-2 rounded-full bg-red-600 text-[10px] font-black uppercase tracking-[0.3em]">
-
-                  LIVE
-
-                </div>
-
-                <div className="px-4 py-2 rounded-full bg-black/40 backdrop-blur-xl flex items-center gap-2 text-xs">
-
-                  <Eye size={14} />
-
-                  {creator.viewers}
-
-                </div>
-
-              </div>
-
-              {/* Bottom */}
-
-              <div className="absolute bottom-6 left-6 right-6">
-
-                <div className="rounded-3xl bg-black/30 backdrop-blur-xl border border-white/10 p-5">
-
-                  <div className="flex items-center gap-2">
-
-                    <h3 className="text-2xl font-black">
-
-                      {creator.name}
-
-                    </h3>
-
-                    {creator.verified && (
-
-                      <CheckCircle2
-                        size={18}
-                        className="text-sky-400 fill-sky-400"
-                      />
-
-                    )}
-
-                  </div>
-
-                  <p className="text-zinc-400 mt-2 text-sm">
-
-                    {creator.duration}
-
-                  </p>
-
-                  <button className="mt-5 w-full rounded-2xl py-3 bg-white/10 hover:bg-yellow-400 hover:text-black transition-all font-bold flex justify-center items-center gap-3">
-
-                    <Play fill="currentColor" size={16} />
-
-                    Watch Live
-
-                  </button>
-
-                </div>
-
-              </div>
-
-            </motion.div>
-
-          ))}
+          </p>
 
         </div>
 
       </div>
+
+      {/* Bottom */}
+
+      <div className="grid md:grid-cols-4 border-t border-white/10">
+
+        {[
+          ["HD", "Streaming"],
+          ["Chat", "Real-Time"],
+          ["Tips", "Instant"],
+          ["PPV", "Events"],
+        ].map(([value, label]) => (
+
+          <div
+            key={value}
+            className="p-6 border-r last:border-r-0 border-white/10"
+          >
+
+            <h3 className="text-3xl font-black text-yellow-400">
+
+              {value}
+
+            </h3>
+
+            <p className="text-zinc-500 mt-2">
+
+              {label}
+
+            </p>
+
+          </div>
+
+        ))}
+
+      </div>
+
+    </div>
+
+  </motion.div>
+
+  {/* Features */}
+
+  <motion.div
+    initial={{ opacity: 0, x: 40 }}
+    whileInView={{ opacity: 1, x: 0 }}
+    viewport={{ once: true }}
+    className="lg:col-span-2 space-y-5"
+  >
+
+    {[
+      {
+        title: "Real-Time Chat",
+        text: "Interact with creators while they broadcast.",
+      },
+      {
+        title: "Exclusive Streams",
+        text: "Subscriber-only and PPV experiences.",
+      },
+      {
+        title: "Live Tips",
+        text: "Support creators instantly during streams.",
+      },
+      {
+        title: "HD Broadcasts",
+        text: "Crystal clear video with low latency.",
+      },
+    ].map((feature) => (
+
+      <div
+        key={feature.title}
+        className="rounded-[28px] border border-white/10 bg-zinc-900 p-7 hover:border-red-500/40 transition"
+      >
+
+        <div className="flex items-center gap-3">
+
+          <CheckCircle2 className="text-yellow-400 fill-yellow-400" />
+
+          <h3 className="text-xl font-black">
+
+            {feature.title}
+
+          </h3>
+
+        </div>
+
+        <p className="mt-4 text-zinc-500 leading-7">
+
+          {feature.text}
+
+        </p>
+
+      </div>
+
+    ))}
+
+  </motion.div>
+
+</div>
 
       {/* Bottom CTA */}
 
@@ -335,7 +316,7 @@ Join Stream
             <div className="flex flex-col sm:flex-row justify-center gap-5 mt-10">
 
               <button
-                onClick={() => push("/signup")}
+                onClick={() => push("/signup?role=fan")}
                 className="px-10 py-5 rounded-2xl bg-gradient-to-r from-red-500 to-yellow-500 font-black hover:scale-105 transition-all"
               >
 

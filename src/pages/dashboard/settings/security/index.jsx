@@ -200,49 +200,11 @@ Creator Verification:
 
 </div>
 
-<Input
-type="password"
-placeholder="Current Password"
-value={passwords.currentPassword}
-onChange={(e)=>
 
-setPasswords({
 
-...passwords,
 
-currentPassword:e.target.value
 
-})
 
-}
-/>
-
-<Input
-type="password"
-placeholder="New Password"
-value={passwords.newPassword}
-onChange={(e)=>
-
-setPasswords({
-
-...passwords,
-
-newPassword:e.target.value
-
-})
-
-}
-/>
-
-<Button
-isLoading={isPending}
-onClick={handlePasswordChange}
-className="w-full bg-yellow-500 text-black py-3"
->
-
-Update Password
-
-</Button>
 
 <div className="border border-red-500/20 bg-red-500/5 p-6 rounded-2xl">
           <div className="flex items-center gap-3 text-red-500 mb-4">
@@ -289,19 +251,50 @@ Update Password
               </button>
             </div>
 
-            <Input
-              type="password"
-              placeholder="Current Password"
-            />
+          <Input
+type="password"
+placeholder="Current Password"
+value={passwords.currentPassword}
+onChange={(e)=>
+
+setPasswords({
+
+...passwords,
+
+currentPassword:e.target.value
+
+})
+
+}
+/>
+
 
             <Input
-              type="password"
-              placeholder="New Password"
-            />
+type="password"
+placeholder="New Password"
+value={passwords.newPassword}
+onChange={(e)=>
 
-            <Button className="w-full py-3 rounded-xl font-black bg-yellow-500 text-black mt-4">
-              UPDATE PASSWORD
-            </Button>
+setPasswords({
+
+...passwords,
+
+newPassword:e.target.value
+
+})
+
+}
+/>
+
+           <Button
+isLoading={isPending}
+onClick={handlePasswordChange}
+className="w-full bg-yellow-500 text-black py-3"
+>
+
+Update Password
+
+</Button>
           </div>
         </div>
       )}

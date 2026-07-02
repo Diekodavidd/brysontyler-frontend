@@ -18,6 +18,7 @@ export default function CreatorDashboardPage() {
 const { push } = useRouter();
     const { data: subscribers = [] } = useSubscribers();
 const { data: content = [] } = useMyContent();
+console.log(content)
 const user = useAuthStore((state) => state.user);
 
   

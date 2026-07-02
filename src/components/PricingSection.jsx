@@ -228,7 +228,10 @@ export default function PricingSection() {
               private messaging and VIP experiences.
             </p>
 
-            <button className="mt-10 px-12 py-5 rounded-2xl bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-black text-lg hover:scale-105 transition-all">
+            <button 
+                            onClick={() => push("/signup?role=fan")}
+
+            className="mt-10 px-12 py-5 rounded-2xl bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-black text-lg hover:scale-105 transition-all">
               START YOUR 7-DAY FREE TRIAL
             </button>
           </div>

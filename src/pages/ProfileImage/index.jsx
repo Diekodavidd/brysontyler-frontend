@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import Image from "@/compat/Image";
 import Button from "@/components/ui/Button";
 import { useRouter } from "@/compat/navigation";
+import { useUploadProfileImage } from "../../hooks/useAuth";
 
 export default function ProfileImagePage() {
   const router = useRouter();
@@ -10,14 +11,18 @@ export default function ProfileImagePage() {
   const inputRef = useRef(null);
   const [preview, setPreview] = useState();
 
-  const handleChange = (e) => {
-    const file = e.target.files?.[0];
+const [file, setFile] = useState(null);
 
-    if (!file) return;
+const handleChange = (e) => {
+    const image = e.target.files?.[0];
 
-    setPreview(URL.createObjectURL(file));
-  };
+    if (!image) return;
 
+    setFile(image);
+    setPreview(URL.createObjectURL(image));
+};
+const { mutate: uploadProfile } =
+    useUploadProfileImage();
   return (
     <div className="mx-auto max-w-2xl">
       <div className="mb-10">
@@ -82,12 +87,34 @@ export default function ProfileImagePage() {
       </div>
 
       <Button
-        className="mt-10 h-16 w-full"
-        onClick={() => router.push("/CoverImage")}
-      >
+              className="mt-10 h-16 w-full"
+
+    onClick={() => {
+
+        if (!file) {
+            router.push("/CoverImage");
+            return;
+        }
+
+        const formData = new FormData();
+
+        formData.append("image", file);
+
+        uploadProfile(formData, {
+
+            onSuccess: () => {
+                router.push("/CoverImage");
+            }
+
+        });
+
+    }}
+>
         Continue
         <ArrowRight className="ml-2" />
       </Button>
+
+      
     </div>
   );
 }

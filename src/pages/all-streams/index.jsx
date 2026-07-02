@@ -16,62 +16,80 @@ export default function ViewAllStreams() {
   const [search, setSearch] = useState("");
   const [visibleCount, setVisibleCount] = useState(8);
 
-  const streams = [
-    {
-      id: 1,
-      name: "Bryson Tyler",
-      image: "https://picsum.photos/id/1015/800/600",
-      viewers: "2.4k",
-    },
-    {
-      id: 2,
-      name: "Alex River",
-      image: "https://picsum.photos/id/1025/800/600",
-      viewers: "1.8k",
-    },
-    {
-      id: 3,
-      name: "Jordan Kai",
-      image: "https://picsum.photos/id/1027/800/600",
-      viewers: "3.1k",
-    },
-    {
-      id: 4,
-      name: "Mia Rose",
-      image: "https://picsum.photos/id/1035/800/600",
-      viewers: "4.5k",
-    },
-    {
-      id: 5,
-      name: "Chase Lane",
-      image: "https://picsum.photos/id/1045/800/600",
-      viewers: "900",
-    },
-    {
-      id: 6,
-      name: "Sarah Jade",
-      image: "https://picsum.photos/id/1055/800/600",
-      viewers: "5.2k",
-    },
-    {
-      id: 7,
-      name: "Kaelin Fox",
-      image: "https://picsum.photos/id/1065/800/600",
-      viewers: "1.2k",
-    },
-    {
-      id: 8,
-      name: "Devon Rex",
-      image: "https://picsum.photos/id/1075/800/600",
-      viewers: "2.9k",
-    },
-    {
-      id: 9,
-      name: "Luna Vane",
-      image: "https://picsum.photos/id/1085/800/600",
-      viewers: "6.7k",
-    },
-  ];
+ const streams = [
+  {
+    id: 1,
+    name: "Noir Ember",
+    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=900&q=80",
+    viewers: "2.7k",
+  },
+  {
+    id: 2,
+    name: "Kairo Vale",
+    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=900&q=80",
+    viewers: "1.9k",
+  },
+  {
+    id: 3,
+    name: "Velvet Rae",
+    image: "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=900&q=80",
+    viewers: "4.2k",
+  },
+  {
+    id: 4,
+    name: "Saint Lux",
+    image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=900&q=80",
+    viewers: "3.8k",
+  },
+  {
+    id: 5,
+    name: "Aria Sol",
+    image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=900&q=80",
+    viewers: "5.4k",
+  },
+  {
+    id: 6,
+    name: "Nova Sinclair",
+    image: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=900&q=80",
+    viewers: "6.1k",
+  },
+  {
+    id: 7,
+    name: "Jett Monroe",
+    image: "https://images.unsplash.com/photo-1504593811423-6dd665756598?w=900&q=80",
+    viewers: "2.3k",
+  },
+  {
+    id: 8,
+    name: "Luna Noir",
+    image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=900&q=80",
+    viewers: "7.5k",
+  },
+  {
+    id: 9,
+    name: "Zane Mercer",
+    image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=900&q=80",
+    viewers: "1.4k",
+  },
+  {
+    id: 10,
+    name: "Selene Voss",
+    image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=900&q=80",
+    viewers: "4.8k",
+  },
+  {
+    id: 11,
+    name: "Echo Hart",
+    image: "https://images.unsplash.com/photo-1504593811423-6dd665756598?w=900&q=80",
+    viewers: "3.5k",
+  },
+  {
+    id: 12,
+    name: "Raven Ellis",
+    image: "https://images.unsplash.com/photo-1521119989659-a83eee488004?w=900&q=80",
+    viewers: "5.9k",
+  },
+];
 
   const filteredStreams = streams.filter((stream) =>
     stream.name.toLowerCase().includes(search.toLowerCase())
@@ -136,8 +154,8 @@ export default function ViewAllStreams() {
                 {displayedStreams.map((stream) => (
                   <div
                     key={stream.id}
-                    onClick={() => router.push(`/live/${stream.id}`)}
-                    className="group aspect-[4/3] bg-zinc-900 relative overflow-hidden border border-white/[0.05] transition-all hover:-translate-y-1 hover:border-red-600/50 cursor-pointer"
+         onClick={() => router.push("/signup?role=fan")}          
+          className="group aspect-[4/3] bg-zinc-900 relative overflow-hidden border border-white/[0.05] transition-all hover:-translate-y-1 hover:border-red-600/50 cursor-pointer"
                   >
                     <Image
                       src={stream.image}
@@ -146,20 +164,35 @@ export default function ViewAllStreams() {
                       className="object-cover transition-transform duration-700 group-hover:scale-110"
                     />
 
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#020202] via-transparent to-transparent p-6 flex flex-col justify-end">
-                      <span className="px-2 py-0.5 bg-red-600 text-[8px] font-black uppercase tracking-widest mb-3 w-fit">
-                        Live
-                      </span>
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#020202] via-black/20 to-transparent p-6 flex flex-col justify-end">
 
-                      <h3 className="text-base font-black tracking-tight">
-                        {stream.name}
-                      </h3>
+  <span className="px-3 py-1 bg-red-600 rounded-full text-[9px] font-black uppercase tracking-[0.25em] w-fit">
 
-                      <div className="flex items-center gap-1.5 text-[10px] text-zinc-400 font-bold mt-1">
-                        <Eye size={12} className="text-red-500" />
-                        {stream.viewers} watching
-                      </div>
-                    </div>
+    LIVE NOW
+
+  </span>
+
+  <h3 className="mt-4 text-xl font-black">
+
+    {stream.name}
+
+  </h3>
+
+  <div className="flex items-center gap-2 text-xs text-zinc-400 mt-2">
+
+    <Eye size={14} className="text-red-500" />
+
+    {stream.viewers} watching
+
+  </div>
+
+  <button
+    className="mt-6 w-full rounded-xl bg-yellow-500 hover:bg-yellow-400 text-black font-black py-3 transition"
+  >
+    Join Stream
+  </button>
+
+</div>
                   </div>
                 ))}
               </div>

@@ -13,14 +13,30 @@ export const getMyLiveSessions = () =>
 export const getLiveSession = (id) =>
   httpGet(`/live/${id}`);
 
-export const createLiveSession = (payload) =>
-  httpPost("/live/create", payload);
+/* CREATE */
+
+export const createLiveSession = (data) =>
+  httpPost("/live/create", data);
+
+/* SCHEDULE */
+
+export const scheduleLiveSession = (data) =>
+  httpPost("/live/create", {
+    ...data,
+    scheduled: true,
+  });
+
+/* JOIN */
 
 export const joinLiveSession = (id) =>
   httpPost(`/live/${id}/join`);
 
+/* LEAVE */
+
 export const leaveLiveSession = (id) =>
   httpPost(`/live/${id}/leave`);
+
+/* END */
 
 export const endLiveSession = (id) =>
   httpPatch(`/live/end/${id}`);

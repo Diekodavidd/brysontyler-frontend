@@ -156,3 +156,29 @@ export const useMe = () =>
 
 export const updateProfile = (payload) =>
     httpPatch("/auth/profile", payload);
+
+export const useUploadProfileImage = () => {
+    const setUser = useAuthStore((s) => s.setUser);
+
+    return useMutation({
+        mutationFn: authService.uploadProfileImage,
+        onSuccess: (res) => {
+            if (res.user) {
+                setUser(res.user);
+            }
+        },
+    });
+};
+
+export const useUploadCoverImage = () => {
+    const setUser = useAuthStore((s) => s.setUser);
+
+    return useMutation({
+        mutationFn: authService.uploadCoverImage,
+        onSuccess: (res) => {
+            if (res.user) {
+                setUser(res.user);
+            }
+        },
+    });
+};

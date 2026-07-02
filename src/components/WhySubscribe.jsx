@@ -8,6 +8,7 @@ import {
   Tv2,
   ArrowRight,
 } from "lucide-react";
+import { useRouter } from "@/compat/navigation";
 
 const features = [
   {
@@ -55,6 +56,9 @@ const features = [
 ];
 
 export default function WhySubscribe() {
+
+    const { push } = useRouter();
+  
   return (
     <section className="relative py-28 overflow-hidden bg-[#060606]">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(250,204,21,.08),transparent_60%)]" />
@@ -118,10 +122,10 @@ export default function WhySubscribe() {
                   {feature.description}
                 </p>
 
-                <button className="mt-8 flex items-center gap-2 text-yellow-400 font-bold group-hover:gap-4 transition-all">
+                {/* <button className="mt-8 flex items-center gap-2 text-yellow-400 font-bold group-hover:gap-4 transition-all">
                   Learn More
                   <ArrowRight size={18} />
-                </button>
+                </button> */}
               </motion.div>
             );
           })}
@@ -154,11 +158,17 @@ export default function WhySubscribe() {
               </p>
 
               <div className="flex flex-col sm:flex-row justify-center gap-5 mt-10">
-                <button className="px-10 py-5 rounded-2xl bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-black hover:scale-105 transition-all">
+                <button
+                 onClick={() => push("/signup?role=fan")}
+                className="px-10 py-5 rounded-2xl bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-black hover:scale-105 transition-all">
                   Start Your Free Trial
                 </button>
 
-                <button className="px-10 py-5 rounded-2xl border border-white/10 bg-white/5 hover:border-yellow-400 transition-all">
+                <button 
+                onClick={() => push("/signup?role=fan")}
+                className="px-10 py-5 rounded-2xl border border-white/10 bg-white/5 hover:border-yellow-400 transition-all">
+                                  
+
                   Explore Membership
                 </button>
               </div>

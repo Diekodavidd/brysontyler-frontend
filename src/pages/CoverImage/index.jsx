@@ -3,6 +3,7 @@ import Image from "@/compat/Image";
 import { ImagePlus, ArrowRight, ArrowLeft } from "lucide-react";
 import { useRouter } from "@/compat/navigation";
 import Button from "@/components/ui/Button";
+import { useUploadCoverImage } from "../../hooks/useAuth";
 
 export default function CoverImagePage() {
   const router = useRouter();
@@ -11,13 +12,22 @@ export default function CoverImagePage() {
 
   const [preview, setPreview] = useState();
 
-  const handleImage = (e) => {
-    const file = e.target.files?.[0];
 
-    if (!file) return;
 
-    setPreview(URL.createObjectURL(file));
-  };
+  const [file, setFile] = useState(null);
+
+const handleImage = (e) => {
+    const image = e.target.files?.[0];
+
+    if (!image) return;
+
+    setFile(image);
+    setPreview(URL.createObjectURL(image));
+};
+
+const { mutate: uploadCover } =
+    useUploadCoverImage();
+
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -104,11 +114,28 @@ export default function CoverImagePage() {
           Back
         </Button>
 
-        <Button
-          type="button"
-          onClick={() => router.push("/Kyc")}
-          className="h-14"
-        >
+      <Button
+                className="h-14"
+
+    onClick={() => {
+
+        if (!file) {
+            router.push("/Kyc");
+            return;
+        }
+
+        const formData = new FormData();
+
+        formData.append("image", file);
+
+       uploadCover(formData,{
+   onSuccess:()=>{
+      router.push("/Kyc");
+   }
+});
+
+    }}
+>
           Continue
           <ArrowRight size={18} className="ml-2" />
         </Button>

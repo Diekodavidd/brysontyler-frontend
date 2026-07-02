@@ -59,5 +59,12 @@ export const startKYC = () => {
     undefined
   );
 };
+// authService.js
+
+export const uploadProfileImage = (formData) =>
+  httpPost("/auth/upload-profile-image", formData);
+
+export const uploadCoverImage = (formData) =>
+  httpPost("/auth/upload-cover-image", formData);
 
 export const getMe = () => httpGet("/auth/me");

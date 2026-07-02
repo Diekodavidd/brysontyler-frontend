@@ -3,6 +3,7 @@ import {
   httpDelete,
   httpPatch,
 } from "@/lib/http";
+
 import { getToken } from "@/lib/token";
 
 const API = import.meta.env.VITE_API_URL;
@@ -17,22 +18,52 @@ export const deleteContent = (id) => {
 };
 
 export const uploadContent = async (formData) => {
+
   const token = getToken();
 
-  const res = await fetch(`${API}/content/upload`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    body: formData,
-  });
+  const res = await fetch(
+    `${API}/content/upload`,
+    {
+      method: "POST",
 
-  return res.json();
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+
+      body: formData,
+    }
+  );
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(
+      data.error || "Upload failed"
+    );
+  }
+
+  return data;
 };
 
-export const updateContent = ({ id, title, protection }) => {
+export const updateContent = ({
+  id,
+  title,
+  description,
+  category,
+  visibility,
+  price,
+  releaseDate,
+  releaseTime,
+  tags,
+}) => {
   return httpPatch(`/content/${id}`, {
     title,
-    protection,
+    description,
+    category,
+    visibility,
+    price,
+    releaseDate,
+    releaseTime,
+    tags,
   });
 };

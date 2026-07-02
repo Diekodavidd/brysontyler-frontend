@@ -1,919 +1,265 @@
-
-
-import { useState, useRef } from "react";
+import { useMemo, useState } from "react";
 import {
-  CloudUpload,
   Search,
-  Filter,
+  Plus,
+  DollarSign,
+  Crown,
   Video,
   Image as ImageIcon,
-  Plus,
-  X,
-  UploadCloud,
-  Save,
-  Eye,
-  Pencil,
-  Trash2,
-  Heart,
-  MessageCircle,
-  Calendar,
 } from "lucide-react";
-import { useDeleteContent, useMyContent, useUpdateContent, useUploadContent } from "../../../hooks/useContent";
 
+import { useMyContent } from "@/hooks/useContent";
+
+import StatsCards from "./components/Statscard";
+import FilterBar from "./components/FilterBar";
+import ContentCard from "./components/ContentCard";
+import UploadContentModal from "./components/UploadContentModal";
+import EditContentModal from "./components/EditContentModal";
+import PreviewContentModal from "./components/PreviewContentModal";
+import DeleteContentModal from "./components/DeleteContentModal";
+import EmptyState from "./components/EmptyBadge";
 
 export default function ContentPage() {
+const {
+  data: content = [],
+  isLoading,
+} = useMyContent();
+
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
 
-  const fileInputRef = useRef(null);
+  const [showUpload, setShowUpload] = useState(false);
 
-  const [uploads, setUploads] = useState([]);
-  const [previewItem, setPreviewItem] = useState(null);
-  const [editingItem, setEditingItem] = useState(null);
-  const [deleteItem, setDeleteItem] = useState(null);
+  const [selectedContent, setSelectedContent] =
+    useState(null);
 
-  // ----------------------------
-  // React Query Hooks
-  // ----------------------------
+  const [editingContent, setEditingContent] =
+    useState(null);
 
-  const {
-    data: content = [],
-    isLoading,
-  } = useMyContent();
+  const [deletingContent, setDeletingContent] =
+    useState(null);
 
-  const uploadMutation = useUploadContent();
-  const updateMutation = useUpdateContent();
-  const deleteMutation = useDeleteContent();
+  const stats = useMemo(() => {
+    return {
+      revenue: content.reduce(
+        (sum, item) => sum + (item.revenue || 0),
+        0
+      ),
 
-  // ----------------------------
-  // Stats
-  // ----------------------------
+      sales: content.reduce(
+        (sum, item) => sum + (item.sales || 0),
+        0
+      ),
+premium: content.filter(
+  item =>
+    item.visibility === "ppv" ||
+    item.visibility === "members_ppv"
+).length,
 
-  const stats = [
-    {
-      title: "Premium Videos",
-      value: content.filter(
-        (item) => item.type === "video"
-      ).length,
-      color: "text-yellow-400",
-    },
-    {
-      title: "Photo Sets",
-      value: content.filter(
-        (item) => item.type === "image"
-      ).length,
-      color: "text-sky-400",
-    },
-    {
-      title: "Subscribers Only",
-      value: content.filter(
-        (item) => item.visibility === "Subscribers"
-      ).length,
-      color: "text-pink-400",
-    },
-    {
-      title: "Premium Content",
-      value: content.filter(
-        (item) => item.visibility === "Premium"
-      ).length,
-      color: "text-emerald-400",
-    },
-  ];
+free: content.filter(
+  item =>
+    item.visibility === "free"
+).length,
+    };
+  }, [content]);
 
-  // ----------------------------
-  // Loading
-  // ----------------------------
+  const filteredContent = useMemo(() => {
+    return content.filter((item) => {
+      const matchesSearch =
+        item.title
+          ?.toLowerCase()
+          .includes(search.toLowerCase());
+
+      if (!matchesSearch) return false;
+
+      switch (filter) {
+        case "videos":
+          return item.type === "video";
+
+        case "photos":
+          return item.type === "image";
+
+      case "premium":
+    return (
+        item.visibility === "ppv" ||
+        item.visibility === "members_ppv"
+    );
+
+case "subscriber":
+    return item.visibility === "subscribers";
+
+case "free":
+    return item.visibility === "free";
+
+       case "draft":
+  return item.status === "draft";
+
+case "scheduled":
+  return (
+    item.status === "scheduled" ||
+    item.status === "pending_review"
+  );
+
+        default:
+          return true;
+      }
+    });
+  }, [content, search, filter]);
 
   if (isLoading) {
     return (
       <div className="h-[70vh] flex items-center justify-center text-zinc-500">
-        Loading Content...
+        Loading Creator Studio...
       </div>
     );
   }
 
-  // ----------------------------
-  // Empty State
-  // ----------------------------
-
-  if (!content.length) {
-    return (
-      <div className="rounded-[40px] border border-dashed border-zinc-700 p-20 text-center">
-        <CloudUpload
-          size={80}
-          className="mx-auto text-yellow-400 mb-8"
-        />
-
-        <h2 className="text-4xl font-black">
-          Your Studio is Empty
-        </h2>
-
-        <p className="text-zinc-500 mt-5 max-w-lg mx-auto leading-7">
-          Upload your first premium photo or video and
-          start earning from subscribers immediately.
-        </p>
-      </div>
-    );
-  }
-
-  // ----------------------------
-  // Handlers
-  // ----------------------------
-
-const handleFileChange = (e) => {
-  const files = Array.from(e.target.files || []);
-
-  const mapped = files.map((file) => ({
-    id: crypto.randomUUID(),
-    file,
-    preview: URL.createObjectURL(file),
-    title:
-      file.name.substring(0, file.name.lastIndexOf(".")) ||
-      file.name,
-    type: file.type.startsWith("video")
-      ? "video"
-      : "image",
-    visibility: "Premium",
-  }));
-
-  setUploads((prev) => [...prev, ...mapped]);
-};
-
-
-
-    
   return (
-    <div className="space-y-10">
+    <>
+      <div className="space-y-10">
 
-      {/* Header */}
+        {/* HEADER */}
 
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-end gap-6">
 
-        <div>
+          <div>
 
-       <p className="uppercase tracking-[0.3em] text-xs text-yellow-400 font-black">
-Creator Studio
-</p>
-
-<h1 className="text-6xl font-black mt-3">
-Your Content
-</h1>
-
-<p className="text-zinc-500 mt-4 max-w-2xl leading-7">
-Everything your fans purchase lives here.
-Upload premium experiences, edit visibility,
-track performance and manage your library.
-</p>
-
-        </div>
-
-        <button className="h-14 px-7 rounded-2xl bg-yellow-400 hover:bg-yellow-300 text-black font-black flex items-center gap-2 transition-all">
-
-          <Plus size={18} />
-
-          Upload Content
-
-        </button>
-
-      </div>
-
-      {/* Stats */}
-
-      <div className="grid grid-cols-2 xl:grid-cols-4 gap-6">
-
-        {stats.map((item) => (
-
-          <div
-            key={item.title}
-            className="rounded-3xl bg-zinc-900 border border-white/5 p-7"
-          >
-
-            <p className="text-zinc-500 uppercase text-xs tracking-[0.2em]">
-
-              {item.title}
-
+            <p className="uppercase tracking-[.3em] text-xs font-black text-yellow-400">
+              Creator Studio
             </p>
 
-            <h2 className={`text-4xl font-black mt-4 ${item.color}`}>
+            <h1 className="text-6xl font-black mt-4">
+              Content Library
+            </h1>
 
-              {item.value}
-
-            </h2>
+            <p className="text-zinc-500 mt-4 max-w-3xl leading-7">
+              Upload premium videos,
+              photos and exclusive
+              content for your fans.
+            </p>
 
           </div>
 
-        ))}
-
-      </div>
-
-      {/* Search + Filter */}
-
-      <div className="flex flex-col lg:flex-row gap-5">
-
-        <div className="relative flex-1">
-
-          <Search
-            className="absolute left-5 top-1/2 -translate-y-1/2 text-zinc-500"
-            size={18}
-          />
-
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search content..."
-            className="w-full h-14 rounded-2xl bg-zinc-900 border border-white/5 pl-14 pr-5 outline-none focus:border-yellow-500 transition-all"
-          />
-
-        </div>
-
-        <div className="relative">
-
-          <Filter
-            className="absolute left-5 top-1/2 -translate-y-1/2 text-zinc-500"
-            size={18}
-          />
-
-          <select
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            className="appearance-none h-14 rounded-2xl bg-zinc-900 border border-white/5 pl-14 pr-12 outline-none"
+          <button
+            onClick={() =>
+              setShowUpload(true)
+            }
+            className="bg-yellow-500 hover:bg-yellow-400 text-black rounded-2xl px-8 py-4 font-black flex items-center gap-3"
           >
-
-            <option value="all">All</option>
-            <option value="video">Videos</option>
-            <option value="image">Images</option>
-            <option value="published">Published</option>
-            <option value="draft">Drafts</option>
-
-          </select>
+            <Plus size={18} />
+            Upload Content
+          </button>
 
         </div>
+
+        {/* STATS */}
+
+        <StatsCards
+          cards={[
+            {
+              title: "Revenue",
+              value: `$${stats.revenue}`,
+              color: "text-green-400",
+              icon: (
+                <DollarSign size={24} />
+              ),
+            },
+            {
+              title: "Sales",
+              value: stats.sales,
+              color: "text-yellow-400",
+              icon: (
+                <Crown size={24} />
+              ),
+            },
+            {
+              title: "Premium",
+              value: stats.premium,
+              color: "text-red-400",
+              icon: (
+                <Video size={24} />
+              ),
+            },
+            {
+              title: "Free",
+              value: stats.free,
+              color: "text-sky-400",
+              icon: (
+                <ImageIcon size={24} />
+              ),
+            },
+          ]}
+        />
+
+        {/* FILTER */}
+
+        <FilterBar
+          search={search}
+          setSearch={setSearch}
+          filter={filter}
+          setFilter={setFilter}
+        />
+
+        {/* CONTENT */}
+
+        {filteredContent.length === 0 ? (
+          <EmptyState />
+        ) : (
+          <div className="grid xl:grid-cols-3 lg:grid-cols-2 gap-7">
+
+            {filteredContent.map((item) => (
+              <ContentCard
+                key={item._id}
+                item={item}
+                onPreview={() =>
+                  setSelectedContent(item)
+                }
+                onEdit={() =>
+                  setEditingContent(item)
+                }
+                onDelete={() =>
+                  setDeletingContent(item)
+                }
+              />
+            ))}
+
+          </div>
+        )}
 
       </div>
 
-      {/* Upload Box */}
-
-      <div className="rounded-[32px] bg-zinc-900 border border-white/5 p-8">
-
-  <div className="flex justify-between items-center mb-8">
-
-    <div>
-
-      <h2 className="text-2xl font-black">
-
-        Upload New Content
-
-      </h2>
-
-      <p className="text-zinc-500 mt-2">
-
-        Videos & Images
-
-      </p>
-
-    </div>
-
-    {uploads.length > 0 && (
-
-      <button
-      className="h-12 rounded-2xl bg-zinc-800 hover:bg-yellow-500 hover:text-black transition-all"
-        // className="h-12 px-6 rounded-xl bg-yellow-400 text-black font-black flex items-center gap-2"
-      onClick={() => {
-
-uploads.forEach((upload) => {
-
-const formData = new FormData();
-
-formData.append(
-"title",
-upload.title
-);
-
-formData.append(
-"visibility",
-upload.visibility
-);
-
-formData.append(
-"type",
-upload.type
-);
-
-formData.append("file", upload.file);
-
-uploadMutation.mutate(formData);
-
-});
-
-setUploads([]);
-
-}}>
-
-        <Save size={16} />
-
-        Publish All
-
-      </button>
-
-    )}
-
-  </div>
-
-  <input
-    hidden
-    multiple
-    ref={fileInputRef}
-    type="file"
-    accept="image/*,video/*"
-    onChange={handleFileChange}
-  />
-
-  <div
-    onClick={() =>
-      fileInputRef.current.click()
-    }
-    className="border-2 border-dashed border-zinc-700 hover:border-yellow-500 rounded-3xl p-16 cursor-pointer transition-all text-center"
-  >
-
-    <UploadCloud
-      size={60}
-      className="mx-auto text-yellow-400 mb-5"
-    />
-
-    <h3 className="text-2xl font-black">
-
-      Upload Premium Content
-
-    </h3>
-
-    <p className="text-zinc-500 mt-3">
-
-      Videos • Images • Up to 4K Resolution
-
-    </p>
-
-  </div>
-
-  {uploads.length > 0 && (
-
-    <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6 mt-8">
-
-      {uploads.map((upload) => (
-
-        <div
-          key={upload.id}
-          className="bg-black rounded-3xl overflow-hidden border border-white/10"
-        >
-
-          <div className="relative aspect-video">
-
-            {upload.type === "video" ? (
-
-              <video
-                src={upload.preview}
-                className="w-full h-full object-cover"
-              />
-
-            ) : (
-
-              <img
-                src={upload.preview}
-                className="w-full h-full object-cover"
-              />
-
-            )}
-
-            <button
-              onClick={() =>
-                removeUpload(upload.id)
-              }
-              className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/70 flex items-center justify-center hover:bg-red-500"
-            >
-
-              <X size={16} />
-
-            </button>
-
-          </div>
-
-          <div className="p-4">
-
-            <input
-              value={upload.title}
-              onChange={(e) =>
-                setUploads((prev) =>
-                  prev.map((item) =>
-                    item.id === upload.id
-                      ? {
-                          ...item,
-                          title:
-                            e.target.value,
-                        }
-                      : item
-                  )
-                )
-              }
-              className="w-full bg-zinc-900 rounded-xl border border-white/10 px-4 py-3 outline-none mb-3"
-            />
-
-            <select
-              value={upload.visibility}
-              onChange={(e) =>
-                setUploads((prev) =>
-                  prev.map((item) =>
-                    item.id === upload.id
-                      ? {
-                          ...item,
-                          visibility:
-                            e.target.value,
-                        }
-                      : item
-                  )
-                )
-              }
-              className="w-full bg-zinc-900 rounded-xl border border-white/10 px-4 py-3 outline-none"
-            >
-
-              <option>
-
-                Premium
-
-              </option>
-
-              <option>
-
-                Subscribers
-
-              </option>
-
-              <option>
-
-                Free
-
-              </option>
-
-            </select>
-
-          </div>
-
-        </div>
-
-      ))}
-
-    </div>
-
-  )}
-
-</div>
-
-      {/* Empty Library */}
-
-      {/* Content Grid */}
-
-<div>
-
-  <div className="flex items-center justify-between mb-8">
-
-    <h2 className="text-2xl font-black">
-
-      Your Library
-
-    </h2>
-
-    <p className="text-zinc-500 text-sm">
-
-      8 Productions
-
-    </p>
-
-  </div>
-
-  <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-7">
-
-    {content
-      .filter((item) => {
-
-        if (
-          search &&
-          !item.title
-            .toLowerCase()
-            .includes(search.toLowerCase())
-        )
-          return false;
-
-        if (filter === "all") return true;
-
-        if (filter === "published")
-          return item.status === "Published";
-
-        if (filter === "draft")
-          return item.status === "Draft";
-
-        return item.type === filter;
-      })
-      .map((item) => (
-
-        <div
-          key={item._id}
-className="group overflow-hidden rounded-[34px]
-bg-gradient-to-b
-from-zinc-900
-to-black
-border
-border-white/5
-hover:border-yellow-500/40
-hover:-translate-y-2
-transition-all
-duration-300"        >
-
-          {/* Thumbnail */}
-
-          <div className="relative aspect-video overflow-hidden">
-<div className="absolute inset-0 bg-gradient-to-t from-black via-black/10 to-transparent" />
-
-<div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition bg-yellow-500/10" />
-            <img
-              src={item.fileUrl}
-              alt=""
-              className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-            />
-
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
-
-            <span
-              className={`absolute top-4 left-4 px-3 py-1 rounded-full text-[10px] uppercase font-black tracking-widest ${
-                item.status === "Published"
-                  ? "bg-green-500 text-black"
-                  : "bg-yellow-400 text-black"
-              }`}
-            >
-
-              {item.status}
-
-            </span>
-
-          </div>
-
-          {/* Body */}
-
-          <div className="p-6">
-
-            <div className="flex items-center justify-between">
-
-              <h3 className="font-black text-lg">
-
-                {item.title}
-
-              </h3>
-
-              {item.type === "video" ? (
-                <Video
-                  size={18}
-                  className="text-yellow-400"
-                />
-              ) : (
-                <ImageIcon
-                  size={18}
-                  className="text-blue-400"
-                />
-              )}
-
-            </div>
-
-            <div className="flex gap-2 mt-4">
-
-              <span className="px-3 py-1 rounded-full bg-black text-xs text-zinc-400">
-
-                {item.visibility}
-
-              </span>
-
-            </div>
-
-        <div className="grid grid-cols-2 gap-5 mt-6">
-
-<div>
-<p className="text-[10px] uppercase tracking-widest text-zinc-500">
-Revenue
-</p>
-
-<p className="text-xl font-black text-green-400">
-{item.revenue}
-</p>
-</div>
-
-<div>
-<p className="text-[10px] uppercase tracking-widest text-zinc-500">
-Views
-</p>
-
-<p className="text-xl font-black">
-{item.views}
-</p>
-</div>
-
-<div>
-<p className="text-[10px] uppercase tracking-widest text-zinc-500">
-Likes
-</p>
-
-<p className="flex items-center gap-2 font-bold">
-<Heart className="text-red-400" size={15}/>
-{item.likes}
-</p>
-</div>
-
-<div>
-<p className="text-[10px] uppercase tracking-widest text-zinc-500">
-Comments
-</p>
-
-<p className="flex items-center gap-2 font-bold">
-<MessageCircle className="text-sky-400" size={15}/>
-{item.comments}
-</p>
-</div>
-
-</div>
-
-<div className="mt-5 flex items-center gap-2 text-xs text-zinc-500">
-
-    <Calendar size={14} />
-
-    Uploaded {item.uploaded}
-
-</div>
-
-            <div className="grid grid-cols-3 gap-3 mt-8">
-
-<button
-onClick={() => setPreviewItem(item)}
-className="h-11 rounded-xl bg-zinc-800 hover:bg-zinc-700 transition flex justify-center items-center"
->
-
-<Eye size={18} />
-
-</button>
-
-<button
-onClick={() => setEditingItem({...item})}
-className="h-11 rounded-xl bg-yellow-400 hover:bg-yellow-300 text-black transition flex justify-center items-center"
->
-
-<Pencil size={18} />
-
-</button>
-
-<button
-onClick={() => setDeleteItem(item)}
-className="h-11 rounded-xl bg-red-500/10 hover:bg-red-500 hover:text-white transition text-red-400 flex justify-center items-center"
->
-
-<Trash2 size={18} />
-
-</button>
-
-</div>
-
-          </div>
-
-        </div>
-
-      ))}
-
-  </div>
-
-</div>
-{previewItem && (
-
-<div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-8">
-
-<div className="bg-zinc-900 rounded-3xl overflow-hidden max-w-5xl w-full border border-white/10">
-
-<div className="relative aspect-video bg-black">
-
-{previewItem.type === "video" ? (
-
-<video
-controls
-src={previewItem.thumbnail}
-className="w-full h-full object-contain"
-/>
-
-) : (
-
-<img
-src={previewItem.thumbnail}
-className="w-full h-full object-contain"
-/>
-
-)}
-
-<button
-onClick={()=>setPreviewItem(null)}
-className="absolute top-5 right-5 w-10 h-10 rounded-full bg-black/70 hover:bg-red-500 flex items-center justify-center"
->
-
-<X/>
-
-</button>
-
-</div>
-
-<div className="p-8">
-
-<h2 className="text-3xl font-black">
-
-{previewItem.title}
-
-</h2>
-
-<p className="text-zinc-500 mt-3">
-
-{previewItem.visibility}
-
-</p>
-
-</div>
-
-</div>
-
-</div>
-
-)}
-
-{editingItem && (
-
-<div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center">
-
-<div className="bg-zinc-900 rounded-3xl p-8 w-full max-w-lg border border-white/10">
-
-<h2 className="text-3xl font-black mb-8">
-
-Edit Content
-
-</h2>
-
-<input
-
-value={editingItem.title}
-
-onChange={(e)=>
-
-setEditingItem({
-
-...editingItem,
-
-title:e.target.value
-
-})
-
-}
-
-className="w-full h-14 rounded-xl bg-black border border-white/10 px-5 mb-5"
-
-/>
-
-<select
-
-value={editingItem.visibility}
-
-onChange={(e)=>
-
-setEditingItem({
-
-...editingItem,
-
-visibility:e.target.value
-
-})
-
-}
-
-className="w-full h-14 rounded-xl bg-black border border-white/10 px-5"
-
->
-
-<option>
-
-Premium
-
-</option>
-
-<option>
-
-Subscribers
-
-</option>
-
-<option>
-
-Free
-
-</option>
-
-</select>
-
-<div className="grid grid-cols-2 gap-4 mt-8">
-
-<button
-
-onClick={()=>setEditingItem(null)}
-
-className="h-12 rounded-xl bg-zinc-800"
-
->
-
-Cancel
-
-</button>
-
-<button
-
-className="h-12 rounded-2xl bg-yellow-500 text-black hover:bg-yellow-400 transition-all"
-onClick={() => {
-
-updateMutation.mutate({
-  id: editingItem._id,
-  payload: editingItem,
-});
-setEditingItem(null);
-
-}}
->
-
-Save Changes
-
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-)}
-
-{deleteItem && (
-
-<div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center">
-
-<div className="bg-zinc-900 rounded-3xl p-8 w-full max-w-md border border-red-500/20">
-
-<h2 className="text-2xl font-black">
-
-Delete Content?
-
-</h2>
-
-<p className="text-zinc-500 mt-3">
-
-This action cannot be undone.
-
-</p>
-
-<div className="grid grid-cols-2 gap-4 mt-8">
-
-<button
-
-onClick={()=>setDeleteItem(null)}
-
-className="h-12 rounded-xl bg-zinc-800"
-
->
-
-Cancel
-
-</button>
-
-<button
-
-className="h-12 rounded-2xl bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition-all"
-onClick={() => {
-
-deleteMutation.mutate(deleteItem._id);Y
-setDeleteItem(null);
-
-}}
->
-
-Delete
-
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-)}
-
-
-
-
-    </div>
-
-    
+      {/* MODALS */}
+
+      <UploadContentModal
+        open={showUpload}
+        onClose={() =>
+          setShowUpload(false)
+        }
+      />
+
+      <PreviewContentModal
+        open={!!selectedContent}
+        content={selectedContent}
+        onClose={() =>
+          setSelectedContent(null)
+        }
+      />
+
+      <EditContentModal
+        open={!!editingContent}
+        content={editingContent}
+        onClose={() =>
+          setEditingContent(null)
+        }
+      />
+
+      <DeleteContentModal
+        open={!!deletingContent}
+        content={deletingContent}
+        onClose={() =>
+          setDeletingContent(null)
+        }
+      />
+    </>
   );
 }

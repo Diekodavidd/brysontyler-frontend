@@ -48,7 +48,6 @@ import DashBoardMembershipPage from "@/pages/dashboard/membership"
 import DashboardMessagesPage from "@/pages/dashboard/messages";
 import DashboardSubscribersPage from "@/pages/dashboard/subscribers";
 import DashboardHistoryPage from "@/pages/dashboard/history";
-import DashboardLivePage from "@/pages/dashboard/live";
 import DashboardAnalyticsPage from "@/pages/dashboard/analytics";
 import DashboardPayoutsPage from "@/pages/dashboard/payouts";
 import DashboardCollaborationsPage from "@/pages/dashboard/collaboration";
@@ -69,7 +68,11 @@ import ProfileFollowingPage from "@/pages/profile/following";
 import ProfileWalletPage from "@/pages/profile/wallet";
 import { useEffect } from "react";
 import Landing from "./pages/landing/Landing";
-import LiveRoomPage from "./pages/dashboard/live/room";
+import DashboardLivePage from "@/pages/dashboard/live/fan";
+import CreatorLivePage from "@/pages/dashboard/live/creator";
+
+import LiveRoomPage from "@/pages/dashboard/live/fan/room";
+import CreatorRoomPage from "@/pages/dashboard/live/creator/room";
 
 function NotFound() {
   return (
@@ -158,9 +161,25 @@ export default function App() {
   }
 />
     <Route path="history" element={<DashboardHistoryPage />} />
-    <Route path="live" element={<DashboardLivePage />} />
-<Route  path="live/:id" element={<LiveRoomPage />}/>
+    {/* <Route path="live" element={<DashboardLivePage />} />
+<Route  path="live/:id" element={<LiveRoomPage />}/> */}
+<Route
+  path="live"
+  element={
+    auth.user?.role === "creator"
+      ? <CreatorLivePage />
+      : <DashboardLivePage />
+  }
+/>
 
+<Route
+  path="live/:id"
+  element={
+    auth.user?.role === "creator"
+      ? <CreatorRoomPage />
+      : <LiveRoomPage />
+  }
+/>
     <Route path="settings" element={<DashboardSettingsLayout />}>
       <Route index element={<DashboardSettingsPage />} />
       <Route path="notifications" element={<DashboardSettingsNotificationsPage />} />

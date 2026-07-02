@@ -10,14 +10,19 @@ import {
   Phone,
   User,
 } from "lucide-react";
-import { useState } from "react";
-import { updateProfile } from "../../../../hooks/useAuth";
+import { useRef, useState } from "react";
+import { updateProfile, useUploadCoverImage, useUploadProfileImage } from "../../../../hooks/useAuth";
 
 
 
 export default function Profile() {
   const user = useAuthStore((state) => state.user);
 const setUser = useAuthStore(state => state.setUser);
+const profileInputRef = useRef(null);
+const coverInputRef = useRef(null);
+
+const { mutate: uploadProfile } = useUploadProfileImage();
+const { mutate: uploadCover } = useUploadCoverImage();
 const [form, setForm] = useState({
   name: user?.name || "",
   email: user?.email || "",
@@ -53,12 +58,15 @@ const handleSave = async () => {
           <div className="w-full h-full bg-gradient-to-r from-yellow-500/20 via-black to-yellow-500/10" />
         )}
 
-        <button className="absolute top-6 right-6 bg-black/70 backdrop-blur px-5 py-3 rounded-2xl font-bold flex items-center gap-2">
-          <Camera size={18} />
-          Cover
-        </button>
+       <button
+    onClick={() => coverInputRef.current?.click()}
+    className="absolute top-6 right-6 bg-black/70 backdrop-blur px-5 py-3 rounded-2xl font-bold flex items-center gap-2"
+>
+    <Camera size={18} />
+    Cover
+</button>
 
-        <div className="absolute left-10 -bottom-16">
+        <div className="absolute left-10 bottom-5">
 
           <div className="relative">
 
@@ -70,9 +78,12 @@ const handleSave = async () => {
               className="w-36 h-36 rounded-full object-cover border-4 border-black"
             />
 
-            <button className="absolute bottom-2 right-2 bg-yellow-500 text-black rounded-full p-3">
-              <Camera size={16} />
-            </button>
+            <button
+    onClick={() => profileInputRef.current?.click()}
+    className="absolute bottom-2 right-2 bg-yellow-500 text-black rounded-full p-3"
+>
+    <Camera size={16} />
+</button>
 
           </div>
 
@@ -173,12 +184,15 @@ const handleSave = async () => {
           Biography
         </label>
 
-        <textarea
-          rows={6}
-          defaultValue={user?.bio}
-          className="w-full rounded-3xl bg-zinc-900 border border-white/5 p-6 outline-none focus:border-yellow-500"
-          placeholder="Tell your fans about yourself..."
-        />
+      <textarea
+    value={form.bio}
+    onChange={(e) =>
+        setForm({
+            ...form,
+            bio: e.target.value,
+        })
+    }
+/>
 
       </div>
 
@@ -186,23 +200,37 @@ const handleSave = async () => {
 
       <div className="grid lg:grid-cols-3 gap-6">
 
-        <Input
-          defaultValue={user?.country}
-          placeholder="Country"
-          icon={<Globe size={18} />}
-        />
+       <Input
+    value={form.country}
+    onChange={(e) =>
+        setForm({
+            ...form,
+            country: e.target.value,
+        })
+    }
+/>
+<Input
+    value={form.state}
+    onChange={(e) =>
+        setForm({
+            ...form,
+            state: e.target.value,
+        })
+    }
+    
+/>
+       <Input
+    value={form.city}
+    onChange={(e) =>
+        setForm({
+            ...form,
+            city: e.target.value,
+        })
+    }
+    
+/> 
 
-        <Input
-          defaultValue={user?.state}
-          placeholder="State"
-          icon={<MapPin size={18} />}
-        />
-
-        <Input
-          defaultValue={user?.city}
-          placeholder="City"
-          icon={<MapPin size={18} />}
-        />
+        
 
       </div>
 
@@ -283,7 +311,37 @@ const handleSave = async () => {
         </div>
 
       </div>
+<input
+    ref={profileInputRef}
+    hidden
+    type="file"
+    accept="image/*"
+    onChange={(e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
 
+        const formData = new FormData();
+        formData.append("image", file);
+
+        uploadProfile(formData);
+    }}
+/>
+
+<input
+    ref={coverInputRef}
+    hidden
+    type="file"
+    accept="image/*"
+    onChange={(e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append("image", file);
+
+        uploadCover(formData);
+    }}
+/>
     </div>
   );
 }
