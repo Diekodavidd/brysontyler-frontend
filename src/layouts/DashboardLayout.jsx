@@ -14,6 +14,7 @@ import {
   MessageSquare,
   LogOut,
   Radio,
+  Images,
   ArrowLeft,
 } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -44,43 +45,70 @@ const fanNavItems = [
     path: "/dashboard",
     icon: Home,
   },
+
   {
-    name: "Membership",
-    path: "/dashboard/membership",
-    icon: Heart,
+    name: "Gallery",
+    path: "/dashboard/gallery",
+    icon: Images,
   },
+
   {
     name: "Live",
     path: "/dashboard/live",
     icon: Radio,
   },
+
   {
     name: "Subscriptions",
     path: "/dashboard/subscriptions",
     icon: Heart,
   },
+
+  {
+    name: "Membership",
+    path: "/dashboard/membership",
+    icon: CreditCard,
+  },
+
+  {
+    name: "Messages",
+    path: "/dashboard/messages",
+    icon: MessageSquare,
+  },
+
   {
     name: "Wallet",
     path: "/dashboard/wallet",
     icon: Wallet,
   },
-  {
-    name: "Messages",
-    path: "/dashboard/messages",
-    icon: MessageSquare,
-},
+
   {
     name: "History",
     path: "/dashboard/history",
     icon: History,
   },
+
   {
     name: "Settings",
     path: "/dashboard/settings",
-    icon: Bell,
+    icon: Settings,
   },
 ];
 
+const fanSections = [
+  {
+    title: "DISCOVER",
+    items: fanNavItems.slice(0, 3),
+  },
+  {
+    title: "COMMUNITY",
+    items: fanNavItems.slice(3, 6),
+  },
+  {
+    title: "ACCOUNT",
+    items: fanNavItems.slice(6),
+  },
+];
 const creatorNavItems = [
   {
     name: "Overview",
@@ -159,26 +187,60 @@ const navItems =
             Back to Site
           </button> */}
 
-          <nav className="space-y-4">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const active = pathname === item.path;
+          <nav className="space-y-8">
+           {auth.user?.role === "creator"
+  ? navItems.map((item) => {
+      const Icon = item.icon;
+      const active = pathname === item.path;
 
-              return (
-                <button
-                  key={item.name}
-                  onClick={() => router.push(item.path)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-                    active
-                      ? "bg-yellow-500 text-black font-bold"
-                      : "text-zinc-500 hover:text-white"
-                  }`}
-                >
-                  <Icon size={18} />
-                  {item.name}
-                </button>
-              );
-            })}
+      return (
+        <button
+          key={item.name}
+          onClick={() => router.push(item.path)}
+          className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition ${
+            active
+              ? "bg-yellow-500 text-black font-bold"
+              : "text-zinc-500 hover:text-white"
+          }`}
+        >
+          <Icon size={18} />
+          {item.name}
+        </button>
+      );
+    })
+  : fanSections.map((section) => (
+      <div key={section.title}>
+
+        <p className="text-[10px] uppercase tracking-[0.35em] text-zinc-600 font-black mb-3">
+          {section.title}
+        </p>
+
+        <div className="space-y-2">
+
+          {section.items.map((item) => {
+            const Icon = item.icon;
+            const active = pathname === item.path;
+
+            return (
+              <button
+                key={item.name}
+                onClick={() => router.push(item.path)}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition ${
+                  active
+                    ? "bg-yellow-500 text-black font-bold"
+                    : "text-zinc-500 hover:text-white"
+                }`}
+              >
+                <Icon size={18} />
+                {item.name}
+              </button>
+            );
+          })}
+
+        </div>
+
+      </div>
+    ))}
           </nav>
         </div>
 

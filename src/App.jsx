@@ -50,6 +50,7 @@ import DashboardSubscribersPage from "@/pages/dashboard/subscribers";
 import DashboardHistoryPage from "@/pages/dashboard/history";
 import DashboardAnalyticsPage from "@/pages/dashboard/analytics";
 import DashboardPayoutsPage from "@/pages/dashboard/payouts";
+import DashboardGalleryPage from "@/pages/dashboard/gallery";
 import DashboardCollaborationsPage from "@/pages/dashboard/collaboration";
 import DashBoardWalletPage from "@/pages/dashboard/wallet/fan";
 import CreatorWalletPage from "@/pages/dashboard/wallet/creator";
@@ -150,6 +151,7 @@ export default function App() {
     <Route path="membership" element={<DashBoardMembershipPage />} />
     <Route path="analytics" element={<DashboardAnalyticsPage />} />
     <Route path="payouts" element={<DashboardPayoutsPage />} />
+    <Route path="gallery" element={<DashboardGalleryPage />} />
     <Route path="collaborations" element={<DashboardCollaborationsPage />} />
     {/* <Route path="wallet" element={<DashBoardWalletPage />} /> */}
     <Route

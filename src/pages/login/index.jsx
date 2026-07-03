@@ -73,7 +73,7 @@ export default function LoginPage() {
           type="button"
           className="h-14 rounded-2xl border border-white/10 bg-zinc-900 hover:border-white/30 transition-all flex items-center justify-center gap-3 font-semibold"
         >
-          <Apple size={20} />
+          <ShieldCheck size={20} />
           Google
         </button>
 

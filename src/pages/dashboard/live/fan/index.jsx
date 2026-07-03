@@ -21,60 +21,6 @@ export default function FanLivePage() {
   const navigate = useNavigate();
 
   const [search, setSearch] = useState("");
-
-  // TODO: Replace with useLiveStreams() hook later
-//   const liveCreators = [
-//     {
-//       _id: "1",
-//       name: "Bryson Tyler",
-//       verified: true,
-//       viewers: 2480,
-//       title: "Private Studio Session",
-//       category: "Music",
-//       started: "12 mins ago",
-//       image: "https://picsum.photos/id/1015/1200/800",
-//     },
-//     {
-//       _id: "2",
-//       name: "Alex River",
-//       verified: true,
-//       viewers: 1834,
-//       title: "Behind The Scenes",
-//       category: "Lifestyle",
-//       started: "4 mins ago",
-//       image: "https://picsum.photos/id/1025/1200/800",
-//     },
-//     {
-//       _id: "3",
-//       name: "Jordan Kai",
-//       verified: false,
-//       viewers: 941,
-//       title: "Live Workout",
-//       category: "Fitness",
-//       started: "19 mins ago",
-//       image: "https://picsum.photos/id/1027/1200/800",
-//     },
-//     {
-//       _id: "4",
-//       name: "Sarah Mills",
-//       verified: true,
-//       viewers: 3201,
-//       title: "Exclusive Q&A",
-//       category: "Podcast",
-//       started: "41 mins ago",
-//       image: "https://picsum.photos/id/1035/1200/800",
-//     },
-//     {
-//       _id: "5",
-//       name: "David Luxe",
-//       verified: false,
-//       viewers: 632,
-//       title: "Night Vlog",
-//       category: "Lifestyle",
-//       started: "7 mins ago",
-//       image: "https://picsum.photos/id/1040/1200/800",
-//     },
-//   ];
 const {
   data,
   isLoading,
@@ -175,14 +121,14 @@ value={filtered.length}
         <Stat
           icon={<Flame />}
           title="Trending"
-          value="12"
+          value="0"
           color="text-orange-400"
         />
 
         <Stat
           icon={<Clock3 />}
           title="Today's Streams"
-          value="34"
+          value="0"
           color="text-green-400"
         />
 

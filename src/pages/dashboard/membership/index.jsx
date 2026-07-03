@@ -135,16 +135,15 @@ const expiry =
             Forever
 
           </p>
+<div className="space-y-3 mt-6">
 
-          <div className="space-y-3 mt-6">
+  <Feature text="Preview Bryson Tyler vlog videos" />
 
-            <Feature text="Browse creators" />
+  <Feature text="Browse selected creator profiles" />
 
-            <Feature text="Creator profiles" />
+  <Feature text="Access public livestreams" />
 
-            <Feature text="Preview content" />
-
-          </div>
+</div>
 
           <button
             disabled
@@ -193,17 +192,19 @@ const expiry =
 
           </p>
 
-          <div className="space-y-5 mt-10">
+        <div className="space-y-5 mt-10">
 
-            <Feature text="Unlimited creator access" />
+  <Feature text="Access the premium Bryson Tyler vlog library" />
 
-            <Feature text="Premium videos" />
+  <Feature text="View every creator profile" />
 
-            <Feature text="Live streams" />
+  <Feature text="Message any creator" />
 
-            <Feature text="Priority support" />
+  <Feature text="Verified Fan badge" />
 
-          </div>
+  <Feature text="Join all livestreams" />
+
+</div>
 
           <button
             disabled={
@@ -260,17 +261,17 @@ const expiry =
 
           <div className="space-y-5 mt-10">
 
-            <Feature text="Everything in VIP" />
+  <Feature text="Everything included in VIP" />
 
-            <Feature text="Exclusive releases" />
+  <Feature text="Unlimited access to every Bryson Tyler vlog" />
 
-            <Feature text="Creator chats" />
+  <Feature text="Video call participating creators" />
 
-            <Feature text="Early access" />
+  <Feature text="Access every creator profile" />
 
-            <Feature text="VIP badge" />
+  <Feature text="Elite Member badge" />
 
-          </div>
+</div>
 
           <button
             disabled={
@@ -301,39 +302,105 @@ const expiry =
 
       {/* BENEFITS */}
 
-      <section className="rounded-[34px] bg-zinc-900 border border-white/5 p-6">
+      {/* BENEFITS */}
 
-        <h2 className="text-2xl font-black">
+<section className="rounded-[34px] bg-zinc-900 border border-white/5 p-6">
 
-          Membership Benefits
+  <h2 className="text-2xl font-black">
+    Your Membership Benefits
+  </h2>
 
-        </h2>
+  <p className="text-zinc-500 mt-2">
+    Everything currently available with your {currentPlan} membership.
+  </p>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
 
-          <Benefit
-            title="Unlimited Creators"
-            desc="Browse every creator on the platform."
-          />
+    {currentPlan === "FREE" && (
+      <>
+        <Benefit
+          title="Gallery Previews"
+          desc="Watch short previews of Bryson Tyler vlog videos before upgrading."
+        />
 
-          <Benefit
-            title="Premium Videos"
-            desc="Watch subscriber-only content."
-          />
+        <Benefit
+          title="Creator Discovery"
+          desc="Browse selected creator profiles and discover new talent."
+        />
 
-          <Benefit
-            title="Livestream Access"
-            desc="Join creator live sessions."
-          />
+        <Benefit
+          title="Live Streams"
+          desc="Join public livestreams and interact with the community."
+        />
+      </>
+    )}
 
-          <Benefit
-            title="Exclusive Releases"
-            desc="Receive early content before everyone else."
-          />
+    {currentPlan === "VIP" && (
+      <>
+        <Benefit
+          title="Bryson Tyler Gallery"
+          desc="Unlock a large collection of premium Bryson Tyler vlog videos."
+        />
 
-        </div>
+        <Benefit
+          title="All Creator Profiles"
+          desc="View every creator profile available on the platform."
+        />
 
-      </section>
+        <Benefit
+          title="Creator Messaging"
+          desc="Message any creator directly inside the platform."
+        />
+
+        <Benefit
+          title="Verified Fan"
+          desc="Receive a Verified Fan badge on your account."
+        />
+
+        <Benefit
+          title="Livestream Access"
+          desc="Watch creator livestreams and exclusive broadcasts."
+        />
+      </>
+    )}
+
+    {currentPlan === "ELITE" && (
+      <>
+        <Benefit
+          title="Complete Video Library"
+          desc="Unlimited access to every Bryson Tyler vlog and future releases."
+        />
+
+        <Benefit
+          title="Video Calls"
+          desc="Start one-on-one video sessions with participating creators."
+        />
+
+        <Benefit
+          title="All Creator Profiles"
+          desc="Browse every creator profile without restrictions."
+        />
+
+        <Benefit
+          title="Livestream Access"
+          desc="Access every livestream, including premium broadcasts."
+        />
+
+        <Benefit
+          title="Elite Priority"
+          desc="Highest priority support and exclusive member-only experiences."
+        />
+
+        <Benefit
+          title="Verified Elite"
+          desc="Display the Elite member badge across the platform."
+        />
+      </>
+    )}
+
+  </div>
+
+</section>
 
     </div>
   );

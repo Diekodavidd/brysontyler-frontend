@@ -16,78 +16,78 @@ export default function ViewAllStreams() {
   const [search, setSearch] = useState("");
   const [visibleCount, setVisibleCount] = useState(8);
 
- const streams = [
+const streams = [
   {
     id: 1,
     name: "Noir Ember",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=900&q=80",
-    viewers: "2.7k",
-  },
-  {
-    id: 2,
-    name: "Kairo Vale",
-    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=900&q=80",
-    viewers: "1.9k",
-  },
-  {
-    id: 3,
-    name: "Velvet Rae",
-    image: "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=900&q=80",
-    viewers: "4.2k",
-  },
-  {
-    id: 4,
-    name: "Saint Lux",
-    image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=900&q=80",
-    viewers: "3.8k",
-  },
-  {
-    id: 5,
-    name: "Aria Sol",
-    image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=900&q=80",
-    viewers: "5.4k",
-  },
-  {
-    id: 6,
-    name: "Nova Sinclair",
     image: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=900&q=80",
-    viewers: "6.1k",
-  },
-  {
-    id: 7,
-    name: "Jett Monroe",
-    image: "https://images.unsplash.com/photo-1504593811423-6dd665756598?w=900&q=80",
-    viewers: "2.3k",
-  },
-  {
-    id: 8,
-    name: "Luna Noir",
-    image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=900&q=80",
-    viewers: "7.5k",
-  },
-  {
-    id: 9,
-    name: "Zane Mercer",
-    image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=900&q=80",
-    viewers: "1.4k",
-  },
-  {
-    id: 10,
-    name: "Selene Voss",
-    image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=900&q=80",
     viewers: "4.8k",
   },
   {
-    id: 11,
-    name: "Echo Hart",
-    image: "https://images.unsplash.com/photo-1504593811423-6dd665756598?w=900&q=80",
+    id: 2,
+    name: "Kairo Luxe",
+    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=900&q=80",
+    viewers: "2.3k",
+  },
+  {
+    id: 3,
+    name: "Zuri Noir",
+    image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=900&q=80",
+    viewers: "6.7k",
+  },
+  {
+    id: 4,
+    name: "Saint Monroe",
+    image: "https://images.unsplash.com/photo-1496345875659-11f7dd282d1d?w=900&q=80",
     viewers: "3.5k",
   },
   {
-    id: 12,
-    name: "Raven Ellis",
-    image: "https://images.unsplash.com/photo-1521119989659-a83eee488004?w=900&q=80",
+    id: 5,
+    name: "Nyla Voss",
+    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=900&q=80",
     viewers: "5.9k",
+  },
+  {
+    id: 6,
+    name: "Jett Royale",
+    image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=900&q=80",
+    viewers: "1.9k",
+  },
+  {
+    id: 7,
+    name: "Amina Sol",
+    image: "https://images.unsplash.com/photo-1521119989659-a83eee488004?w=900&q=80",
+    viewers: "7.2k",
+  },
+  {
+    id: 8,
+    name: "Nova Banks",
+    image: "https://images.unsplash.com/photo-1504593811423-6dd665756598?w=900&q=80",
+    viewers: "4.1k",
+  },
+  {
+    id: 9,
+    name: "Raven Ellis",
+    image: "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=900&q=80",
+    viewers: "8.4k",
+  },
+  {
+    id: 10,
+    name: "Milan Knox",
+    image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=900&q=80",
+    viewers: "2.8k",
+  },
+  {
+    id: 11,
+    name: "Sage Cartier",
+    image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=900&q=80",
+    viewers: "3.7k",
+  },
+  {
+    id: 12,
+    name: "Luxe Amari",
+    image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=900&q=80",
+    viewers: "6.3k",
   },
 ];
 
