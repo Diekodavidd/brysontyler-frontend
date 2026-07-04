@@ -21,6 +21,8 @@ export default function CategoryTabs({
   { id: "exclusive", label: "Exclusive", icon: Crown },
   { id: "couples", label: "Couples", icon: Film },
   { id: "solo", label: "Solo", icon: Camera },
+  { id: "group", label: "Solo", icon: Camera },
+  { id: "threesome", label: "Solo", icon: Camera },
   { id: "behind-scenes", label: "Behind the Scenes", icon: Clapperboard },
   { id: "interviews", label: "Interviews", icon: Mic2 },
 ];

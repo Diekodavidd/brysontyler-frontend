@@ -10,17 +10,21 @@ export default function VideoCard({
   video,
   membership,
   onLocked,
-}) {
-  const canWatch = () => {
-    if (membership === "elite") return true;
+  onPlay,
+}){
+  
+  const userPlan = membership?.toLowerCase();
+const requiredPlan = video.membership?.toLowerCase();
 
-    if (membership === "vip") {
-      return video.membership !== "elite";
-    }
+const canWatch = () => {
+  if (userPlan === "elite") return true;
 
-    return video.membership === "free";
-  };
+  if (userPlan === "vip") {
+    return requiredPlan !== "elite";
+  }
 
+  return requiredPlan === "free";
+};
   const locked = !canWatch();
 
   const badge = {
@@ -54,17 +58,22 @@ export default function VideoCard({
 
       <div
         className="relative aspect-[9/13] overflow-hidden"
-        onClick={() =>
-          locked
+    onClick={() =>
+        locked
             ? onLocked(video)
-            : console.log("Play")
-        }
+            : onPlay(video)
+    }
+
       >
-        <img
-          src={video.thumbnail}
-          alt={video.title}
-          className="absolute inset-0 w-full h-full object-cover transition duration-[1800ms] group-hover:scale-110"
-        />
+      <video
+    src={video.previewUrl}
+    muted
+    autoPlay
+    loop
+    playsInline
+    preload="metadata"
+    className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-110"
+/>
 
         {/* Gradient */}
 
@@ -100,13 +109,16 @@ export default function VideoCard({
 
           {locked ? (
 
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onLocked(video);
-              }}
-              className="w-20 h-20 rounded-full bg-yellow-500 hover:bg-yellow-400 flex items-center justify-center shadow-2xl"
-            >
+       <button
+    onClick={(e)=>{
+        e.stopPropagation();
+
+        locked
+            ? onLocked(video)
+            : onPlay(video);
+    }}
+    className="w-20 h-20 rounded-full bg-yellow-500 hover:bg-yellow-400 flex items-center justify-center shadow-2xl"
+>
               <Lock
                 size={34}
                 className="text-black"
@@ -180,12 +192,12 @@ export default function VideoCard({
 
             <button
               onClick={(e) => {
-                e.stopPropagation();
+    e.stopPropagation();
 
-                locked
-                  ? onLocked(video)
-                  : console.log("Play");
-              }}
+    locked
+        ? onLocked(video)
+        : onPlay(video);
+}}
               className={`mt-6 w-full rounded-2xl py-3 font-black transition flex justify-center items-center gap-3 ${
                 locked
                   ? "bg-white/10 hover:bg-red-600"

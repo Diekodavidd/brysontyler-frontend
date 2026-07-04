@@ -1,298 +1,344 @@
-/* eslint-disable no-unused-vars */
-
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import {
-  MoreHorizontal,
-  Check,
-  Eye,
-  Trash2,
-  X,
   Wallet,
+  CheckCircle2,
+  XCircle,
+  Clock3,
+  Search,
+  Eye,
+  DollarSign,
+  ArrowUpRight,
 } from "lucide-react";
 
-export default function PayoutRequests() {
-  const [payouts, setPayouts] = useState([
+export default function AdminPayoutsPage() {
+  const [search, setSearch] = useState("");
+
+  const payouts = [
     {
-      id: "PO-9921",
-      creator: "Jessica Streamer",
-      amount: "$1,250.00",
-      status: "Pending",
-      email: "jess@streamer.com",
+      id: 1,
+      creator: "Bryson Tyler",
+      amount: 1450,
+      method: "Bank Transfer",
+      status: "pending",
+      requested: "Jul 2, 2026",
     },
     {
-      id: "PO-9920",
-      creator: "Tech Reviews",
-      amount: "$3,400.00",
-      status: "Pending",
-      email: "tech@reviews.com",
+      id: 2,
+      creator: "Samuel James",
+      amount: 825,
+      method: "PayPal",
+      status: "approved",
+      requested: "Jul 1, 2026",
     },
-  ]);
+    {
+      id: 3,
+      creator: "Chris Walker",
+      amount: 320,
+      method: "Bank Transfer",
+      status: "declined",
+      requested: "Jun 30, 2026",
+    },
+  ];
 
-  const [activeMenu, setActiveMenu] = useState(null);
-  const [viewModal, setViewModal] = useState(null);
-  const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const filtered = payouts.filter((p) =>
+    p.creator
+      .toLowerCase()
+      .includes(search.toLowerCase())
+  );
 
-  const menuRef = useRef(null);
+  const pending = payouts.filter(
+    (p) => p.status === "pending"
+  ).length;
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        menuRef.current &&
-        !menuRef.current.contains(event.target)
-      ) {
-        setActiveMenu(null);
-      }
-    };
+  const approved = payouts.filter(
+    (p) => p.status === "approved"
+  ).length;
 
-    document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      document.removeEventListener(
-        "mousedown",
-        handleClickOutside
-      );
-    };
-  }, []);
-
-  const handleMarkPaid = (id) => {
-    setPayouts(
-      payouts.map((p) =>
-        p.id === id ? { ...p, status: "Paid" } : p
-      )
-    );
-
-    setActiveMenu(null);
-  };
-
-  const handleDelete = (id) => {
-    setPayouts(payouts.filter((p) => p.id !== id));
-    setDeleteConfirm(null);
-  };
+  const totalAmount = payouts.reduce(
+    (sum, p) => sum + p.amount,
+    0
+  );
 
   return (
     <div className="space-y-8">
+
       {/* Header */}
-      <div className="flex justify-between items-end">
+
+      <div className="flex items-end justify-between">
+
         <div>
-          <h2 className="text-3xl font-black tracking-tight">
-            Payout Queue
-          </h2>
 
-          <p className="text-zinc-500 mt-2">
-            Manage and process creator earnings efficiently.
+          <p className="uppercase tracking-[.35em] text-xs font-black text-amber-500">
+
+            Finance
+
           </p>
+
+          <h1 className="mt-3 text-4xl font-black">
+
+            Creator Payout Requests
+
+          </h1>
+
+          <p className="mt-3 text-zinc-500">
+
+            Review, approve and process creator withdrawals.
+
+          </p>
+
         </div>
 
-        <div className="flex items-center gap-2 bg-[#080808] px-4 py-2 rounded-xl border border-white/5">
-          <Wallet size={16} className="text-amber-500" />
+      </div>
 
-          <span className="text-sm font-bold">
-            $
-            {payouts
-              .filter((p) => p.status === "Pending")
-              .reduce(
-                (acc, p) =>
-                  acc +
-                  parseFloat(
-                    p.amount.replace(/[^0-9.-]+/g, "")
-                  ),
-                0
-              )
-              .toLocaleString()}{" "}
-            Total Pending
-          </span>
-        </div>
+      {/* Stats */}
+
+      <div className="grid md:grid-cols-4 gap-6">
+
+        <StatCard
+          title="Pending"
+          value={pending}
+          icon={Clock3}
+          color="text-yellow-400"
+          bg="bg-yellow-500/10"
+        />
+
+        <StatCard
+          title="Approved"
+          value={approved}
+          icon={CheckCircle2}
+          color="text-green-400"
+          bg="bg-green-500/10"
+        />
+
+        <StatCard
+          title="Total Requests"
+          value={payouts.length}
+          icon={Wallet}
+          color="text-blue-400"
+          bg="bg-blue-500/10"
+        />
+
+        <StatCard
+          title="Requested"
+          value={`$${totalAmount}`}
+          icon={DollarSign}
+          color="text-amber-400"
+          bg="bg-amber-500/10"
+        />
+
+      </div>
+
+      {/* Search */}
+
+      <div className="relative">
+
+        <Search
+          size={18}
+          className="absolute left-5 top-4 text-zinc-500"
+        />
+
+        <input
+          value={search}
+          onChange={(e) =>
+            setSearch(e.target.value)
+          }
+          placeholder="Search creator..."
+          className="w-full rounded-2xl border border-white/10 bg-[#090909] py-4 pl-14 pr-5 outline-none focus:border-amber-500"
+        />
+
       </div>
 
       {/* Table */}
-      <div className="bg-[#080808] border border-white/5 rounded-2xl overflow-visible">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="bg-white/[0.02] border-b border-white/5">
-              <th className="px-6 py-4 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
-                ID
-              </th>
 
-              <th className="px-6 py-4 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
+      <div className="overflow-hidden rounded-[30px] border border-white/5 bg-[#090909]">
+
+        <table className="w-full">
+
+          <thead className="border-b border-white/5 bg-black/30">
+
+            <tr className="text-left text-sm text-zinc-400">
+
+              <th className="px-8 py-5">
                 Creator
               </th>
 
-              <th className="px-6 py-4 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
-                Amount
-              </th>
+              <th>Amount</th>
 
-              <th className="px-6 py-4 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
-                Status
-              </th>
+              <th>Method</th>
 
-              <th className="px-6 py-4 text-[10px] font-bold text-zinc-500 uppercase tracking-widest text-right">
+              <th>Status</th>
+
+              <th>Date</th>
+
+              <th className="text-center">
                 Actions
               </th>
+
             </tr>
+
           </thead>
 
-          <tbody className="divide-y divide-white/5">
-            {payouts.map((row) => (
+          <tbody>
+
+            {filtered.map((payout) => (
+
               <tr
-                key={row.id}
-                className="hover:bg-white/[0.02] transition-colors relative"
+                key={payout.id}
+                className="border-b border-white/5 hover:bg-white/5"
               >
-                <td className="px-6 py-4 font-mono text-xs text-zinc-500">
-                  {row.id}
+
+                <td className="px-8 py-6 font-bold">
+
+                  {payout.creator}
+
                 </td>
 
-                <td className="px-6 py-4 font-bold text-sm">
-                  {row.creator}
+                <td className="font-bold text-green-400">
+
+                  ${payout.amount}
+
                 </td>
 
-                <td className="px-6 py-4 font-black text-amber-500">
-                  {row.amount}
+                <td>{payout.method}</td>
+
+                <td>
+
+                  <StatusBadge
+                    status={payout.status}
+                  />
+
                 </td>
 
-                <td className="px-6 py-4">
-                  <span
-                    className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase ${
-                      row.status === "Paid"
-                        ? "bg-emerald-500/10 text-emerald-500"
-                        : "bg-amber-500/10 text-amber-500"
-                    }`}
-                  >
-                    {row.status}
-                  </span>
+                <td className="text-zinc-500">
+
+                  {payout.requested}
+
                 </td>
 
-                <td className="px-6 py-4 text-right relative">
-                  <button
-                    onClick={() =>
-                      setActiveMenu(
-                        activeMenu === row.id ? null : row.id
-                      )
-                    }
-                    className="p-2 hover:bg-white/5 rounded-lg"
-                  >
-                    <MoreHorizontal size={16} />
-                  </button>
+                <td>
 
-                  {activeMenu === row.id && (
-                    <div
-                      ref={menuRef}
-                      className="absolute right-6 top-12 w-40 bg-[#121212] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden py-1"
-                    >
-                      <button
-                        onClick={() => {
-                          setViewModal(row);
-                          setActiveMenu(null);
-                        }}
-                        className="w-full px-4 py-2 text-left text-sm text-zinc-300 hover:bg-white/5 flex items-center gap-2"
-                      >
-                        <Eye size={14} />
-                        View Details
-                      </button>
+                  <div className="flex justify-center gap-3">
 
-                      <button
-                        onClick={() => handleMarkPaid(row.id)}
-                        className="w-full px-4 py-2 text-left text-sm text-emerald-500 hover:bg-emerald-500/10 flex items-center gap-2"
-                      >
-                        <Check size={14} />
-                        Mark Paid
-                      </button>
+                    <button className="rounded-xl bg-white/5 p-3 hover:bg-amber-500 hover:text-black">
 
-                      <button
-                        onClick={() => {
-                          setDeleteConfirm(row.id);
-                          setActiveMenu(null);
-                        }}
-                        className="w-full px-4 py-2 text-left text-sm text-red-500 hover:bg-red-500/10 flex items-center gap-2"
-                      >
-                        <Trash2 size={14} />
-                        Delete
-                      </button>
-                    </div>
-                  )}
+                      <Eye size={18} />
+
+                    </button>
+
+                    <button className="rounded-xl bg-green-500/10 p-3 text-green-400 hover:bg-green-500 hover:text-white">
+
+                      <CheckCircle2 size={18} />
+
+                    </button>
+
+                    <button className="rounded-xl bg-red-500/10 p-3 text-red-400 hover:bg-red-500 hover:text-white">
+
+                      <XCircle size={18} />
+
+                    </button>
+
+                  </div>
+
                 </td>
+
               </tr>
+
             ))}
+
           </tbody>
+
         </table>
+
       </div>
 
-      {/* Details Modal */}
-      {viewModal && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[100] p-4">
-          <div className="bg-[#080808] border border-white/10 p-8 rounded-2xl w-full max-w-sm">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="font-black text-lg">
-                Payout Details
-              </h3>
+      {/* Bottom Card */}
 
-              <button onClick={() => setViewModal(null)}>
-                <X size={20} />
-              </button>
-            </div>
+      <div className="rounded-[30px] border border-amber-500/20 bg-gradient-to-r from-amber-500/10 to-transparent p-8 flex justify-between items-center">
 
-            <div className="space-y-4 text-sm">
-              <p className="text-zinc-500">
-                ID:{" "}
-                <span className="text-white">
-                  {viewModal.id}
-                </span>
-              </p>
+        <div>
 
-              <p className="text-zinc-500">
-                Creator:{" "}
-                <span className="text-white">
-                  {viewModal.creator}
-                </span>
-              </p>
+          <h2 className="text-2xl font-black">
 
-              <p className="text-zinc-500">
-                Email:{" "}
-                <span className="text-white">
-                  {viewModal.email}
-                </span>
-              </p>
+            Process All Pending Requests
 
-              <p className="text-zinc-500">
-                Status:{" "}
-                <span className="text-amber-500">
-                  {viewModal.status}
-                </span>
-              </p>
-            </div>
-          </div>
+          </h2>
+
+          <p className="mt-2 text-zinc-500">
+
+            Bulk approve eligible payout requests.
+
+          </p>
+
         </div>
-      )}
 
-      {/* Delete Confirmation */}
-      {deleteConfirm && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[100] p-4">
-          <div className="bg-[#080808] border border-white/10 p-8 rounded-2xl w-full max-w-sm text-center">
-            <h3 className="font-black text-lg mb-2">
-              Delete Payout?
-            </h3>
+        <button className="flex items-center gap-3 rounded-2xl bg-amber-500 px-8 py-4 font-black text-black hover:bg-amber-400">
 
-            <p className="text-zinc-500 text-sm mb-6">
-              This record will be permanently removed.
-            </p>
+          Process All
 
-            <div className="flex gap-3">
-              <button
-                onClick={() => setDeleteConfirm(null)}
-                className="flex-1 py-2 rounded-lg bg-white/5 font-bold"
-              >
-                Cancel
-              </button>
+          <ArrowUpRight size={18} />
 
-              <button
-                onClick={() => handleDelete(deleteConfirm)}
-                className="flex-1 py-2 rounded-lg bg-red-600 font-bold"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+        </button>
+
+      </div>
+
     </div>
+  );
+}
+
+function StatCard({
+  title,
+  value,
+  icon: Icon,
+  color,
+  bg,
+}) {
+  return (
+    <div className="rounded-[28px] border border-white/5 bg-[#090909] p-6">
+
+      <div className="flex items-center justify-between">
+
+        <div
+          className={`h-12 w-12 rounded-2xl flex items-center justify-center ${bg}`}
+        >
+          <Icon
+            size={22}
+            className={color}
+          />
+        </div>
+
+        <h2 className="text-3xl font-black">
+          {value}
+        </h2>
+
+      </div>
+
+      <p className="mt-6 text-xs uppercase tracking-[.25em] text-zinc-500 font-black">
+
+        {title}
+
+      </p>
+
+    </div>
+  );
+}
+
+function StatusBadge({ status }) {
+  const styles = {
+    pending:
+      "bg-yellow-500/10 text-yellow-400",
+    approved:
+      "bg-green-500/10 text-green-400",
+    declined:
+      "bg-red-500/10 text-red-400",
+  };
+
+  return (
+    <span
+      className={`rounded-full px-3 py-2 text-xs font-black uppercase ${
+        styles[status]
+      }`}
+    >
+      {status}
+    </span>
   );
 }

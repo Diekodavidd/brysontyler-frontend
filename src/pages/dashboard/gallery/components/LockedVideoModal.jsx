@@ -27,7 +27,7 @@ export default function LockedVideoModal({
     <AnimatePresence>
 
       <motion.div
-        className="fixed inset-0 z-[999] bg-black/80 backdrop-blur-lg flex items-center justify-center p-6"
+     className="fixed inset-0 z-[999] bg-black/90 backdrop-blur-xl flex items-center justify-center p-6"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -52,8 +52,8 @@ export default function LockedVideoModal({
           transition={{
             duration: 0.35,
           }}
-          className="relative w-full max-w-5xl overflow-hidden rounded-[36px] bg-[#0d0d0d] border border-white/10"
-        >
+      className="relative w-full max-w-7xl max-h-[95vh] overflow-y-auto rounded-[36px] bg-[#090909] border border-white/10">
+        
 
           {/* Close */}
 

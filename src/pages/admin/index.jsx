@@ -4,99 +4,319 @@ import {
   Users,
   Wallet,
   FileText,
+  UserCheck,
+  Crown,
+  Film,
+  DollarSign,
+  Bell,
+  Upload,
+  CheckCircle2,
+  XCircle,
 } from "lucide-react";
+import { useAdminStats } from "@/hooks/useAdmin";
 
 export default function AdminOverview() {
+
+const {
+    data,
+    isLoading,
+} = useAdminStats();
+console.log("ADMIN DATA:", data);
+console.log("STATS:", data?.stats);
+const statsData = data?.stats;
   const stats = [
     {
-      label: "Total Revenue",
-      value: "$45,231.00",
-      change: "+12.5%",
-      trend: "up",
-      icon: Wallet,
+        label: "Total Fans",
+        value: statsData?.totalFans ?? 0,
+        change: "",
+        trend: "up",
+        icon: Users,
     },
     {
-      label: "Pending Payouts",
-      value: "12",
-      change: "+3 from yesterday",
-      trend: "neutral",
-      icon: FileText,
+        label: "Creators",
+        value: statsData?.totalCreators ?? 0,
+        change: "",
+        trend: "up",
+        icon: UserCheck,
     },
     {
-      label: "New Applications",
-      value: "5",
-      change: "-2.1%",
-      trend: "down",
-      icon: Users,
+        label: "Pending Applications",
+        value: statsData?.pendingApplications ?? 0,
+        change: "",
+        trend: "neutral",
+        icon: FileText,
     },
-  ];
+    {
+        label: "Brand Videos",
+        value: statsData?.totalBrandVideos ?? 0,
+        change: "",
+        trend: "up",
+        icon: Film,
+    },
+    {
+        label: "VIP Members",
+        value: statsData?.vipMembers ?? 0,
+        change: "",
+        trend: "up",
+        icon: Crown,
+    },
+    {
+        label: "Elite Members",
+        value: statsData?.eliteMembers ?? 0,
+        change: "",
+        trend: "up",
+        icon: Crown,
+    },
+    {
+        label: "Pending Review",
+        value: statsData?.pendingContent ?? 0,
+        change: "",
+        trend: "neutral",
+        icon: Film,
+    },
+    {
+        label: "Revenue",
+        value: `$${statsData?.totalRevenue ?? 0}`,
+        change: "",
+        trend: "up",
+        icon: DollarSign,
+    },
+];
 
+  const notifications =
+    data?.latestUsers?.map((user) => ({
+        text: `${user.name} joined as ${user.role}`,
+    })) || [];
+
+  const pendingCreators =
+    data?.pendingCreators || [];
+if (isLoading) {
+    return (
+        <div className="py-40 text-center">
+            Loading dashboard...
+        </div>
+    );
+}
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
+      {/* Header */}
+
       <div className="flex justify-between items-end">
         <div>
-          <h2 className="text-3xl font-black tracking-tight">
-            System Overview
-          </h2>
+          <p className="uppercase tracking-[.3em] text-xs font-black text-amber-500">
+            Admin Dashboard
+          </p>
 
-          <p className="text-zinc-500 mt-2">
-            Platform performance and administrative tasks at a glance.
+          <h1 className="text-4xl font-black mt-3">
+            System Overview
+          </h1>
+
+          <p className="text-zinc-500 mt-3">
+            Everything happening across Bryson Tyler.
           </p>
         </div>
 
-        <button className="px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-black font-bold text-sm rounded-xl transition-all">
+        <button className="rounded-2xl bg-amber-500 px-6 py-3 text-black font-black hover:bg-amber-400 transition">
           Generate Report
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {/* Stats */}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
         {stats.map((s) => (
           <div
             key={s.label}
-            className="group bg-[#080808] border border-white/5 p-6 rounded-2xl hover:border-amber-500/30 transition-all"
+            className="rounded-3xl border border-white/5 bg-[#080808] p-6 hover:border-amber-500/30 transition"
           >
-            <div className="flex justify-between items-start mb-4">
-              <div className="p-2 bg-white/5 rounded-lg text-amber-500">
-                <s.icon size={20} />
+            <div className="flex justify-between items-start">
+              <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-amber-500">
+                <s.icon size={22} />
               </div>
 
-              <span
-                className={`text-[10px] font-bold px-2 py-1 rounded-md flex items-center gap-1 ${
+              <div
+                className={`flex items-center gap-1 rounded-full px-3 py-1 text-[10px] font-black ${
                   s.trend === "up"
-                    ? "text-emerald-500 bg-emerald-500/10"
+                    ? "bg-emerald-500/10 text-emerald-400"
                     : s.trend === "down"
-                    ? "text-red-500 bg-red-500/10"
-                    : "text-zinc-500 bg-white/5"
+                    ? "bg-red-500/10 text-red-400"
+                    : "bg-zinc-800 text-zinc-400"
                 }`}
               >
                 {s.trend === "up" && <ArrowUpRight size={12} />}
                 {s.trend === "down" && <ArrowDownRight size={12} />}
                 {s.change}
-              </span>
+              </div>
             </div>
 
-            <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest mb-1">
+            <p className="mt-6 text-xs uppercase tracking-[.25em] text-zinc-500 font-bold">
               {s.label}
             </p>
 
-            <p className="text-3xl font-black tracking-tight">
+            <h2 className="mt-2 text-3xl font-black">
               {s.value}
-            </p>
+            </h2>
           </div>
         ))}
       </div>
 
-      <div className="bg-[#080808] border border-white/5 rounded-2xl p-8">
-        <h3 className="font-bold mb-6">
-          Recent Administrative Actions
-        </h3>
+      {/* Notifications + Quick Actions */}
 
-        <div className="space-y-4">
-          <div className="text-sm text-zinc-600 italic">
-            No recent administrative activity found.
+      <div className="grid lg:grid-cols-2 gap-6">
+        <div className="rounded-3xl border border-white/5 bg-[#080808] p-8">
+          <div className="flex items-center gap-3 mb-8">
+            <Bell className="text-amber-500" />
+            <h2 className="text-xl font-black">
+              Recent Notifications
+            </h2>
+          </div>
+
+          <div className="space-y-4">
+            {notifications.map((item, i) => (
+              <div
+                key={i}
+                className="rounded-2xl bg-black/30 px-5 py-4 text-sm"
+              >
+                {item.text}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="rounded-3xl border border-white/5 bg-[#080808] p-8">
+          <h2 className="text-xl font-black mb-8">
+            Quick Actions
+          </h2>
+
+          <div className="grid grid-cols-2 gap-4">
+            <button className="rounded-2xl bg-amber-500 py-5 text-black font-black hover:bg-amber-400 transition flex flex-col items-center gap-2">
+              <Upload size={20} />
+              Upload Brand Video
+            </button>
+
+            <button className="rounded-2xl bg-zinc-900 py-5 hover:bg-zinc-800 transition flex flex-col items-center gap-2">
+              <UserCheck size={20} />
+              Review Creators
+            </button>
+
+            <button className="rounded-2xl bg-zinc-900 py-5 hover:bg-zinc-800 transition flex flex-col items-center gap-2">
+              <Wallet size={20} />
+              Memberships
+            </button>
+
+            <button className="rounded-2xl bg-zinc-900 py-5 hover:bg-zinc-800 transition flex flex-col items-center gap-2">
+              <FileText size={20} />
+              Reports
+            </button>
           </div>
         </div>
       </div>
+
+      {/* Pending Creators */}
+
+      <div className="rounded-3xl border border-white/5 bg-[#080808] p-8">
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-xl font-black">
+            Pending Creator Applications
+          </h2>
+
+          <button className="text-amber-500 font-bold text-sm">
+            View All
+          </button>
+        </div>
+
+        <div className="space-y-5">
+          {pendingCreators.map((creator) => (
+            <div
+              key={creator.name}
+              className="flex items-center justify-between rounded-2xl bg-black/30 p-5"
+            >
+              <div>
+                <h3 className="font-black">
+                  {creator.name}
+                </h3>
+
+                <p className="text-sm text-zinc-500 mt-1">
+Applied{" "}
+{new Date(
+    creator.createdAt
+).toLocaleDateString()}                </p>
+              </div>
+
+              <div className="flex gap-3">
+                <button className="rounded-xl bg-green-500 px-5 py-2 text-black font-bold flex items-center gap-2">
+                  <CheckCircle2 size={16} />
+                  Approve
+                </button>
+
+                <button className="rounded-xl bg-red-500 px-5 py-2 font-bold flex items-center gap-2">
+                  <XCircle size={16} />
+                  Reject
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Bottom Summary */}
+
+      <div className="grid lg:grid-cols-2 gap-6">
+        <div className="rounded-3xl border border-white/5 bg-[#080808] p-8">
+          <h2 className="text-xl font-black mb-6">
+            Brand Gallery
+          </h2>
+
+          <div className="space-y-4">
+<Summary
+title="Published Videos"
+value={statsData?.publishedVideos ?? 0}
+/>
+<Summary
+title="Featured Videos"
+value={statsData?.featuredVideos ?? 0}
+/>
+<Summary
+title="Draft Videos"
+value={statsData?.draftVideos ?? 0}
+/>
+            <Summary title="Scheduled Uploads" value="2" />
+          </div>
+        </div>
+
+        <div className="rounded-3xl border border-white/5 bg-[#080808] p-8">
+          <h2 className="text-xl font-black mb-6">
+            Membership Breakdown
+          </h2>
+
+          <div className="space-y-4">
+<Summary
+title="FREE Members"
+value={statsData?.freeMembers ?? 0}
+/>
+<Summary
+title="VIP Members"
+value={statsData?.vipMembers ?? 0}
+/>
+<Summary
+title="ELITE Members"
+value={statsData?.eliteMembers ?? 0}
+/>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Summary({ title, value }) {
+  return (
+    <div className="flex items-center justify-between rounded-2xl bg-black/30 px-5 py-4">
+      <span className="text-zinc-400">{title}</span>
+
+      <span className="font-black text-xl">
+        {value}
+      </span>
     </div>
   );
 }

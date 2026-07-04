@@ -11,6 +11,9 @@ import {
 } from "lucide-react";
 import { useFanDashboard, useFanHistory, usePayments, useSubscriptions } from "../../hooks/useFan";
 import { useAuthStore } from "../../store/useAuthStore";
+import {
+  useCreateMembership,
+} from "@/hooks/useMembership";
 
 export default function FanDashboardPage() {
 const { data: dashboard } = useFanDashboard();
@@ -20,13 +23,27 @@ const { data: payments } = usePayments();
   const user = useAuthStore((state) => state.user);
 
 
+const {
+  mutate: buyMembership,
+  isPending,
+} = useCreateMembership();
+const membership =
+  user?.membership || {};
 
+const currentPlan =
+  membership.plan || "FREE";
+
+const status =
+  membership.status || "active";
+
+const expiry =
+  membership.endDate;
 console.log("Dashboard response:", dashboard);
 
 const cards = [
   {
     title: "Membership",
-    value: dashboard?.stats?.totalSubscriptions || "FREE",
+    value:currentPlan || "FREE",
     icon: Users,
     color: "text-yellow-400",
   },

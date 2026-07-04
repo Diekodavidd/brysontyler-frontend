@@ -8,39 +8,69 @@ import {
   LayoutDashboard,
   LogOut,
   Lock,
+  Bell,
+  Crown,
+  Film,
+  Users,
+  ShieldAlert,
 } from "lucide-react";
 
 export default function AdminDashboardLayout() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const navItems = [
-    {
-      name: "Admin Overview",
-      path: "/admin",
-      icon: LayoutDashboard,
-    },
-    {
-      name: "Pending Creators",
-      path: "/admin/pending-creators",
-      icon: UserCheck,
-    },
-    {
-      name: "Payout Requests",
-      path: "/admin/payouts",
-      icon: Wallet,
-    },
-    {
-      name: "System Security",
-      path: "/admin/security",
-      icon: ShieldCheck,
-    },
-    {
-      name: "Admin Settings",
-      path: "/admin/settings",
-      icon: Settings,
-    },
-  ];
+ const navItems = [
+  {
+    name: "Dashboard",
+    path: "/admin",
+    icon: LayoutDashboard,
+  },
+  {
+    name: "Notifications",
+    path: "/admin/notifications",
+    icon: Bell,
+  },
+  {
+    name: "Creator Applications",
+    path: "/admin/pending-creators",
+    icon: UserCheck,
+  },
+  {
+    name: "Creators",
+    path: "/admin/creators",
+    icon: Users,
+  },
+  {
+    name: "Fans",
+    path: "/admin/fans",
+    icon: Users,
+  },
+  {
+    name: "Brand Gallery",
+    path: "/admin/gallery",
+    icon: Film,
+  },
+  {
+    name: "Memberships",
+    path: "/admin/memberships",
+    icon: Crown,
+  },
+  {
+    name: "Payout Requests",
+    path: "/admin/payouts",
+    icon: Wallet,
+  },
+  {
+    name: "Reports",
+    path: "/admin/reports",
+    icon: ShieldAlert,
+  },
+  {
+    name: "Settings",
+    path: "/admin/settings",
+    icon: Settings,
+  },
+];
 
   return (
     <div className="min-h-screen bg-[#030303] text-white flex">

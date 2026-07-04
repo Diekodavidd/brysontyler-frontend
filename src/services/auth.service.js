@@ -68,3 +68,6 @@ export const uploadCoverImage = (formData) =>
   httpPost("/auth/upload-cover-image", formData);
 
 export const getMe = () => httpGet("/auth/me");
+
+export const adminLogin = (credentials) =>
+  httpPost("/auth/admin/login", credentials);

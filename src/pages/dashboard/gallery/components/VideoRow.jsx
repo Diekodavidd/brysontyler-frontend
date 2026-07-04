@@ -4,11 +4,12 @@ import { useRef } from "react";
 import VideoCard from "./VideoCard";
 
 export default function VideoRow({
-  title,
-  videos = [],
-  membership,
-  onLocked,
-}) {
+    title,
+    videos,
+    membership,
+    onLocked,
+    onPlay,
+}){
   const sliderRef = useRef(null);
 
   const scroll = (direction) => {
@@ -80,10 +81,11 @@ export default function VideoRow({
           >
 
             <VideoCard
-              video={video}
-              membership={membership}
-              onLocked={() => onLocked(video)}
-            />
+    video={video}
+    membership={membership}
+    onLocked={onLocked}
+    onPlay={onPlay}
+/>
 
           </div>
 

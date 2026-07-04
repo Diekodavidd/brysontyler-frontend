@@ -31,8 +31,10 @@ const totalRevenue = activeSubscribers.reduce(
   0
 );
 
-const verified =
-  user?.creatorVerification?.verified;
+const creatorStatus =
+  user?.creatorApproval?.status || "not_submitted";
+
+const verified = creatorStatus === "approved";
 
 const recentActivity = [
   ...content.slice(0, 3).map((item) => ({
@@ -99,8 +101,15 @@ const recentActivity = [
 
         <CheckCircle2 size={15} />
 
-        {verified ? "Verified Creator" : "Creator Account"}
-
+{
+  creatorStatus === "approved"
+    ? "Verified Creator"
+    : creatorStatus === "pending"
+    ? "Pending Approval"
+    : creatorStatus === "rejected"
+    ? "Application Rejected"
+    : "Creator Account"
+}
       </div>
 
       <h1 className="mt-7 text-6xl font-black leading-none tracking-tight">
@@ -177,8 +186,15 @@ const recentActivity = [
         </p>
 
         <h2 className="mt-3 text-xl font-black text-pink-400">
-          {verified ? "Verified" : "Pending"}
-        </h2>
+{
+  creatorStatus === "approved"
+    ? "Verified"
+    : creatorStatus === "pending"
+    ? "Pending Review"
+    : creatorStatus === "rejected"
+    ? "Rejected"
+    : "Not Submitted"
+}     </h2>
 
         <p className="mt-2 text-sm text-zinc-500">
           Creator Verification
@@ -606,8 +622,15 @@ const recentActivity = [
 
           <p className="text-yellow-400 text-sm">
 
-            {verified ? "VERIFIED" : "PENDING REVIEW"}
-
+{
+  creatorStatus === "approved"
+    ? "VERIFIED"
+    : creatorStatus === "pending"
+    ? "PENDING REVIEW"
+    : creatorStatus === "rejected"
+    ? "APPLICATION REJECTED"
+    : "NOT SUBMITTED"
+}
           </p>
 
         </div>

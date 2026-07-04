@@ -11,14 +11,17 @@ export default function GalleryHero({
   featured,
   membership,
   onLocked,
+  onPlay,
 }) {
   if (!featured) return null;
+const userPlan = membership?.toLowerCase();
+const requiredPlan = featured.membership?.toLowerCase();
 
- const locked =
-  membership === "free"
-    ? featured.membership !== "free"
-    : membership === "vip"
-    ? featured.membership === "elite"
+const locked =
+userPlan === "free"
+    ? requiredPlan !== "free"
+    : userPlan === "vip"
+    ? requiredPlan === "elite"
     : false;
 
 const badgeStyles = {
@@ -43,8 +46,9 @@ const badgeStyles = {
 };
 
 const badge =
-  badgeStyles[featured.membership] || badgeStyles.free;
-
+    badgeStyles[requiredPlan] ||
+    badgeStyles.free;
+console.log("GalleryHero featured:", featured);
 const BadgeIcon = badge.icon;
   return (
     <motion.section
@@ -71,18 +75,14 @@ const BadgeIcon = badge.icon;
 
       {/* Overlay */}
 
-      <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent" />
+      <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-black via-black/70 to-transparent" />
 
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+<div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black via-transparent to-transparent" />
 
-      {/* Glow */}
-
-      <div className="absolute -left-40 top-0 w-[450px] h-[450px] rounded-full bg-yellow-500/10 blur-[180px]" />
-
+<div className="absolute -left-40 top-0 pointer-events-none w-[450px] h-[450px] rounded-full bg-yellow-500/10 blur-[180px]" />
       {/* Content */}
 
-      <div className="relative h-full flex items-end">
-
+<div className="relative z-20 h-full flex items-end">
         <div className="max-w-3xl px-14 pb-16">
 
           {/* Tag */}
@@ -143,7 +143,7 @@ const BadgeIcon = badge.icon;
 
             {locked ? (
               <button
-                onClick={onLocked}
+onClick={() => onLocked(featured)}
                 className="rounded-2xl bg-yellow-500 hover:bg-yellow-400 px-9 py-5 text-black font-black flex items-center gap-3 transition"
               >
                 <Lock size={18} />
@@ -152,24 +152,31 @@ const BadgeIcon = badge.icon;
 
               </button>
             ) : (
-              <button
-                className="rounded-2xl bg-yellow-500 hover:bg-yellow-400 px-9 py-5 text-black font-black flex items-center gap-3 transition"
-              >
-                <Play
-                  fill="currentColor"
-                  size={18}
-                />
+       <button
+         className="rounded-2xl bg-yellow-500 hover:bg-yellow-400 px-9 py-5 text-black font-black flex items-center gap-3 transition"
 
-                Watch Now
+  onClick={() => {
+    console.log("BUTTON CLICKED");
+    console.log(featured);
 
-              </button>
+    onPlay(featured);
+
+    console.log("AFTER onPlay");
+  }}
+>
+    Watch Now
+</button>
             )}
-
-            <button className="rounded-2xl border border-white/10 bg-white/5 hover:border-yellow-500 hover:bg-white/10 px-9 py-5 font-bold transition">
-
-              View Details
-
-            </button>
+{/* <button
+    onClick={() =>
+        locked
+            ? onLocked(featured)
+            : onPlay(featured)
+    }
+    className="rounded-2xl border border-white/10 bg-white/5 hover:border-yellow-500 hover:bg-white/10 px-9 py-5 font-bold transition"
+>
+    View Details
+</button> */}
 
           </div>
 

@@ -153,6 +153,7 @@ export const useMe = () =>
   });
 
   import { httpPatch } from "@/lib/http";
+import { useNavigate } from "react-router-dom";
 
 export const updateProfile = (payload) =>
     httpPatch("/auth/profile", payload);
@@ -181,4 +182,31 @@ export const useUploadCoverImage = () => {
             }
         },
     });
+};
+
+export const useAdminLogin = () => {
+  const setUser = useAuthStore((state) => state.setUser);
+  const { replace } = useRouter();
+
+  return useMutation({
+    mutationFn: authService.adminLogin,
+
+    onSuccess: (res) => {
+      if (res?.token) {
+        setToken(res.token);
+      }
+
+      if (res?.user) {
+        setUser(res.user);
+      }
+
+      toast.success("Welcome back, Admin!");
+
+      replace("/admin/dashboard");
+    },
+
+    onError: (err) => {
+      toast.error(getErrorMessage(err));
+    },
+  });
 };

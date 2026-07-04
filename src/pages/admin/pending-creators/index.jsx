@@ -1,210 +1,624 @@
-import { useState, useRef, useEffect } from "react";
+import { useMemo, useState } from "react";
 import {
-  MoreHorizontal,
-  Check,
+  Search,
+  CheckCircle2,
+  XCircle,
   Eye,
-  Trash2,
+  Filter,
+  ShieldCheck,
+  Clock3,
+  Globe,
 } from "lucide-react";
 
-export default function PayoutRequests() {
-  const initialPayouts = [
-    {
-      id: "PO-9921",
-      creator: "Jessica Streamer",
-      amount: "$1,250.00",
-      status: "Pending",
-      date: "June 15, 2026",
-    },
-    {
-      id: "PO-9920",
-      creator: "Tech Reviews",
-      amount: "$3,400.00",
-      status: "Processing",
-      date: "June 14, 2026",
-    },
-    {
-      id: "PO-9919",
-      creator: "Gaming Pro",
-      amount: "$850.00",
-      status: "Paid",
-      date: "June 13, 2026",
-    },
-  ];
+import {
+  usePendingCreators,
+  useApproveCreator,
+  useRejectCreator,
+} from "@/hooks/useAdmin";
 
-  const [payouts, setPayouts] = useState(initialPayouts);
-  const [filter, setFilter] = useState("All");
-  const [activeMenu, setActiveMenu] = useState(null);
+export default function PendingCreatorsPage() {
+  const [search, setSearch] = useState("");
+  const [selectedCreator, setSelectedCreator] =
+    useState(null);
 
-  const menuRef = useRef(null);
+  const {
+    data,
+    isLoading,
+  } = usePendingCreators();
 
-  // Close menu when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        menuRef.current &&
-        !menuRef.current.contains(event.target)
-      ) {
-        setActiveMenu(null);
-      }
-    };
+  const approveMutation =
+    useApproveCreator();
 
-    document.addEventListener("mousedown", handleClickOutside);
+  const rejectMutation =
+    useRejectCreator();
 
-    return () => {
-      document.removeEventListener(
-        "mousedown",
-        handleClickOutside
+  const creators =
+    data?.creators || [];
+
+  const filtered = useMemo(() => {
+    return creators.filter((creator) => {
+
+      const term =
+        search.toLowerCase();
+
+      return (
+        creator.name
+          ?.toLowerCase()
+          .includes(term) ||
+
+        creator.email
+          ?.toLowerCase()
+          .includes(term) ||
+
+        creator.creatorApplication?.stageName
+          ?.toLowerCase()
+          .includes(term) ||
+
+        creator.creatorApplication?.category
+          ?.toLowerCase()
+          .includes(term)
       );
-    };
-  }, []);
+    });
+  }, [creators, search]);
 
-  const handleMarkPaid = (id) => {
-    setPayouts(
-      payouts.map((p) =>
-        p.id === id ? { ...p, status: "Paid" } : p
-      )
+  const handleApprove = (id) => {
+    approveMutation.mutate(id);
+  };
+
+  const handleReject = (id) => {
+
+    const reason = prompt(
+      "Reason for rejection:"
     );
 
-    setActiveMenu(null);
+    if (reason === null) return;
+
+    rejectMutation.mutate({
+      id,
+      reason,
+    });
   };
 
-  const handleDelete = (id) => {
-    setPayouts(payouts.filter((p) => p.id !== id));
-    setActiveMenu(null);
-  };
+  if (isLoading) {
+    return (
+      <div className="py-40 text-center text-zinc-500">
+        Loading creator applications...
+      </div>
+    );
+  }
 
-  const filteredPayouts =
-    filter === "All"
-      ? payouts
-      : payouts.filter((p) => p.status === filter);
+  const pendingCount =
+    creators.length;
 
-  return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-black">
-          Payout Management
-        </h2>
+  const approvedToday = 0;
 
-        <div className="flex gap-2">
-          {["All", "Pending", "Paid"].map((f) => (
-            <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
-                filter === f
-                  ? "bg-amber-500 text-black"
-                  : "bg-[#080808] border border-white/5 hover:bg-white/5"
-              }`}
-            >
-              {f}
-            </button>
-          ))}
-        </div>
+  const rejectedCount = 0;
+
+  const awaitingKYC =
+    creators.filter(
+      (c) =>
+        !c.isKYCVerified
+    ).length;
+    return (
+  <div className="space-y-8">
+
+    <div className="flex justify-between items-end">
+
+      <div>
+
+        <p className="uppercase tracking-[.3em] text-xs text-amber-500 font-black">
+          Creator Verification
+        </p>
+
+        <h1 className="text-4xl font-black mt-3">
+          Pending Applications
+        </h1>
+
+        <p className="text-zinc-500 mt-3">
+          Review and approve creators joining the platform.
+        </p>
+
       </div>
 
-      <div className="bg-[#080808] border border-white/5 rounded-2xl overflow-visible">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="bg-white/[0.02] border-b border-white/5">
-              <th className="px-6 py-4 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
-                Payout ID
-              </th>
+      <button className="rounded-2xl bg-amber-500 px-6 py-3 text-black font-black">
+        {pendingCount} Pending
+      </button>
 
-              <th className="px-6 py-4 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
-                Creator
-              </th>
+    </div>
 
-              <th className="px-6 py-4 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
-                Amount
-              </th>
+    {/* Search */}
 
-              <th className="px-6 py-4 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
-                Status
-              </th>
+    <div className="flex justify-between gap-5 flex-wrap">
 
-              <th className="px-6 py-4 text-[10px] font-bold text-zinc-500 uppercase tracking-widest text-right">
-                Actions
-              </th>
-            </tr>
-          </thead>
+      <div className="relative w-96">
 
-          <tbody className="divide-y divide-white/5">
-            {filteredPayouts.map((row) => (
-              <tr
-                key={row.id}
-                className="hover:bg-white/[0.02] transition-colors relative"
-              >
-                <td className="px-6 py-4 text-sm font-mono text-zinc-400">
-                  {row.id}
-                </td>
+        <Search
+          size={18}
+          className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500"
+        />
 
-                <td className="px-6 py-4 text-sm font-bold">
-                  {row.creator}
-                </td>
+        <input
+          value={search}
+          onChange={(e) =>
+            setSearch(e.target.value)
+          }
+          placeholder="Search creators..."
+          className="w-full rounded-2xl border border-white/5 bg-[#090909] py-3 pl-12 pr-4 outline-none focus:border-amber-500"
+        />
 
-                <td className="px-6 py-4 text-sm font-bold text-amber-500">
-                  {row.amount}
-                </td>
+      </div>
 
-                <td className="px-6 py-4">
-                  <span
-                    className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                      row.status === "Pending"
-                        ? "bg-amber-500/10 text-amber-500"
-                        : row.status === "Paid"
-                        ? "bg-emerald-500/10 text-emerald-500"
-                        : "bg-blue-500/10 text-blue-500"
-                    }`}
-                  >
-                    {row.status}
+      <button className="rounded-2xl border border-white/10 bg-[#090909] px-5 py-3 flex items-center gap-2">
+
+        <Filter size={18} />
+
+        Filters
+
+      </button>
+
+    </div>
+
+    {/* Stats */}
+
+    <div className="grid md:grid-cols-4 gap-5">
+
+      <StatCard
+        title="Pending"
+        value={pendingCount}
+        icon={Clock3}
+      />
+
+      <StatCard
+        title="Approved Today"
+        value={approvedToday}
+        icon={ShieldCheck}
+      />
+
+      <StatCard
+        title="Rejected"
+        value={rejectedCount}
+        icon={XCircle}
+      />
+
+      <StatCard
+        title="Awaiting KYC"
+        value={awaitingKYC}
+        icon={Eye}
+      />
+
+    </div>
+
+    {/* Applications */}
+
+    <div className="space-y-5">
+
+      {filtered.map((creator) => (
+
+        <div
+          key={creator._id}
+          className="rounded-3xl border border-white/5 bg-[#080808] p-6"
+        >
+
+          <div className="flex justify-between items-center">
+
+            <div className="flex gap-5">
+
+              <img
+                src={
+                  creator.profileImage ||
+                  "https://placehold.co/120x120"
+                }
+                alt=""
+                className="w-20 h-20 rounded-2xl object-cover"
+              />
+
+              <div>
+
+                <h2 className="text-xl font-black">
+
+                  {creator.name}
+
+                </h2>
+
+                <p className="text-zinc-500 mt-1">
+
+                  {creator.email}
+
+                </p>
+
+                <div className="mt-4 flex flex-wrap gap-6 text-sm text-zinc-400">
+
+                  <span>
+
+                    Stage Name
+
+                    <span className="ml-2 text-white font-bold">
+
+                      {creator.creatorApplication?.stageName || "-"}
+
+                    </span>
+
                   </span>
-                </td>
 
-                <td className="px-6 py-4 text-right relative">
-                  <button
-                    onClick={() =>
-                      setActiveMenu(
-                        activeMenu === row.id ? null : row.id
-                      )
-                    }
-                    className="text-zinc-500 hover:text-white transition-colors p-2"
-                  >
-                    <MoreHorizontal size={18} />
-                  </button>
+                  <span>
 
-                  {activeMenu === row.id && (
-                    <div
-                      ref={menuRef}
-                      className="absolute right-6 top-12 w-40 bg-[#121212] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden py-1"
+                    Category
+
+                    <span className="ml-2 text-white font-bold">
+
+                      {creator.creatorApplication?.category || "-"}
+
+                    </span>
+
+                  </span>
+
+                  <span>
+
+                    KYC
+
+                    <span
+                      className={`ml-2 font-bold ${
+                        creator.isKYCVerified
+                          ? "text-green-400"
+                          : "text-yellow-400"
+                      }`}
                     >
-                      <button className="w-full px-4 py-2 text-left text-sm text-zinc-300 hover:bg-white/5 flex items-center gap-2">
-                        <Eye size={14} />
-                        View Details
-                      </button>
 
-                      <button
-                        onClick={() => handleMarkPaid(row.id)}
-                        className="w-full px-4 py-2 text-left text-sm text-emerald-500 hover:bg-emerald-500/10 flex items-center gap-2"
-                      >
-                        <Check size={14} />
-                        Mark Paid
-                      </button>
+                      {creator.kycStatus}
 
-                      <button
-                        onClick={() => handleDelete(row.id)}
-                        className="w-full px-4 py-2 text-left text-sm text-red-500 hover:bg-red-500/10 flex items-center gap-2"
-                      >
-                        <Trash2 size={14} />
-                        Delete
-                      </button>
-                    </div>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                    </span>
+
+                  </span>
+
+                  <span>
+
+                    Applied
+
+                    <span className="ml-2 text-white font-bold">
+
+                      {creator.creatorApplication?.submittedAt
+                        ? new Date(
+                            creator.creatorApplication.submittedAt
+                          ).toLocaleDateString()
+                        : "-"}
+
+                    </span>
+
+                  </span>
+
+                </div>
+
+              </div>
+
+            </div>
+
+            <div className="flex gap-3">
+
+              <button
+                onClick={() =>
+                  setSelectedCreator(creator)
+                }
+                className="rounded-2xl border border-white/10 px-5 py-3 hover:border-amber-500 flex items-center gap-2"
+              >
+
+                <Eye size={18} />
+
+                Review
+
+              </button>
+
+              <button
+                onClick={() =>
+                  handleApprove(creator._id)
+                }
+                disabled={
+                  approveMutation.isPending
+                }
+                className="rounded-2xl bg-green-500 px-5 py-3 text-black font-bold flex items-center gap-2"
+              >
+
+                <CheckCircle2 size={18} />
+
+                Approve
+
+              </button>
+
+              <button
+                onClick={() =>
+                  handleReject(creator._id)
+                }
+                disabled={
+                  rejectMutation.isPending
+                }
+                className="rounded-2xl bg-red-500 px-5 py-3 font-bold flex items-center gap-2"
+              >
+
+                <XCircle size={18} />
+
+                Reject
+
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      ))}
+
+      {filtered.length === 0 && (
+
+        <div className="rounded-3xl border border-white/5 bg-[#080808] p-16 text-center text-zinc-500">
+
+          No pending creator applications.
+
+        </div>
+
+      )}
+
+    </div>
+
+    {/* Bottom */}
+
+    <div className="rounded-3xl border border-white/5 bg-[#080808] p-8">
+
+      <h2 className="text-2xl font-black">
+
+        Approval Checklist
+
+      </h2>
+
+      <div className="grid md:grid-cols-2 gap-6 mt-8">
+
+        <Checklist
+          title="Identity Verification"
+          text="Government ID verified through Didit."
+        />
+
+        <Checklist
+          title="Creator Profile"
+          text="Stage name, category and creator information completed."
+        />
+
+        <Checklist
+          title="Content Quality"
+          text="Creator profile meets Bryson Tyler standards."
+        />
+
+        <Checklist
+          title="Community Guidelines"
+          text="Creator agrees to all platform rules."
+        />
+
       </div>
+
+    </div>
+
+    {selectedCreator && (
+      <ReviewModal
+        creator={selectedCreator}
+        onClose={() =>
+          setSelectedCreator(null)
+        }
+      />
+    )}
+
+  </div>
+);
+}
+function StatCard({ title, value, icon: Icon }) {
+  return (
+    <div className="rounded-3xl bg-[#080808] border border-white/5 p-6">
+      <div className="flex justify-between items-center">
+        <Icon className="text-amber-500" />
+
+        <span className="text-4xl font-black">
+          {value}
+        </span>
+      </div>
+
+      <p className="mt-6 text-zinc-500 uppercase tracking-[.25em] text-xs font-bold">
+        {title}
+      </p>
+    </div>
+  );
+}
+
+function Checklist({ title, text }) {
+  return (
+    <div className="rounded-2xl bg-black/30 p-6">
+      <Globe className="text-amber-500" />
+
+      <h3 className="font-black mt-5">
+        {title}
+      </h3>
+
+      <p className="text-zinc-500 mt-3 leading-7">
+        {text}
+      </p>
+    </div>
+  );
+}
+
+function ReviewModal({
+  creator,
+  onClose,
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-6">
+
+      <div className="w-full max-w-2xl rounded-3xl bg-[#080808] border border-white/10 p-8">
+
+        <div className="flex justify-between items-center mb-8">
+
+          <h2 className="text-3xl font-black">
+            Creator Application
+          </h2>
+
+          <button
+            onClick={onClose}
+            className="rounded-xl border border-white/10 px-4 py-2 hover:border-red-500"
+          >
+            Close
+          </button>
+
+        </div>
+
+        <div className="flex gap-6">
+
+          <img
+            src={
+              creator.profileImage ||
+              "https://placehold.co/160x160"
+            }
+            alt=""
+            className="h-32 w-32 rounded-3xl object-cover"
+          />
+
+          <div className="space-y-3">
+
+            <div>
+              <p className="text-xs uppercase tracking-[.25em] text-zinc-500">
+                Full Name
+              </p>
+
+              <h3 className="text-xl font-black">
+                {creator.name}
+              </h3>
+            </div>
+
+            <div>
+              <p className="text-xs uppercase tracking-[.25em] text-zinc-500">
+                Email
+              </p>
+
+              <p>
+                {creator.email}
+              </p>
+            </div>
+
+            <div>
+              <p className="text-xs uppercase tracking-[.25em] text-zinc-500">
+                Stage Name
+              </p>
+
+              <p>
+                {creator.creatorApplication?.stageName || "-"}
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-6 mt-10">
+
+          <InfoCard
+            label="Category"
+            value={
+              creator.creatorApplication?.category || "-"
+            }
+          />
+
+          <InfoCard
+            label="KYC Status"
+            value={creator.kycStatus}
+          />
+
+          <InfoCard
+            label="Country"
+            value={creator.country || "-"}
+          />
+
+          <InfoCard
+            label="State"
+            value={creator.state || "-"}
+          />
+
+          <InfoCard
+            label="City"
+            value={creator.city || "-"}
+          />
+
+          <InfoCard
+            label="Applied"
+            value={
+              creator.creatorApplication?.submittedAt
+                ? new Date(
+                    creator.creatorApplication.submittedAt
+                  ).toLocaleString()
+                : "-"
+            }
+          />
+
+        </div>
+
+        <div className="mt-8">
+
+          <p className="text-xs uppercase tracking-[.25em] text-zinc-500 mb-3">
+            Bio
+          </p>
+
+          <div className="rounded-2xl bg-black/30 p-5 leading-7 text-zinc-300">
+            {creator.bio || "No bio provided."}
+          </div>
+
+        </div>
+
+        <div className="mt-8">
+
+          <p className="text-xs uppercase tracking-[.25em] text-zinc-500 mb-3">
+            Social Links
+          </p>
+
+          <div className="space-y-3">
+
+            {(creator.creatorApplication?.socialLinks || []).length > 0 ? (
+              creator.creatorApplication.socialLinks.map(
+                (link, index) => (
+                  <a
+                    key={index}
+                    href={link}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="block rounded-xl bg-black/30 px-4 py-3 text-amber-400 hover:text-yellow-300 break-all"
+                  >
+                    {link}
+                  </a>
+                )
+              )
+            ) : (
+              <p className="text-zinc-500">
+                No social links submitted.
+              </p>
+            )}
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  );
+}
+
+function InfoCard({
+  label,
+  value,
+}) {
+  return (
+    <div className="rounded-2xl bg-black/30 p-5">
+
+      <p className="text-xs uppercase tracking-[.25em] text-zinc-500">
+        {label}
+      </p>
+
+      <h4 className="mt-3 font-bold break-words">
+        {value}
+      </h4>
+
     </div>
   );
 }

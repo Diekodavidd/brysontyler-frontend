@@ -37,8 +37,16 @@ import CreatorVerificationPage from "@/pages/CreatorVerification";
 import AdminPage from "@/pages/admin";
 import AdminPayoutsPage from "@/pages/admin/payouts";
 import AdminPendingCreatorsPage from "@/pages/admin/pending-creators";
+import AdminCreatorsPage from "@/pages/admin/creators";
+import AdminFansPage from "@/pages/admin/fans";
+import AdminLoginPage from "@/pages/admin/login";
+import AdminContentReviewPage from "@/pages/admin/content-review";
+import AdminNotificationsPage from "@/pages/admin/notifications";
 import AdminSecurityPage from "@/pages/admin/security";
 import AdminSettingsPage from "@/pages/admin/settings";
+import AdminGalleryPage from "@/pages/admin/brand-gallery";
+import AdminMembershipsPage from "@/pages/admin/memberships";
+import AdminReportsPage from "@/pages/admin/reports";
 
 // Dashboard pages
 import DashboardPage from "@/pages/dashboard";
@@ -128,6 +136,7 @@ export default function App() {
         <Route path="/CreatorProfilePage" element={<CreatorProfilePagePage />} />
         <Route path="/CreatorVerification" element={<CreatorVerificationPage />} />
       </Route>
+          <Route path="/adminlogin" element={<AdminLoginPage />} />
 
       {/* ---------- Admin (protected) ---------- */}
       <Route element={<ProtectedRoute />}>
@@ -135,6 +144,13 @@ export default function App() {
           <Route index element={<AdminPage />} />
           <Route path="payouts" element={<AdminPayoutsPage />} />
           <Route path="pending-creators" element={<AdminPendingCreatorsPage />} />
+          <Route path="content-review" element={<AdminContentReviewPage />} />
+          <Route path="notifications" element={<AdminNotificationsPage />} />
+          <Route path="creators" element={<AdminCreatorsPage />} />
+          <Route path="fans" element={<AdminFansPage />} />
+          <Route path="gallery" element={<AdminGalleryPage />} />
+          <Route path="memberships" element={<AdminMembershipsPage />} />
+          <Route path="reports" element={<AdminReportsPage />} />
           <Route path="security" element={<AdminSecurityPage />} />
           <Route path="settings" element={<AdminSettingsPage />} />
         </Route>
