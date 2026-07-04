@@ -141,8 +141,7 @@ case "scheduled":
             onClick={() =>
               setShowUpload(true)
             }
-            className="bg-yellow-500 hover:bg-yellow-400 text-black rounded-2xl px-8 py-4 font-black flex items-center gap-3"
-          >
+className="w-full sm:w-auto justify-center bg-yellow-500 hover:bg-yellow-400 text-black rounded-2xl px-6 lg:px-8 py-4 font-black flex items-center gap-3"          >
             <Plus size={18} />
             Upload Content
           </button>

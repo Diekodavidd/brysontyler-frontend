@@ -90,8 +90,7 @@ if (isLoading) {
 
         {/* Header */}
 
-        <div className="flex justify-between items-end">
-
+<div className="flex flex-col lg:flex-row gap-6 lg:justify-between">
           <div>
 
             <p className="uppercase tracking-[.3em] text-xs font-black text-amber-500">
@@ -118,8 +117,21 @@ if (isLoading) {
             onClick={() =>
               setUploadOpen(true)
             }
-            className="rounded-2xl bg-amber-500 hover:bg-amber-400 px-6 py-4 text-black font-black flex items-center gap-2 transition"
-          >
+className="
+self-start
+lg:self-auto
+rounded-2xl
+bg-amber-500
+hover:bg-amber-400
+px-6
+py-4
+text-black
+font-black
+flex
+items-center
+gap-2
+transition
+"          >
 
             <Plus size={18} />
 
@@ -135,9 +147,9 @@ if (isLoading) {
 
         {/* Filters */}
 
-        <div className="flex flex-wrap justify-between gap-5">
-
-          <div className="relative w-[380px]">
+<div className="flex flex-col xl:flex-row gap-5">
+          <div className="relative w-full
+xl:w-[380px]">
 
             <Search
               size={18}
@@ -155,8 +167,7 @@ if (isLoading) {
 
           </div>
 
-          <div className="flex gap-3">
-
+<div className="flex flex-col sm:flex-row gap-3 w-full xl:w-auto">
             <select
               value={membershipFilter}
               onChange={(e) =>
@@ -164,8 +175,16 @@ if (isLoading) {
                   e.target.value
                 )
               }
-              className="rounded-xl border border-white/10 bg-[#090909] px-4"
-            >
+className="
+w-full
+sm:w-auto
+rounded-xl
+border
+border-white/10
+bg-[#090909]
+px-4
+py-3
+"            >
 
               <option value="all">
                 All Memberships

@@ -102,8 +102,7 @@ export default function PendingCreatorsPage() {
     return (
   <div className="space-y-8">
 
-    <div className="flex justify-between items-end">
-
+<div className="flex flex-col lg:flex-row lg:justify-between gap-6">
       <div>
 
         <p className="uppercase tracking-[.3em] text-xs text-amber-500 font-black">
@@ -120,7 +119,16 @@ export default function PendingCreatorsPage() {
 
       </div>
 
-      <button className="rounded-2xl bg-amber-500 px-6 py-3 text-black font-black">
+      <button className="
+self-start
+lg:self-auto
+rounded-2xl
+bg-amber-500
+px-6
+py-3
+text-black
+font-black
+">
         {pendingCount} Pending
       </button>
 
@@ -128,9 +136,8 @@ export default function PendingCreatorsPage() {
 
     {/* Search */}
 
-    <div className="flex justify-between gap-5 flex-wrap">
-
-      <div className="relative w-96">
+<div className="flex flex-col sm:flex-row gap-5 flex-1 min-w-0">      <div className="relative w-full
+lg:w-96">
 
         <Search
           size={18}
@@ -160,8 +167,7 @@ export default function PendingCreatorsPage() {
 
     {/* Stats */}
 
-    <div className="grid md:grid-cols-4 gap-5">
-
+<div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
       <StatCard
         title="Pending"
         value={pendingCount}
@@ -196,11 +202,20 @@ export default function PendingCreatorsPage() {
 
         <div
           key={creator._id}
-          className="rounded-3xl border border-white/5 bg-[#080808] p-6"
-        >
+ className="
+        rounded-2xl
+        bg-black/30
+        p-5
+      "        >
 
-          <div className="flex justify-between items-center">
-
+<div  className="
+          flex
+          flex-col
+          lg:flex-row
+          lg:items-center
+          lg:justify-between
+          gap-5
+        ">
             <div className="flex gap-5">
 
               <img
@@ -209,25 +224,21 @@ export default function PendingCreatorsPage() {
                   "https://placehold.co/120x120"
                 }
                 alt=""
-                className="w-20 h-20 rounded-2xl object-cover"
-              />
+className="w-20 h-20 rounded-2xl object-cover flex-shrink-0"              />
 
-              <div>
-
+<div className="flex-1 min-w-0">
                 <h2 className="text-xl font-black">
 
                   {creator.name}
 
                 </h2>
 
-                <p className="text-zinc-500 mt-1">
-
+<p className="mt-1 text-zinc-500 break-all">
                   {creator.email}
 
                 </p>
 
-                <div className="mt-4 flex flex-wrap gap-6 text-sm text-zinc-400">
-
+<div className="mt-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3 text-sm text-zinc-400">
                   <span>
 
                     Stage Name
@@ -292,14 +303,40 @@ export default function PendingCreatorsPage() {
 
             </div>
 
-            <div className="flex gap-3">
-
+<div
+  className="
+    flex
+    flex-col
+    sm:flex-row
+    lg:flex-col
+    xl:flex-row
+    gap-3
+    w-full
+    lg:w-auto
+    xl:items-center
+  "
+>
               <button
                 onClick={() =>
                   setSelectedCreator(creator)
                 }
-                className="rounded-2xl border border-white/10 px-5 py-3 hover:border-amber-500 flex items-center gap-2"
-              >
+className="
+flex
+items-center
+justify-center
+gap-2
+rounded-2xl
+border
+border-white/10
+hover:border-amber-500
+px-5
+py-3
+font-medium
+w-full
+sm:flex-1
+lg:w-full
+xl:w-auto
+"              >
 
                 <Eye size={18} />
 
@@ -314,8 +351,22 @@ export default function PendingCreatorsPage() {
                 disabled={
                   approveMutation.isPending
                 }
-                className="rounded-2xl bg-green-500 px-5 py-3 text-black font-bold flex items-center gap-2"
-              >
+className="
+flex
+items-center
+justify-center
+gap-2
+rounded-2xl
+bg-green-500
+px-5
+py-3
+font-bold
+text-black
+w-full
+sm:flex-1
+lg:w-full
+xl:w-auto
+"              >
 
                 <CheckCircle2 size={18} />
 
@@ -330,8 +381,21 @@ export default function PendingCreatorsPage() {
                 disabled={
                   rejectMutation.isPending
                 }
-                className="rounded-2xl bg-red-500 px-5 py-3 font-bold flex items-center gap-2"
-              >
+className="
+flex
+items-center
+justify-center
+gap-2
+rounded-2xl
+bg-red-500
+px-5
+py-3
+font-bold
+w-full
+sm:flex-1
+lg:w-full
+xl:w-auto
+"              >
 
                 <XCircle size={18} />
 
@@ -369,7 +433,7 @@ export default function PendingCreatorsPage() {
 
       </h2>
 
-      <div className="grid md:grid-cols-2 gap-6 mt-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
 
         <Checklist
           title="Identity Verification"
@@ -448,8 +512,19 @@ function ReviewModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-6">
 
-      <div className="w-full max-w-2xl rounded-3xl bg-[#080808] border border-white/10 p-8">
-
+<div
+className="
+w-full
+max-w-2xl
+max-h-[90vh]
+overflow-y-auto
+rounded-3xl
+bg-[#080808]
+border
+border-white/10
+p-6
+lg:p-8
+">
         <div className="flex justify-between items-center mb-8">
 
           <h2 className="text-3xl font-black">
@@ -465,8 +540,7 @@ function ReviewModal({
 
         </div>
 
-        <div className="flex gap-6">
-
+<div className="flex flex-col md:flex-row gap-6">
           <img
             src={
               creator.profileImage ||
@@ -512,7 +586,7 @@ function ReviewModal({
 
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6 mt-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
 
           <InfoCard
             label="Category"

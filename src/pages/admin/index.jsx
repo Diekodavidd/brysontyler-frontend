@@ -226,37 +226,91 @@ if (isLoading) {
         </div>
 
         <div className="space-y-5">
-          {pendingCreators.map((creator) => (
-            <div
-              key={creator.name}
-              className="flex items-center justify-between rounded-2xl bg-black/30 p-5"
-            >
-              <div>
-                <h3 className="font-black">
-                  {creator.name}
-                </h3>
+  {pendingCreators.map((creator) => (
+    <div
+      key={creator.name}
+      className="
+        rounded-2xl
+        bg-black/30
+        p-5
+      "
+    >
+      <div
+        className="
+          flex
+          flex-col
+          lg:flex-row
+          lg:items-center
+          lg:justify-between
+          gap-5
+        "
+      >
+        {/* Creator Info */}
+        <div>
+          <h3 className="font-black text-lg">
+            {creator.name}
+          </h3>
 
-                <p className="text-sm text-zinc-500 mt-1">
-Applied{" "}
-{new Date(
-    creator.createdAt
-).toLocaleDateString()}                </p>
-              </div>
-
-              <div className="flex gap-3">
-                <button className="rounded-xl bg-green-500 px-5 py-2 text-black font-bold flex items-center gap-2">
-                  <CheckCircle2 size={16} />
-                  Approve
-                </button>
-
-                <button className="rounded-xl bg-red-500 px-5 py-2 font-bold flex items-center gap-2">
-                  <XCircle size={16} />
-                  Reject
-                </button>
-              </div>
-            </div>
-          ))}
+          <p className="mt-1 text-sm text-zinc-500">
+            Applied{" "}
+            {new Date(creator.createdAt).toLocaleDateString()}
+          </p>
         </div>
+
+        {/* Actions */}
+        <div
+          className="
+            flex
+            flex-col
+            sm:flex-row
+            gap-3
+            w-full
+            lg:w-auto
+          "
+        >
+          <button
+            className="
+              flex
+              items-center
+              justify-center
+              gap-2
+              rounded-xl
+              bg-green-500
+              px-5
+              py-3
+              font-bold
+              text-black
+              w-full
+              sm:w-auto
+            "
+          >
+            <CheckCircle2 size={16} />
+            Approve
+          </button>
+
+          <button
+            className="
+              flex
+              items-center
+              justify-center
+              gap-2
+              rounded-xl
+              bg-red-500
+              px-5
+              py-3
+              font-bold
+              w-full
+              sm:w-auto
+            "
+          >
+            <XCircle size={16} />
+            Reject
+          </button>
+        </div>
+      </div>
+    </div>
+  ))}
+</div>
       </div>
 
       {/* Bottom Summary */}
