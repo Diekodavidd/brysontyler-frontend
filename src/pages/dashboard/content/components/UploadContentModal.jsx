@@ -266,9 +266,9 @@ for (const [key] of payload.entries()) {
   return (
     <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur overflow-y-auto">
 
-      <div className="max-w-6xl mx-auto py-16 px-6">
+      <div className="max-w-6xl mx-3 mx-auto py-16 px-6">
 
-        <div className="bg-zinc-900 rounded-[36px] border border-white/5 p-10">
+        <div className="bg-zinc-900 rounded-[36px] border border-white/5 p-5 sm:p-8 lg:p-10">
 
           {/* HEADER */}
 
@@ -300,7 +300,7 @@ for (const [key] of payload.entries()) {
 
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-10">
+          <div className="grid-cols-1 lg:grid-cols-2 gap-10">
 
             {/* LEFT */}
 

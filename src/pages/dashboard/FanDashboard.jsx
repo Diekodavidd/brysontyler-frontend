@@ -106,18 +106,23 @@ if (notifications.length === 0) {
   if (!user) return null;
 
   return (
-    <div className="space-y-10">
-
+<div className="space-y-6 lg:space-y-10">
       {/* Header */}
 
-      <div className="flex justify-between items-end">
-        <div>
+<div
+className="
+flex
+flex-col
+lg:flex-row
+justify-between
+lg:items-end
+gap-6
+">        <div>
           <p className="text-yellow-400 font-black uppercase tracking-[0.3em] text-xs">
             Fan Dashboard
           </p>
 
-         <h1 className="text-5xl font-black">
-  Welcome back,
+<h1 className="text-3xl sm:text-4xl xl:text-5xl font-black">  Welcome back,
   <br />
   {user.name}
 </h1>
@@ -127,14 +132,21 @@ if (notifications.length === 0) {
           </p>
         </div>
 
-        <button className="px-6 py-3 rounded-2xl bg-yellow-500 text-black font-black hover:bg-yellow-400 transition">
+        <button className="w-full
+sm:w-auto
+px-6
+py-3 rounded-2xl bg-yellow-500 text-black font-black hover:bg-yellow-400 transition">
           Discover Creators
         </button>
       </div>
 
       {/* Stats */}
 
-      <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-6">
+      <div className="grid
+grid-cols-1
+sm:grid-cols-2
+xl:grid-cols-4
+gap-5">
 
         {cards.map((card) => {
 
@@ -143,7 +155,7 @@ if (notifications.length === 0) {
           return (
             <div
               key={card.title}
-              className="bg-zinc-900 rounded-3xl border border-white/5 p-7 hover:border-yellow-500/30 transition"
+              className="bg-zinc-900 rounded-3xl border border-white/5 p-5 lg:p-7 hover:border-yellow-500/30 transition"
             >
               <div className="flex justify-between">
 
@@ -153,7 +165,7 @@ if (notifications.length === 0) {
                     {card.title}
                   </p>
 
-                  <h2 className="text-4xl font-black mt-4">
+                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black mt-4">
                     {card.value}
                   </h2>
 
@@ -176,11 +188,14 @@ if (notifications.length === 0) {
 
       {/* Grid */}
 
-      <div className="grid lg:grid-cols-2 gap-8">
+      <div className="grid
+grid-cols-1
+xl:grid-cols-2
+gap-6">
 
         {/* Continue Watching */}
 
-        <div className="bg-zinc-900 rounded-3xl border border-white/5 p-8">
+        <div className="bg-zinc-900 rounded-3xl border border-white/5 p-5 lg:p-8">
 
           <div className="flex justify-between mb-8">
 
@@ -243,7 +258,7 @@ if (notifications.length === 0) {
 
         {/* Active Subscriptions */}
 
-        <div className="bg-zinc-900 rounded-3xl border border-white/5 p-8">
+        <div className="bg-zinc-900 rounded-3xl border border-white/5 p-5 lg:p-8">
 
           <div className="flex justify-between mb-8">
 
@@ -260,7 +275,12 @@ if (notifications.length === 0) {
             {subscriptionsData?.subscriptions?.map((sub) => (
   <div
     key={sub._id}
-    className="flex justify-between items-center pb-4 border-b border-white/5"
+    className="flex
+flex-col
+sm:flex-row
+sm:items-center
+justify-between
+gap-3 pb-4 border-b border-white/5"
   >
     <div>
       <h3 className="font-bold">
@@ -292,11 +312,14 @@ if (notifications.length === 0) {
 
       {/* Bottom */}
 
-      <div className="grid lg:grid-cols-2 gap-8">
+      <div className="grid
+grid-cols-1
+xl:grid-cols-2
+gap-6">
 
         {/* Notifications */}
 
-        <div className="bg-zinc-900 rounded-3xl border border-white/5 p-8">
+        <div className="bg-zinc-900 rounded-3xl border border-white/5 p-5 lg:p-8">
 
           <div className="flex items-center gap-3 mb-8">
 
@@ -343,7 +366,7 @@ You're all caught up.
 
         {/* Recent Activity */}
 
-        <div className="bg-zinc-900 rounded-3xl border border-white/5 p-8">
+        <div className="bg-zinc-900 rounded-3xl border border-white/5 p-p-5 lg:p-8">
 
           <div className="flex items-center gap-3 mb-8">
 
@@ -358,7 +381,13 @@ You're all caught up.
           <div className="space-y-5">
 
             {payments?.payments?.slice(0,5).map((payment)=>(
-<div key={payment._id} className="flex justify-between">
+<div key={payment._id} className="
+flex
+flex-col
+sm:flex-row
+justify-between
+gap-2
+">
     <span>
         Subscription to {payment.creatorId.name}
     </span>

@@ -169,23 +169,29 @@ const navItems =
     : fanNavItems;
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white flex">
-      <aside className="w-64 border-r border-white/10 p-8 flex flex-col justify-between">
-        <div>
-         <div className="text-xl font-black mb-8 tracking-widest text-yellow-500">
-  {auth.user?.role === "creator"
+<div className="min-h-screen bg-[#050505] text-white flex overflow-hidden">
+<aside
+className="
+w-20
+lg:w-64
+border-r
+border-white/10
+px-2
+lg:px-8
+py-6
+flex
+flex-col
+justify-between
+transition-all
+duration-300
+">        <div>
+<div className="hidden lg:block text-xl font-black mb-8 tracking-widest text-yellow-500">
+    {auth.user?.role === "creator"
     ? "CREATOR STUDIO"
     : "FAN DASHBOARD"}
 </div>
 
-          {/* Back to Home */}
-          {/* <button
-            onClick={() => router.push("/")}
-            className="flex items-center gap-2 text-zinc-400 hover:text-white mb-10 text-[10px] font-bold uppercase tracking-[0.2em] transition-all"
-          >
-            <ArrowLeft size={14} />
-            Back to Site
-          </button> */}
+         
 
           <nav className="space-y-8">
            {auth.user?.role === "creator"
@@ -195,24 +201,39 @@ const navItems =
 
       return (
         <button
-          key={item.name}
-          onClick={() => router.push(item.path)}
-          className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition ${
-            active
-              ? "bg-yellow-500 text-black font-bold"
-              : "text-zinc-500 hover:text-white"
-          }`}
-        >
-          <Icon size={18} />
-          {item.name}
-        </button>
+  key={item.name}
+  onClick={() => router.push(item.path)}
+  className={`
+    w-full
+    flex
+    items-center
+    justify-center
+    lg:justify-start
+    gap-3
+    px-2
+    lg:px-4
+    py-3
+    rounded-xl
+    transition
+    ${
+      active
+        ? "bg-yellow-500 text-black font-bold"
+        : "text-zinc-500 hover:text-white"
+    }
+  `}
+>
+  <Icon size={18} />
+
+  <span className="hidden lg:block">
+    {item.name}
+  </span>
+</button>
       );
     })
   : fanSections.map((section) => (
       <div key={section.title}>
 
-        <p className="text-[10px] uppercase tracking-[0.35em] text-zinc-600 font-black mb-3">
-          {section.title}
+<p className="hidden lg:block text-[10px] uppercase tracking-[0.35em] text-zinc-600 font-black mb-3">          {section.title}
         </p>
 
         <div className="space-y-2">
@@ -225,15 +246,28 @@ const navItems =
               <button
                 key={item.name}
                 onClick={() => router.push(item.path)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition ${
+                className={`
+w-full
+flex
+items-center
+justify-center
+lg:justify-start
+gap-3
+px-2
+lg:px-4
+py-3
+rounded-xl
+transition
+ ${
                   active
                     ? "bg-yellow-500 text-black font-bold"
                     : "text-zinc-500 hover:text-white"
                 }`}
               >
                 <Icon size={18} />
-                {item.name}
-              </button>
+<span className="hidden lg:block">
+    {item.name}
+</span>              </button>
             );
           })}
 
@@ -246,15 +280,34 @@ const navItems =
 
        <button
   onClick={() => logout()}
-  className="flex items-center gap-2 text-zinc-500 hover:text-red-500 text-sm font-bold transition-colors"
->
-  <LogOut size={16} />
-  SIGN OUT
+className="
+flex
+items-center
+justify-center
+lg:justify-start
+gap-2
+text-zinc-500
+hover:text-red-500
+text-sm
+font-bold
+transition-colors
+">
+  <LogOut size={18}/>
+
+<span className="hidden lg:block">
+SIGN OUT
+</span>
 </button>
       </aside>
 
-      <main className="flex-1 p-12 overflow-y-auto">
-        <Outlet />
+<main
+className="
+flex-1
+overflow-y-auto
+p-4
+sm:p-6
+lg:p-12
+">        <Outlet />
       </main>
     </div>
   );

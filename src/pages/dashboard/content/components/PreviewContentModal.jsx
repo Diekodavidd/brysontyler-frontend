@@ -24,7 +24,7 @@ export default function PreviewContentModal({
   return (
     <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur overflow-y-auto">
 
-      <div className="max-w-6xl mx-auto py-16 px-6">
+      <div className="max-w-6xl mx-3 mx-auto py-16 px-6">
 
         <div className="bg-zinc-900 rounded-[36px] border border-white/5 overflow-hidden">
 
@@ -38,7 +38,7 @@ export default function PreviewContentModal({
                 Content Preview
               </p>
 
-              <h2 className="text-4xl font-black mt-3">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black mt-3">
                 {content.title}
               </h2>
 
@@ -95,7 +95,7 @@ export default function PreviewContentModal({
 
             {/* DETAILS */}
 
-            <div className="p-10 space-y-8">
+            <div className="p-5 sm:p-8 lg:p-10 space-y-8">
 
               <div className="flex gap-3 flex-wrap">
 
@@ -128,7 +128,7 @@ export default function PreviewContentModal({
 
               {/* INFO */}
 
-              <div className="grid grid-cols-2 gap-5">
+              <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-5">
 
                 <InfoCard
                   icon={<DollarSign />}

@@ -32,7 +32,7 @@ export default function VideoPlayerModal({
     ] || badge.free;
 
   return (
-    <div className="fixed inset-0 z-[999] bg-black/90 backdrop-blur-xl flex items-center justify-center p-6">
+    <div className="fixed inset-0 z-[999] bg-black/90 backdrop-blur-xl flex items-center justify-center text-3xl lg:text-5xl">
 
       <div className="relative w-full max-w-7xl max-h-[95vh] overflow-y-auto rounded-[36px] bg-[#090909] border border-white/10">
 
@@ -40,7 +40,10 @@ export default function VideoPlayerModal({
 
         <button
           onClick={onClose}
-          className="absolute top-6 right-6 z-50 w-12 h-12 rounded-full bg-black/60 hover:bg-red-600 transition flex items-center justify-center"
+          className="absolute top-6 right-6 z-50 w-10
+h-10
+lg:w-12
+lg:h-12 rounded-full bg-black/60 hover:bg-red-600 transition flex items-center justify-center"
         >
           <X size={18}/>
         </button>
@@ -61,7 +64,8 @@ export default function VideoPlayerModal({
 
         {/* BODY */}
 
-        <div className="p-10">
+        <div className="p-5
+lg:p-10">
 
           <div className="grid lg:grid-cols-[2fr_1fr] gap-12">
 
@@ -79,13 +83,13 @@ export default function VideoPlayerModal({
 
               </div>
 
-              <h1 className="mt-6 text-5xl font-black">
+              <h1 className="mt-6 text-3xl lg:text-5xl font-black">
 
                 {video.title}
 
               </h1>
 
-              <p className="mt-6 text-zinc-400 leading-8 text-lg">
+              <p className="mt-6 text-zinc-400 leading-8 text-base lg:text-lg">
 
                 {video.description ||
                   "No description provided."}
@@ -125,7 +129,7 @@ export default function VideoPlayerModal({
                 className="rounded-3xl w-full object-cover border border-white/10"
               />
 
-              <div className="rounded-3xl bg-black border border-white/10 p-6">
+              <div className="rounded-3xl bg-black border border-white/10 p-5 lg:p-6">
 
                 <h3 className="text-xl font-black mb-6">
 

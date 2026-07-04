@@ -54,7 +54,7 @@ export default function CategoryTabs({
 
           </p>
 
-          <h2 className="text-4xl font-black mt-3">
+          <h2 className="text-3xl lg:text-4xl font-black mt-3">
 
             Explore the Gallery
 
@@ -92,7 +92,10 @@ export default function CategoryTabs({
                 onClick={() =>
                   onChange(tab.id)
                 }
-                className={`group rounded-2xl border transition-all duration-300 px-6 py-4 flex items-center gap-3 whitespace-nowrap ${
+                className={`group rounded-2xl border transition-all duration-300 px-5
+py-3
+lg:px-6
+lg:py-4 flex items-center gap-3 whitespace-nowrap ${
                   selected
                     ? "bg-yellow-500 text-black border-yellow-500 shadow-lg shadow-yellow-500/20"
                     : "bg-zinc-900 border-white/5 text-zinc-400 hover:border-yellow-500/30 hover:text-white"

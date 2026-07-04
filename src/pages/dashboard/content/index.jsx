@@ -116,24 +116,21 @@ case "scheduled":
 
   return (
     <>
-      <div className="space-y-10">
-
+<div className="space-y-6 lg:space-y-10">
         {/* HEADER */}
 
-        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-end gap-6">
-
+<div className="flex flex-col xl:flex-row xl:justify-between xl:items-end gap-6">
           <div>
 
             <p className="uppercase tracking-[.3em] text-xs font-black text-yellow-400">
               Creator Studio
             </p>
 
-            <h1 className="text-6xl font-black mt-4">
-              Content Library
+<h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mt-3">              Content Library
+
             </h1>
 
-            <p className="text-zinc-500 mt-4 max-w-3xl leading-7">
-              Upload premium videos,
+<p className="text-sm sm:text-base text-zinc-500 mt-4 max-w-3xl leading-7">              Upload premium videos,
               photos and exclusive
               content for your fans.
             </p>

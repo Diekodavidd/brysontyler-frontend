@@ -63,7 +63,7 @@ const BadgeIcon = badge.icon;
       transition={{
         duration: 0.6,
       }}
-      className="relative overflow-hidden rounded-[40px] h-[650px]"
+      className="relative overflow-hidden rounded-[40px] h-[520px] sm:h-[600px] lg:h-[650px]"
     >
       {/* Background */}
 
@@ -83,7 +83,8 @@ const BadgeIcon = badge.icon;
       {/* Content */}
 
 <div className="relative z-20 h-full flex items-end">
-        <div className="max-w-3xl px-14 pb-16">
+        <div className="max-w-3xl px-5 sm:px-8 lg:px-14
+pb-8 sm:pb-12 lg:pb-16">
 
           {/* Tag */}
 
@@ -104,7 +105,9 @@ const BadgeIcon = badge.icon;
 
           {/* Title */}
 
-          <h1 className="text-7xl font-black mt-7 leading-none">
+          <h1 className="text-4xl
+sm:text-5xl
+lg:text-7xl font-black mt-7 leading-none">
 
             {featured.title}
 
@@ -112,14 +115,16 @@ const BadgeIcon = badge.icon;
 
           {/* Subtitle */}
 
-         <p className="text-zinc-300 text-lg mt-6 max-w-2xl leading-8">
+         <p className="text-zinc-300 text-base
+lg:text-lg mt-6 max-w-2xl leading-8">
   {featured.description ||
     "Exclusive premium content from Bryson Tyler."}
     </p>
 
           {/* Meta */}
 
-          <div className="flex flex-wrap gap-8 mt-8">
+          <div className="text-base
+lg:text-lg mt-8">
 
   <div className="flex items-center gap-2 text-zinc-300">
     <Clock3 size={17} />
@@ -144,7 +149,10 @@ const BadgeIcon = badge.icon;
             {locked ? (
               <button
 onClick={() => onLocked(featured)}
-                className="rounded-2xl bg-yellow-500 hover:bg-yellow-400 px-9 py-5 text-black font-black flex items-center gap-3 transition"
+                className="rounded-2xl bg-yellow-500 hover:bg-yellow-400 px-6
+lg:px-9
+py-4
+lg:py-5 text-black font-black flex items-center gap-3 transition"
               >
                 <Lock size={18} />
 
@@ -153,7 +161,10 @@ onClick={() => onLocked(featured)}
               </button>
             ) : (
        <button
-         className="rounded-2xl bg-yellow-500 hover:bg-yellow-400 px-9 py-5 text-black font-black flex items-center gap-3 transition"
+         className="rounded-2xl bg-yellow-500 hover:bg-yellow-400 px-6
+lg:px-9
+py-4
+lg:py-5 text-black font-black flex items-center gap-3 transition"
 
   onClick={() => {
     console.log("BUTTON CLICKED");
@@ -187,14 +198,20 @@ onClick={() => onLocked(featured)}
       {/* Membership Badge */}
 
      <div
-  className={`absolute top-8 right-8 rounded-3xl backdrop-blur-xl px-8 py-6 border ${badge.border} ${badge.bg}`}
+  className={`absolute top-4
+right-4
+lg:top-8
+lg:right-8 rounded-3xl backdrop-blur-xl top-4
+right-4
+lg:top-8
+lg:right-8 border ${badge.border} ${badge.bg}`}
 >
 
  <p className="uppercase tracking-[.3em] text-[10px] text-zinc-400 font-black">
   Your Plan
 </p>
 
-<h3 className={`mt-3 text-2xl font-black ${badge.text}`}>
+<h3 className={`mt-3 text-lg lg:text-2xl font-black ${badge.text}`}>
   {membership.toUpperCase()}
 </h3>
 

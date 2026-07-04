@@ -1,10 +1,10 @@
 export default function StatsCards({ cards = [] }) {
   return (
-    <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
+    <div className="grid md:grid-cols-2 grid-cols-2 lg:grid-cols-4 gap-6">
       {cards.map((card) => (
         <div
           key={card.title}
-          className="rounded-[28px] bg-zinc-900 border border-white/5 p-7 hover:border-yellow-500/20 transition-all"
+          className="rounded-[28px] bg-zinc-900 border border-white/5 p-5 sm:p-6 lg:p-8 hover:border-yellow-500/20 transition-all"
         >
           <div className="flex items-start justify-between">
             <div>

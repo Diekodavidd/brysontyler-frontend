@@ -27,7 +27,8 @@ export default function LockedVideoModal({
     <AnimatePresence>
 
       <motion.div
-     className="fixed inset-0 z-[999] bg-black/90 backdrop-blur-xl flex items-center justify-center p-6"
+     className="fixed inset-0 z-[999] bg-black/90 backdrop-blur-xl flex items-center justify-center p-3
+sm:p-6"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -66,7 +67,9 @@ export default function LockedVideoModal({
 
           {/* Background */}
 
-          <div className="relative h-[320px] overflow-hidden">
+          <div className="relative h-[220px]
+sm:h-[280px]
+lg:h-[320px] overflow-hidden">
 
             <img
               src={video.thumbnail}
@@ -78,7 +81,10 @@ export default function LockedVideoModal({
 
             <div className="absolute inset-0 bg-gradient-to-t from-[#0d0d0d] via-transparent to-transparent" />
 
-            <div className="absolute left-12 bottom-12">
+            <div className="absolute left-5
+bottom-5
+lg:left-12
+lg:bottom-12">
 
               <div className="inline-flex items-center gap-2 rounded-full bg-yellow-500/10 border border-yellow-500/20 px-5 py-2">
 
@@ -95,7 +101,8 @@ export default function LockedVideoModal({
 
               </div>
 
-              <h2 className="text-5xl font-black mt-6">
+              <h2 className="text-3xl
+lg:text-5xl font-black mt-6">
 
                 {video.title}
 
@@ -123,7 +130,8 @@ export default function LockedVideoModal({
 
           {/* Body */}
 
-          <div className="p-10">
+          <div className="p-5
+lg:p-10">
 
             <div className="grid lg:grid-cols-[1.5fr_1fr] gap-10">
 
@@ -133,7 +141,10 @@ export default function LockedVideoModal({
 
                 <div className="flex items-center gap-4">
 
-                  <div className="w-16 h-16 rounded-full bg-yellow-500 flex items-center justify-center">
+                  <div className="w-14
+h-14
+lg:w-16
+lg:h-16 rounded-full bg-yellow-500 flex items-center justify-center">
 
                     <Lock
                       size={28}
@@ -213,7 +224,8 @@ export default function LockedVideoModal({
 
               {/* Right */}
 
-              <div className="rounded-[30px] bg-gradient-to-b from-yellow-500/10 to-transparent border border-yellow-500/20 p-8">
+              <div className="rounded-[30px] bg-gradient-to-b from-yellow-500/10 to-transparent border border-yellow-500/20 p-5
+lg:p-8">
 
                 <div className="flex justify-center">
 
@@ -228,7 +240,7 @@ export default function LockedVideoModal({
 
                 </div>
 
-                <h3 className="text-center text-3xl font-black mt-8">
+                <h3 className="text-center text-2xl lg:text-3xl font-black mt-8">
 
                   Upgrade to {upgradeTo}
 

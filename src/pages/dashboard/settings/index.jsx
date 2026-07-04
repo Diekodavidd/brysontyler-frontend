@@ -59,18 +59,19 @@ export default function SettingsHome() {
       : fanItems;
 
   return (
-    <div className="space-y-8">
-      <h1 className="text-4xl font-black">Settings</h1>
+<div className="space-y-6 lg:space-y-8">
+        <h1 className="text-3xl sm:text-4xl font-black">
+          Settings</h1>
 
-      <div className="grid md:grid-cols-2 gap-6">
-        {items.map((item) => (
+<div className="grid grid-cols-1 md:grid-cols-2 gap-5 lg:gap-6">        {items.map((item) => (
+  
           <button
             key={item.title}
             onClick={() => router.push(item.path)}
-            className="rounded-3xl border border-white/10 bg-zinc-900 p-8 text-left hover:border-yellow-500 transition"
+            className="rounded-3xl border border-white/10 bg-zinc-900 p-5 sm:p-6 lg:p-8 text-left hover:border-yellow-500 transition"
           >
-            <h2 className="text-xl font-bold">
-              {item.title}
+<h2 className="text-lg sm:text-xl font-bold">
+                {item.title}
             </h2>
           </button>
         ))}

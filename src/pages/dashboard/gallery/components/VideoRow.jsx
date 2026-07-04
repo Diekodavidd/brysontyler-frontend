@@ -32,7 +32,7 @@ export default function VideoRow({
 
         <div>
 
-          <h2 className="text-3xl font-black">
+          <h2 className="text-2xl lg:text-3xl font-black">
 
             {title}
 
@@ -70,14 +70,20 @@ export default function VideoRow({
 
       <div
         ref={sliderRef}
-        className="flex gap-7 overflow-x-auto scroll-smooth pb-4 scrollbar-hide"
+        className="flex gap-4 lg:gap-7 overflow-x-auto scroll-smooth pb-4 scrollbar-hide"
       >
 
         {videos.map((video) => (
 
           <div
             key={video.id}
-            className="min-w-[340px] max-w-[340px] flex-shrink-0"
+            className="min-w-[250px]
+sm:min-w-[300px]
+lg:min-w-[340px]
+
+max-w-[250px]
+sm:max-w-[300px]
+lg:max-w-[340px] flex-shrink-0"
           >
 
             <VideoCard

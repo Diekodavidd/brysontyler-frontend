@@ -7,8 +7,7 @@ export default function FilterBar({
   setFilter,
 }) {
   return (
-    <div className="flex flex-col lg:flex-row gap-5">
-
+<div className="flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between">
       {/* Search */}
 
       <div className="relative flex-1">
@@ -24,7 +23,7 @@ export default function FilterBar({
             setSearch(e.target.value)
           }
           placeholder="Search content..."
-          className="w-full h-14 rounded-2xl bg-zinc-900 border border-white/5 pl-14 pr-5 outline-none focus:border-yellow-500 transition"
+          className="w-full lg:w-96 h-14 rounded-2xl bg-zinc-900 border border-white/5 pl-14 pr-5 outline-none focus:border-yellow-500 transition"
         />
 
       </div>

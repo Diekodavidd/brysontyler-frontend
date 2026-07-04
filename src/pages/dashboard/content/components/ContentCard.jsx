@@ -70,11 +70,11 @@ export default function ContentCard({
 
       {/* Body */}
 
-      <div className="p-6 space-y-5">
+      <div className="p-5 lg:p-6 space-y-5">
 
         <div>
 
-          <h2 className="text-2xl font-black line-clamp-1">
+          <h2 className="text-xl lg:text-2xl font-black line-clamp-1">
 
             {item.title}
 

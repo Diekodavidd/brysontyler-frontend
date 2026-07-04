@@ -88,14 +88,20 @@ const canWatch = () => {
         {/* Membership */}
 
         <div
-          className={`absolute top-5 left-5 px-4 py-2 rounded-full text-[10px] font-black tracking-[.25em] ${current.className}`}
+          className={`absolute top-5 left-5 px-3
+py-1.5
+lg:px-4
+lg:py-2 rounded-full text-[10px] font-black tracking-[.25em] ${current.className}`}
         >
           {current.label}
         </div>
 
         {/* Duration */}
 
-        <div className="absolute top-5 right-5 rounded-full bg-black/60 backdrop-blur px-4 py-2 text-xs flex items-center gap-2">
+        <div className="absolute top-5 right-5 rounded-full bg-black/60 backdrop-blur px-3
+py-1.5
+lg:px-4
+lg:py-2 text-xs flex items-center gap-2">
 
           <Clock3 size={13} />
 
@@ -117,7 +123,10 @@ const canWatch = () => {
             ? onLocked(video)
             : onPlay(video);
     }}
-    className="w-20 h-20 rounded-full bg-yellow-500 hover:bg-yellow-400 flex items-center justify-center shadow-2xl"
+    className="w-16
+h-16
+lg:w-20
+lg:h-20 rounded-full bg-yellow-500 hover:bg-yellow-400 flex items-center justify-center shadow-2xl"
 >
               <Lock
                 size={34}
@@ -127,7 +136,10 @@ const canWatch = () => {
 
           ) : (
 
-            <button className="w-20 h-20 rounded-full bg-yellow-500 hover:bg-yellow-400 flex items-center justify-center shadow-2xl">
+            <button className="w-16
+h-16
+lg:w-20
+lg:h-20 rounded-full bg-yellow-500 hover:bg-yellow-400 flex items-center justify-center shadow-2xl">
 
               <Play
                 size={34}
@@ -143,9 +155,9 @@ const canWatch = () => {
 
         {/* Bottom */}
 
-        <div className="absolute bottom-0 left-0 right-0 p-6">
+        <div className="absolute bottom-0 left-0 right-0 p-4 lg:p-6">
 
-          <div className="rounded-3xl bg-black/50 backdrop-blur-xl border border-white/10 p-5">
+          <div className="rounded-3xl bg-black/50 backdrop-blur-xl border border-white/10 p-4 lg:p-5">
 
             <div className="flex items-center justify-between">
 
@@ -178,7 +190,7 @@ const canWatch = () => {
 
             </div>
 
-            <h3 className="mt-4 text-2xl font-black line-clamp-2">
+            <h3 className="mt-4 text-xl lg:text-2xl font-black line-clamp-2">
 
               {video.title}
 

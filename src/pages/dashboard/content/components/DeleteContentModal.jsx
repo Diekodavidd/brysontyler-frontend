@@ -29,7 +29,7 @@ export default function DeleteContentModal({
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur flex items-center justify-center p-6">
 
-      <div className="w-full max-w-lg rounded-[32px] bg-zinc-900 border border-white/5 overflow-hidden">
+      <div className="w-full max-w-lg mx-3 rounded-[32px] bg-zinc-900 border border-white/5 overflow-hidden">
 
         {/* Header */}
 

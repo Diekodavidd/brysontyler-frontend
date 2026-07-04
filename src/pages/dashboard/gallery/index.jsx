@@ -175,8 +175,7 @@ const orderedRows =
       console.log("PLAYING VIDEO", playingVideo);
   return (
     
-    <div className="space-y-14">
-
+<div className="space-y-8 lg:space-y-14">
   <GalleryHero
     featured={featured}
     membership={membership}

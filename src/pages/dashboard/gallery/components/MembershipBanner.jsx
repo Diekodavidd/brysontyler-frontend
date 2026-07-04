@@ -83,7 +83,8 @@ export default function MembershipBanner({
 
       <div className="absolute -right-20 bottom-0 w-72 h-72 rounded-full bg-yellow-500/10 blur-[120px]" />
 
-      <div className="relative p-10">
+      <div className="relative p-5
+lg:p-10">
 
         <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-10">
 
@@ -100,7 +101,8 @@ export default function MembershipBanner({
 
             </div>
 
-            <h2 className="mt-6 text-5xl font-black">
+            <h2 className="mt-6 text-3xl
+lg:text-5xl font-black">
 
               Your Gallery Access
 
@@ -120,9 +122,10 @@ export default function MembershipBanner({
 
           {/* Right */}
 
-          <div className="grid sm:grid-cols-2 gap-5 min-w-[360px]">
+          <div className="grid sm:grid-cols-2 gap-5 w-full
+xl:min-w-[360px]">
 
-            <div className="rounded-3xl bg-black/40 border border-white/10 p-7">
+            <div className="rounded-3xl bg-black/40 border border-white/10 p-5 lg:p-7">
 
               <p className="uppercase tracking-[.25em] text-xs text-zinc-500 font-black">
 
@@ -138,7 +141,7 @@ export default function MembershipBanner({
 
             </div>
 
-            <div className="rounded-3xl bg-black/40 border border-white/10 p-7">
+            <div className="rounded-3xl bg-black/40 border border-white/10 p-5 lg:p-7">
 
               <p className="uppercase tracking-[.25em] text-xs text-zinc-500 font-black">
 
@@ -160,7 +163,10 @@ export default function MembershipBanner({
 
         {/* Benefits */}
 
-        <div className="grid lg:grid-cols-4 gap-5 mt-10">
+        <div className="grid
+grid-cols-1
+sm:grid-cols-2
+lg:grid-cols-4 gap-5 mt-10">
 
           {[
             "Bryson Tyler Originals",
@@ -190,7 +196,8 @@ export default function MembershipBanner({
         {/* CTA */}
 
         {membership !== "elite" && (
-          <div className="mt-10 flex justify-end">
+          <div className="mt-10 flex justify-center
+lg:justify-end">
 
             <button className="rounded-2xl bg-yellow-500 hover:bg-yellow-400 transition px-8 py-4 text-black font-black flex items-center gap-3">
 
