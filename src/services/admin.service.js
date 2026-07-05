@@ -1,5 +1,9 @@
-import { httpGet, httpPatch, httpPost } from "@/lib/http";
-
+import {
+  httpGet,
+  httpPatch,
+  httpPost,
+  httpDelete,
+} from "@/lib/http";
 export const getAdminStats = () =>
   httpGet("/admin/stats");
 
@@ -52,3 +56,6 @@ export const rejectCreator = (id, reason) =>
 
   export const getMemberships = () =>
   httpGet("/admin/memberships");
+
+  export const deleteUser = (id) =>
+  httpDelete(`/admin/users/${id}`);

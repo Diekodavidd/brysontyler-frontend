@@ -11,6 +11,7 @@ import {
     rejectCreator,getAllCreators,getAllFans,
     getMemberships,
 } from "@/services/admin.service";
+import { deleteUser } from "../services/admin.service";
 
 export function useAdminStats() {
     return useQuery({
@@ -109,4 +110,34 @@ export function useAllFans() {
     queryKey: ["fans"],
     queryFn: getAllFans,
   });
+}
+
+
+export function useDeleteUser() {
+
+    const queryClient =
+        useQueryClient();
+
+    return useMutation({
+
+        mutationFn: deleteUser,
+
+        onSuccess: () => {
+
+            queryClient.invalidateQueries({
+                queryKey: ["fans"],
+            });
+
+            queryClient.invalidateQueries({
+                queryKey: ["all-creators"],
+            });
+
+            queryClient.invalidateQueries({
+                queryKey: ["admin-stats"],
+            });
+
+        },
+
+    });
+
 }

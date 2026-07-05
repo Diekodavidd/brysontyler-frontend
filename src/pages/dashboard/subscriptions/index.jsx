@@ -8,40 +8,56 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import {
-  useSubscriptions,
   useCancelSubscription,
 } from "@/hooks/useSubscription";
 import { X, UserPlus } from "lucide-react";
 import { useCreators } from "@/hooks/useCreator";
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../../store/useAuthStore";
+import CreatorPreviewModal from "./components/CreatorPreviewModal";
+import { useSubscriptions } from "../../../hooks/useFan";
 
 export default function FanSubscriptionsPage() {
   const [search, setSearch] = useState("");
   const [showCreators, setShowCreators] =
   useState(false);
-
+const user = useAuthStore(state => state.user);
 const navigate = useNavigate();
-
+const [selectedCreator, setSelectedCreator] = useState(null);
 const { data, isLoading } = useSubscriptions();
 const { data: creatorsData } =
   useCreators();
 
 const { mutate: cancelSubscription } =
   useCancelSubscription();
+  console.log("Subscriptions API:", data);
+const membership =
+    user?.membership?.plan || "FREE";
 
+const isFree =
+    membership === "FREE";
+
+const isVip =
+    membership === "VIP" ||
+    membership === "Elite";
 
 const subscriptions = data?.subscriptions || [];
 const creators =
   creatorsData?.creators || [];
+console.log(creators);
 
-const availableCreators =
-  creators.filter(
-    (creator) =>
-      !subscriptions.some(
-        (sub) =>
-          sub.creatorId?._id === creator._id
-      )
-  );
+const availableCreators = creators
+    .filter(
+        creator =>
+            !subscriptions.some(
+                sub =>
+                    sub.creatorId?._id === creator._id
+            )
+    )
+    .slice(
+        0,
+        isFree ? 5 : creators.length
+    );
  const filtered = useMemo(() => {
   return subscriptions.filter((sub) =>
     sub.creatorId?.name
@@ -269,10 +285,9 @@ ${item.amount}/month
             <div className="flex gap-4 mt-8">
 
               <button
-  onClick={() =>
-    navigate(`/creator/${item.creatorId._id}`)
-  }
-  className="flex-1 bg-yellow-500 hover:bg-yellow-400 text-black py-3 rounded-2xl font-black"
+              onClick={() =>
+    setSelectedCreator(item.creatorId)
+}  className="flex-1 bg-yellow-500 hover:bg-yellow-400 text-black py-3 rounded-2xl font-black"
 >
   Visit Creator
 </button>
@@ -324,58 +339,109 @@ ${item.amount}/month
 
         {availableCreators.map((creator) => (
 
-          <div
-            key={creator._id}
-            className="rounded-3xl bg-zinc-900 border border-white/5 p-6 hover:border-yellow-500/40 transition"
-          >
+  <div
+    key={creator._id}
+    className="rounded-3xl bg-zinc-900 border border-white/5 p-6 hover:border-yellow-500/40 transition"
+  >
 
-            <div className="w-20 h-20 rounded-full bg-yellow-500 text-black flex items-center justify-center text-2xl font-black">
+    <div className="w-20 h-20 rounded-full overflow-hidden bg-zinc-800">
 
-              {creator.name
+    {creator.profileImage ? (
+
+        <img
+            src={creator.profileImage}
+            alt={creator.name}
+            className="w-full h-full object-cover"
+        />
+
+    ) : (
+
+        <div className="w-full h-full flex items-center justify-center bg-yellow-500 text-black text-2xl font-black">
+
+            {creator.name
                 ?.split(" ")
                 .map((n) => n[0])
                 .join("")
                 .slice(0, 2)}
 
-            </div>
+        </div>
 
-            <h3 className="text-2xl font-black mt-6">
-              {creator.name}
-            </h3>
+    )}
 
-            <p className="text-zinc-500 mt-2 line-clamp-2">
-              {creator.bio || "No bio available."}
-            </p>
+</div>
 
-            <div className="flex gap-3 mt-8">
+    <h3 className="text-2xl font-black mt-6">
+      {creator.name}
+    </h3>
 
-              <button
-                onClick={() =>
-                  navigate(`/creator/${creator._id}`)
-                }
-                className="flex-1 bg-yellow-500 text-black py-3 rounded-2xl font-black"
-              >
-                View
-              </button>
+    <p className="text-zinc-500 mt-2 line-clamp-2">
+      {creator.bio || "No bio available."}
+    </p>
 
-              <button
-                className="flex items-center justify-center gap-2 flex-1 border border-white/10 rounded-2xl py-3 hover:border-yellow-500"
-              >
-                <UserPlus size={18} />
-                Subscribe
-              </button>
+   <div className="mt-8">
 
-            </div>
+    <button
+        disabled={isFree}
+        onClick={() =>
+            !isFree &&
+setSelectedCreator(creator)        }
+        className={`w-full py-3 rounded-2xl font-black ${
+            isFree
+                ? "bg-zinc-700 text-zinc-400 cursor-not-allowed"
+                : "bg-yellow-500 text-black hover:bg-yellow-400"
+        }`}
+    >
+        {isFree ? "VIP Required" : "View Profile"}
+    </button>
 
-          </div>
+</div>
 
-        ))}
+  </div>
+
+))}
+
+{isFree && creators.length > 5 && (
+
+  <div className="col-span-full mt-6">
+
+    <div className="rounded-3xl border border-yellow-500/30 bg-gradient-to-r from-yellow-500/10 to-black p-10 text-center">
+
+      <h2 className="text-4xl font-black">
+        Unlock {creators.length - 5} More Creators
+      </h2>
+
+      <p className="text-zinc-400 mt-4 max-w-2xl mx-auto">
+        Upgrade to VIP to browse our complete creator catalog,
+        visit creator profiles, subscribe to premium creators,
+        and unlock exclusive content.
+      </p>
+
+      <button
+        onClick={() => navigate("/dashboard/membership")}
+        className="mt-8 bg-yellow-500 hover:bg-yellow-400 text-black px-8 py-4 rounded-2xl font-black"
+      >
+        Upgrade to VIP
+      </button>
+
+    </div>
+
+  </div>
+
+)}
 
       </div>
 
     </div>
 
   </div>
+)}
+
+{selectedCreator && (
+    <CreatorPreviewModal
+    creator={selectedCreator}
+    subscriptions={subscriptions}
+    onClose={() => setSelectedCreator(null)}
+/>
 )}
     </div>
   );

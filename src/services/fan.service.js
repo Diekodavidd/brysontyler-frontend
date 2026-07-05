@@ -1,21 +1,13 @@
-import api from "@/lib/api";
+import { httpGet } from "@/lib/http";
 
-export const getDashboard = async () => {
-  const { data } = await api.get("/fan/dashboard");
-  return data;
-};
+export const getDashboard = () =>
+  httpGet("/fan/dashboard");
 
-export const getHistory = async () => {
-  const { data } = await api.get("/fan/history");
-  return data;
-};
+export const getHistory = () =>
+  httpGet("/fan/history");
 
-export const getSubscriptions = async () => {
-  const { data } = await api.get("/subscription/my-subscriptions");
-  return data;
-};
+export const getSubscriptions = () =>
+  httpGet("/fan/subscriptions");
 
-export const getPayments = async () => {
-  const { data } = await api.get("/payment");
-  return data;
-};
+export const getPayments = () =>
+  httpGet("/payment");

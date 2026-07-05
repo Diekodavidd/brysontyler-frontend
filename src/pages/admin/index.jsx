@@ -14,9 +14,11 @@ import {
   XCircle,
 } from "lucide-react";
 import { useAdminStats } from "@/hooks/useAdmin";
+import { useNavigate } from "react-router-dom";
+
 
 export default function AdminOverview() {
-
+const navigate = useNavigate();
 const {
     data,
     isLoading,
@@ -82,7 +84,6 @@ const statsData = data?.stats;
         icon: DollarSign,
     },
 ];
-
   const notifications =
     data?.latestUsers?.map((user) => ({
         text: `${user.name} joined as ${user.role}`,
@@ -183,7 +184,7 @@ if (isLoading) {
           </div>
         </div>
 
-        <div className="rounded-3xl border border-white/5 bg-[#080808] p-8">
+        {/* <div className="rounded-3xl border border-white/5 bg-[#080808] p-8">
           <h2 className="text-xl font-black mb-8">
             Quick Actions
           </h2>
@@ -209,7 +210,47 @@ if (isLoading) {
               Reports
             </button>
           </div>
-        </div>
+        </div> */}
+        <div className="rounded-3xl border border-white/5 bg-[#080808] p-8">
+  <h2 className="text-xl font-black mb-8">
+            Quick Actions
+          </h2>
+                    <div className="grid grid-cols-2 gap-4">
+
+  <button
+    onClick={() => navigate("/admin/gallery")}
+    className="rounded-2xl bg-amber-500 py-5 text-black font-black hover:bg-amber-400 transition flex flex-col items-center gap-2"
+  >
+    <Upload size={20} />
+    Upload Brand Video
+  </button>
+
+  <button
+    onClick={() => navigate("/admin/pending-creators")}
+    className="rounded-2xl bg-zinc-900 py-5 hover:bg-zinc-800 transition flex flex-col items-center gap-2"
+  >
+    <UserCheck size={20} />
+    Review Creators
+  </button>
+
+  <button
+    onClick={() => navigate("/admin/memberships")}
+    className="rounded-2xl bg-zinc-900 py-5 hover:bg-zinc-800 transition flex flex-col items-center gap-2"
+  >
+    <Wallet size={20} />
+    Memberships
+  </button>
+
+  <button
+    onClick={() => navigate("/admin/reports")}
+    className="rounded-2xl bg-zinc-900 py-5 hover:bg-zinc-800 transition flex flex-col items-center gap-2"
+  >
+    <FileText size={20} />
+    Reports
+  </button>
+  </div>
+
+</div>
       </div>
 
       {/* Pending Creators */}
@@ -258,55 +299,7 @@ if (isLoading) {
         </div>
 
         {/* Actions */}
-        <div
-          className="
-            flex
-            flex-col
-            sm:flex-row
-            gap-3
-            w-full
-            lg:w-auto
-          "
-        >
-          <button
-            className="
-              flex
-              items-center
-              justify-center
-              gap-2
-              rounded-xl
-              bg-green-500
-              px-5
-              py-3
-              font-bold
-              text-black
-              w-full
-              sm:w-auto
-            "
-          >
-            <CheckCircle2 size={16} />
-            Approve
-          </button>
-
-          <button
-            className="
-              flex
-              items-center
-              justify-center
-              gap-2
-              rounded-xl
-              bg-red-500
-              px-5
-              py-3
-              font-bold
-              w-full
-              sm:w-auto
-            "
-          >
-            <XCircle size={16} />
-            Reject
-          </button>
-        </div>
+       
       </div>
     </div>
   ))}

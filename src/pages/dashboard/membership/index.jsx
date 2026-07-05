@@ -5,30 +5,70 @@ import {
   Sparkles,
   ArrowRight,
 } from "lucide-react";
-
+import { useNavigate } from "react-router-dom";
+import { Loader2 } from "lucide-react";
 import {
+  useMembership,
   useCreateMembership,
 } from "@/hooks/useMembership";
 import { useAuthStore } from "@/store/useAuthStore";
-
+import { useState } from "react";
 export default function FanMembershipPage() {
  const user = useAuthStore((state) => state.user);
+const navigate = useNavigate();
+const [loadingPlan, setLoadingPlan] = useState(null);
+ const {
+    data,
+    isLoading,
+} = useMembership();
+
 const {
   mutate: buyMembership,
   isPending,
 } = useCreateMembership();
+
 const membership =
-  user?.membership || {};
+    data?.membership ||
+    user?.membership ||
+    {};
 
 const currentPlan =
-  membership.plan || "FREE";
+    membership?.plan || "FREE";
 
 const status =
-  membership.status || "active";
+    membership?.status || "active";
 
 const expiry =
-  membership.endDate;
+    membership?.endDate;
+const handleMembership = (plan) => {
+  setLoadingPlan(plan);
 
+  buyMembership(plan, {
+    onSuccess: (data) => {
+      const payment = data.payment;
+
+      navigate(`/dashboard/payment/${payment.payment_id}`);
+    },
+
+    onError: (err) => {
+      console.log(err);
+      setLoadingPlan(null);
+    },
+  });
+};
+if (isLoading) {
+
+    return (
+
+        <div className="flex justify-center py-20">
+
+            Loading Membership...
+
+        </div>
+
+    );
+
+}
   return (
     <div className="space-y-8">
 
@@ -168,7 +208,7 @@ const expiry =
 
               {currentPlan === "VIP"
     ? "Current Plan"
-    : currentPlan === "Elite"
+    : currentPlan === "ELITE"
     ? "Downgrade to VIP"
     : "Upgrade to VIP"}
 
@@ -206,32 +246,22 @@ const expiry =
 
 </div>
 
-          <button
-            disabled={
-              isPending ||
-              currentPlan === "VIP"
-            }
-            onClick={() => {
-  console.log("VIP CLICKED");
-
-  buyMembership("VIP", {
-    onSuccess: (data) => {
-      console.log("SUCCESS", data);
-    },
-    onError: (err) => {
-      console.log("ERROR", err);
-    },
-  });
-}
-            }
-            className="mt-10 w-full rounded-2xl bg-yellow-500 py-4 text-black font-black hover:bg-yellow-400"
-          >
-
-            {currentPlan === "VIP"
-              ? "Current Plan"
-              : "Upgrade"}
-
-          </button>
+     <button
+disabled={loadingPlan !== null || currentPlan === "VIP"}
+  onClick={() => handleMembership("VIP")}
+  className="mt-10 w-full rounded-2xl bg-yellow-500 py-4 text-black font-black hover:bg-yellow-400 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+>
+{loadingPlan === "VIP" ? (
+      <>
+      <Loader2 className="animate-spin" size={18} />
+      Creating Payment...
+    </>
+  ) : currentPlan === "VIP" ? (
+    "Current Plan"
+  ) : (
+    "Upgrade"
+  )}
+</button>
 
         </div>
 
@@ -241,9 +271,9 @@ const expiry =
 
           <h2 className="text-3xl font-black">
 
-            {currentPlan === "Elite"
+            {currentPlan === "ELITE"
     ? "Current Plan"
-    : "Upgrade to Elite"}
+    : "Upgrade to ELITE"}
 
           </h2>
 
@@ -273,28 +303,22 @@ const expiry =
 
 </div>
 
-          <button
-            disabled={
-              isPending ||
-              currentPlan === "Elite"
-            }
-            onClick={() =>
-              buyMembership("Elite", {
-                onSuccess: ({
-                  payment,
-                }) =>
-                  window.location.href =
-                    payment.invoice_url,
-              })
-            }
-            className="mt-10 w-full rounded-2xl bg-white text-black py-4 font-black hover:bg-zinc-200"
-          >
+         <button
+disabled={loadingPlan !== null || currentPlan === "ELITE"}
+    onClick={() => handleMembership("ELITE")}
+                className="mt-10 w-full rounded-2xl bg-white text-black py-4 font-black hover:bg-zinc-200"
 
-            {currentPlan === "Elite"
-              ? "Current Plan"
-              : "Upgrade"}
-
-          </button>
+>
+{loadingPlan === "ELITE" ? (
+      <>
+      <Loader2 className="animate-spin" size={18} />
+      Creating Payment...
+    </>
+  ) : currentPlan === "ELITE" ? (
+    "Current Plan"
+  ) : (
+    "Upgrade"
+  )}</button>
 
         </div>
 

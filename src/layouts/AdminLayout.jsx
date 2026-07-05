@@ -14,21 +14,19 @@ import {
   Users,
   ShieldAlert,
 } from "lucide-react";
+import { useAuthStore } from "../store/useAuthStore";
 
 export default function AdminDashboardLayout() {
-  const router = useRouter();
+   const router = useRouter();
   const pathname = usePathname();
+
+  const logout = useAuthStore((state) => state.logout);
 
  const navItems = [
   {
     name: "Dashboard",
     path: "/admin",
     icon: LayoutDashboard,
-  },
-  {
-    name: "Notifications",
-    path: "/admin/notifications",
-    icon: Bell,
   },
   {
     name: "Creator Applications",
@@ -59,6 +57,11 @@ export default function AdminDashboardLayout() {
     name: "Payout Requests",
     path: "/admin/payouts",
     icon: Wallet,
+  },
+   {
+    name: "Notifications",
+    path: "/admin/notifications",
+    icon: Bell,
   },
   {
     name: "Reports",
@@ -144,10 +147,16 @@ active
           </nav>
         </div>
 
-        <button className="flex items-center gap-2 text-zinc-700 hover:text-amber-500 text-xs font-bold tracking-widest transition-colors uppercase">
-          <LogOut size={16} />
-          Exit Panel
-        </button>
+        <button
+  onClick={() => {
+    logout();
+    router.replace("/login");
+  }}
+  className="flex items-center gap-2 text-zinc-700 hover:text-amber-500 text-xs font-bold tracking-widest transition-colors uppercase"
+>
+  <LogOut size={16} />
+  Exit Panel
+</button>
       </aside>
 
       {/* Main Content */}

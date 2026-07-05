@@ -10,3 +10,13 @@ export const useProfile = () => {
     }
   });
 };
+
+import { getPayment } from "@/services/payment.service";
+
+export const usePayment = (paymentId) =>
+  useQuery({
+    queryKey: ["payment", paymentId],
+    queryFn: () => getPayment(paymentId),
+    enabled: !!paymentId,
+    refetchInterval: 5000,
+  });

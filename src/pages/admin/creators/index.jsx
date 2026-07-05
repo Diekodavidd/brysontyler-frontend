@@ -3,6 +3,7 @@ import {
   Search,
   Filter,
   Eye,
+  CheckCircle2,
   ShieldCheck,
   Users,
   DollarSign,
@@ -11,11 +12,12 @@ import {
   XCircle,
 } from "lucide-react";
 
-import { useAllCreators } from "@/hooks/useAdmin";
+import { useAllCreators,  useDeleteUser, } from "@/hooks/useAdmin";
 
 export default function AdminCreatorsPage() {
   const [search, setSearch] = useState("");
   const [selectedCreator, setSelectedCreator] = useState(null);
+  const deleteMutation = useDeleteUser();
 
   const { data, isLoading } = useAllCreators();
 
@@ -188,6 +190,7 @@ if (isLoading) {
               {creator.creatorApproval?.status ===
                 "approved" && (
                 <ShieldCheck
+                
                   size={16}
                   className="text-emerald-400"
                 />
@@ -226,13 +229,14 @@ if (isLoading) {
 
       <td>
         <button
-          onClick={() =>
-            setSelectedCreator(creator)
-          }
-          className="rounded-xl border border-white/10 p-3 hover:border-amber-500"
-        >
-          <Eye size={18} />
-        </button>
+  onClick={() => {
+    console.log(creator);
+    
+    setSelectedCreator(creator);
+  }}
+>
+  <Eye size={18} />
+</button>
       </td>
     </tr>
   ))}
@@ -248,7 +252,7 @@ if (isLoading) {
           <div className="max-h-[90vh] w-full max-w-5xl overflow-y-auto rounded-[32px] bg-[#0b0b0b] border border-white/10">
 
             <img
-              src={selectedCreator.cover}
+              src={selectedCreator.coverImage}
               className="h-72 w-full object-cover"
             />
 
@@ -259,7 +263,7 @@ if (isLoading) {
                 <div className="flex gap-6">
 
                   <img
-                    src={selectedCreator.avatar}
+                    src={selectedCreator.profileImage}
                     className="h-40 w-40 rounded-3xl border-4 border-[#0b0b0b] object-cover"
                   />
 
@@ -291,9 +295,11 @@ if (isLoading) {
 
                 <Info title="Email" value={selectedCreator.email} />
                 <Info title="Country" value={selectedCreator.country} />
-                <Info title="Joined" value={selectedCreator.joined} />
-                <Info title="Membership" value={selectedCreator.membership} />
-
+                <Info title="Joined" value={selectedCreator.createdAt} />
+<Info
+  title="Membership"
+  value={selectedCreator.membership?.plan || "-"}
+/>
                 <Info title="Subscribers" value={selectedCreator.subscribers} />
                 <Info title="Videos" value={selectedCreator.videos} />
                 <Info title="Revenue" value={selectedCreator.revenue} />
@@ -329,12 +335,17 @@ if (isLoading) {
 
                 </button>
 
-                <button className="rounded-2xl bg-red-500 px-6 py-4 font-black flex items-center gap-2">
 
-                  <Ban size={18} />
 
-                  Suspend
+            
 
+                <button className="rounded-2xl bg-red-500 px-6 py-4 font-black flex items-center gap-2"
+    variant="destructive"
+    onClick={() => deleteMutation.mutate(selectedCreator._id)}
+>
+                    <Ban size={18} />
+
+    Delete User
                 </button>
 
               </div>

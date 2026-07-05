@@ -7,29 +7,102 @@ import {
   Download,
   Receipt,
   ArrowDownLeft,
+  Loader2,
 } from "lucide-react";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/store/useAuthStore";
-import { usePayments } from "@/hooks/usePayment";
+import { useWallet , useBuyCoins,useAddFunds } from "@/hooks/useWallet";
+import AddFundsModal from "./components/AddFundsModal";
+
 
 export default function FanWalletPage() {
  const navigate = useNavigate();
-
+ const [loadingCoin, setLoadingCoin] = useState(null);
+const [showModal, setShowModal] =
+  useState(false);
 const user = useAuthStore((state) => state.user);
 
-const { data, isLoading } = usePayments();
+const {
+  data,
+  isLoading,
+} = useWallet();
 
-const transactions = data?.payments || [];
+const {
+  mutate: buyCoins,
+  isPending,
+} = useBuyCoins();
+
+const {
+  mutate: addFunds,
+  isPending: addingFunds,
+} = useAddFunds();
+const wallet = data?.wallet;
+
+const transactions =
+  wallet?.payments || [];
 
 const totalSpent = useMemo(() => {
-  return transactions.reduce(
-    (sum, tx) => sum + Number(tx.amount),
-    0
-  );
+  return transactions
+    .filter((tx) =>
+      ["finished", "confirmed"].includes(tx.paymentStatus)
+    )
+    .reduce((sum, tx) => sum + Number(tx.amount), 0);
 }, [transactions]);
 
+const increase = (type)=>{
+
+setQuantities(prev=>({
+
+...prev,
+
+[type]:prev[type]+1
+
+}));
+
+};
+
+const decrease=(type)=>{
+
+setQuantities(prev=>({
+
+...prev,
+
+[type]:
+
+Math.max(1,prev[type]-1)
+
+}));
+
+};
+
+const coinTypes = [
+  {
+    type: "gold",
+    name: "Gold Coin",
+    price: 5,
+    description: "Highest Value",
+  },
+  {
+    type: "silver",
+    name: "Silver Coin",
+    price: 2,
+    description: "Medium Value",
+  },
+  {
+    type: "ruby",
+    name: "Ruby Coin",
+    price: 1,
+    description: "Entry Value",
+  },
+];
+
+const [quantities, setQuantities] = useState({
+  gold: 1,
+  silver: 1,
+  ruby: 1,
+});
 if (isLoading) {
   return (
     <div className="h-[70vh] flex items-center justify-center text-zinc-500">
@@ -38,6 +111,43 @@ if (isLoading) {
   );
 }
 
+const handleBuyCoins = (coinType, quantity) => {
+
+    setLoadingCoin(coinType);
+
+    buyCoins(
+        {
+            coinType,
+            quantity,
+        },
+        {
+            onSuccess: ({ payment }) => {
+
+                navigate(
+                    `/dashboard/payment/${payment.payment_id}`
+                );
+
+            },
+
+            onSettled: () => {
+                setLoadingCoin(null);
+            },
+        }
+    );
+
+};
+
+const handleAddFunds = (amount) => {
+  addFunds(amount, {
+    onSuccess: ({ payment }) => {
+      setShowModal(false);
+
+      navigate(
+        `/dashboard/payment/${payment.payment_id}`
+      );
+    },
+  });
+};
   return (
     <div className="space-y-10">
 
@@ -61,10 +171,13 @@ if (isLoading) {
 
         </div>
 
-        <button className="px-6 py-3 rounded-2xl bg-yellow-500 hover:bg-yellow-400 text-black font-black transition flex items-center gap-2">
-          <Plus size={18} />
-          Add Funds
-        </button>
+        <button
+  onClick={() => setShowModal(true)}
+  className="px-6 py-3 rounded-2xl bg-yellow-500 hover:bg-yellow-400 text-black font-black transition flex items-center gap-2"
+>
+  <Plus size={18} />
+  Add Funds
+</button>
 
       </div>
 
@@ -82,9 +195,39 @@ if (isLoading) {
       Coin Balance
     </p>
 
-    <h2 className="text-4xl font-black mt-2">
-      {user?.coinBalance || 0}
-    </h2>
+    <div className="space-y-3 mt-5">
+
+<div className="flex justify-between">
+
+<span>🥇 Gold</span>
+
+<strong>
+{user?.coinBalances?.gold || 0}
+</strong>
+
+</div>
+
+<div className="flex justify-between">
+
+<span>🥈 Silver</span>
+
+<strong>
+{user?.coinBalances?.silver || 0}
+</strong>
+
+</div>
+
+<div className="flex justify-between">
+
+<span>♦ Ruby</span>
+
+<strong>
+{user?.coinBalances?.ruby || 0}
+</strong>
+
+</div>
+
+</div>
 
     <p className="mt-3 font-semibold">
       ≈ ${(user?.coinBalance / 100).toFixed(2)}
@@ -101,8 +244,8 @@ if (isLoading) {
     </p>
 
     <h2 className="text-4xl font-black mt-2">
-      $0.00
-    </h2>
+${wallet?.balance?.toFixed(2) || "0.00"}   
+ </h2>
 
     <p className="text-zinc-500 mt-3">
       Available Credit
@@ -143,7 +286,7 @@ if (isLoading) {
     </p>
 
     <h2 className="text-4xl font-black mt-2">
-      {user?.membership?.plan || "FREE"}
+{wallet?.membership?.plan || "FREE"}
     </h2>
 
     <p className="text-green-400 mt-3">
@@ -160,69 +303,50 @@ if (isLoading) {
 
   <div className="flex items-center justify-between flex-wrap gap-8">
 
-    <div>
+    <div className="max-w-lg">
 
       <h2 className="text-2xl font-black">
-        Coin Conversion
+        Coin Store
       </h2>
 
       <p className="text-zinc-500 mt-3">
-        Coins are used for premium videos,
-        livestreams, tipping creators and
-        exclusive content.
+        Purchase individual coin types in any quantity.
+        Each coin has a different value and can be used
+        across premium videos, livestreams, tipping,
+        exclusive content and creator interactions.
       </p>
 
     </div>
 
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div className="grid md:grid-cols-3 gap-4">
 
-      <div className="rounded-2xl bg-black/40 px-6 py-5 text-center">
+      {coinTypes.map((coin) => (
 
-        <h3 className="font-black">
-          500
-        </h3>
+        <div
+          key={coin.type}
+          className="rounded-2xl bg-black/40 border border-white/5 px-6 py-5 text-center"
+        >
 
-        <p className="text-zinc-500">
-          $5
-        </p>
+          <Coins
+            size={30}
+            className="mx-auto text-yellow-400 mb-3"
+          />
 
-      </div>
+          <h3 className="font-black text-lg">
+            {coin.name}
+          </h3>
 
-      <div className="rounded-2xl bg-black/40 px-6 py-5 text-center">
+          <p className="text-yellow-400 font-bold mt-2">
+            ${coin.price} / Coin
+          </p>
 
-        <h3 className="font-black">
-          1000
-        </h3>
+          <p className="text-xs text-zinc-500 mt-2">
+            {coin.description}
+          </p>
 
-        <p className="text-zinc-500">
-          $10
-        </p>
+        </div>
 
-      </div>
-
-      <div className="rounded-2xl bg-black/40 px-6 py-5 text-center">
-
-        <h3 className="font-black">
-          2500
-        </h3>
-
-        <p className="text-zinc-500">
-          $25
-        </p>
-
-      </div>
-
-      <div className="rounded-2xl bg-black/40 px-6 py-5 text-center">
-
-        <h3 className="font-black">
-          5000
-        </h3>
-
-        <p className="text-zinc-500">
-          $50
-        </p>
-
-      </div>
+      ))}
 
     </div>
 
@@ -230,65 +354,94 @@ if (isLoading) {
 
 </div>
 
-      {/* Quick Actions */}
 
-     {/* Coin Packages */}
 
-<div className="grid lg:grid-cols-4 md:grid-cols-2 gap-6">
 
-  {[
-    {
-      coins: 500,
-      price: 5,
-    },
-    {
-      coins: 1000,
-      price: 10,
-    },
-    {
-      coins: 2500,
-      price: 25,
-    },
-    {
-      coins: 5000,
-      price: 50,
-    },
-  ].map((pkg) => (
+
+{/* Purchase Coins */}
+
+<div className="grid lg:grid-cols-3 gap-6">
+
+  {coinTypes.map((coin) => (
 
     <div
-      key={pkg.coins}
+      key={coin.type}
       className="rounded-3xl bg-zinc-900 border border-white/5 p-7 hover:border-yellow-500 transition"
     >
 
       <Coins
+        size={36}
         className="text-yellow-400"
-        size={32}
       />
 
-      <h2 className="text-4xl font-black mt-5">
-
-        {pkg.coins}
-
+      <h2 className="text-3xl font-black mt-5">
+        {coin.name}
       </h2>
 
       <p className="text-zinc-500 mt-2">
-
-        Coins
-
+        ${coin.price} per coin
       </p>
 
-      <h3 className="text-3xl font-black mt-6">
+      <div className="mt-6">
 
-        ${pkg.price}
+        <label className="text-sm text-zinc-400">
+          Quantity
+        </label>
 
-      </h3>
+        <input
+          type="number"
+          min={1}
+          value={quantities[coin.type]}
+          onChange={(e) =>
+            setQuantities((prev) => ({
+              ...prev,
+              [coin.type]:
+                Number(e.target.value) || 1,
+            }))
+          }
+          className="mt-2 w-full rounded-xl bg-black border border-white/10 px-4 py-3 outline-none focus:border-yellow-500"
+        />
+
+      </div>
+
+      <div className="mt-6">
+
+        <p className="text-sm text-zinc-500">
+          Total
+        </p>
+
+        <h3 className="text-3xl font-black text-yellow-400">
+          $
+          {(
+            coin.price *
+            quantities[coin.type]
+          ).toFixed(2)}
+        </h3>
+
+      </div>
 
       <button
-        className="mt-8 w-full rounded-2xl bg-yellow-500 text-black py-3 font-black hover:bg-yellow-400"
+disabled={loadingCoin === coin.type}
+        onClick={() =>
+          handleBuyCoins(
+            coin.type,
+            quantities[coin.type]
+          )
+        }
+        className="mt-8 w-full rounded-2xl bg-yellow-500 text-black py-3 font-black hover:bg-yellow-400 disabled:opacity-60 flex justify-center items-center gap-2"
       >
-
-        Buy Coins
-
+        {
+loadingCoin === coin.type ? (
+    <>
+        <Loader2
+            size={18}
+            className="animate-spin"
+        />
+        Creating Payment...
+    </>
+) : (
+    "Buy Coins"
+)}
       </button>
 
     </div>
@@ -314,8 +467,18 @@ if (isLoading) {
 
         <div>
 
-          {transactions.map((tx) => (
+          {transactions.map((tx) => {
+const success = [
 
+"confirmed",
+
+"finished",
+
+"sending",
+
+"partially_paid",
+
+].includes(tx.paymentStatus);
             <div
               key={tx._id}
               className="flex justify-between items-center px-8 py-6 border-b border-white/5 last:border-none hover:bg-white/[0.02] transition"
@@ -336,8 +499,29 @@ if (isLoading) {
                 <div>
 
                   <h3 className="font-bold">
-Subscription to {tx.creatorId?.name}
-                  </h3>
+{
+tx.paymentType==="coins" &&
+
+`${tx.coinPurchase.quantity}
+${tx.coinPurchase.coinType}
+coins`
+}
+
+{
+tx.paymentType==="wallet" &&
+"Wallet Deposit"
+}
+
+{
+tx.paymentType==="membership" &&
+`${tx.membershipPlan} Membership`
+}
+
+{
+tx.paymentType==="subscription" &&
+`Subscription to ${tx.creatorId?.name}`
+}
+                      </h3>
 
                   <p className="text-zinc-500 text-sm">
 {new Date(tx.createdAt).toLocaleString()}
@@ -348,22 +532,28 @@ Subscription to {tx.creatorId?.name}
               </div>
 
               <div
+              
                 className={`font-black text-lg ${
-tx.paymentStatus === "completed"
-                    ? "text-green-400"
-                    : "text-red-400"
-                }`}
+    success
+        ? "text-green-400"
+        : "text-red-400"
+}`}
               >
 -${tx.amount}              </div>
 
             </div>
 
-          ))}
+})}
 
         </div>
 
       </div>
-
+<AddFundsModal
+  open={showModal}
+  onClose={() => setShowModal(false)}
+  onSubmit={handleAddFunds}
+  isPending={addingFunds}
+/>
     </div>
   );
 }
