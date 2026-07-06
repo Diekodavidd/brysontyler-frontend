@@ -39,6 +39,11 @@ export default function AdminDashboardLayout() {
     icon: Users,
   },
   {
+    name: "Content Approval",
+    path: "/admin/content-approval",
+    icon: Film,
+  },
+  {
     name: "Fans",
     path: "/admin/fans",
     icon: Users,

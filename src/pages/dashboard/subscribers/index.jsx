@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Users,
   Search,
@@ -6,15 +6,24 @@ import {
   Shield,
 } from "lucide-react";
 
-import { useSubscribers } from "@/hooks/useSubscribers";
+import { useCreatorSubscribers, useUpdateSubscriptionPrice } from "../../../hooks/useSubscribers";
+import { useAuthStore } from "../../../store/useAuthStore";
 
 export default function SubscribersPage() {
   const [search, setSearch] = useState("");
 
-  const {
-    data: subscribers = [],
-    isLoading,
-  } = useSubscribers();
+ const {
+  data,
+  isLoading,
+} = useCreatorSubscribers();
+console.log(data);
+
+const subscribers = data?.subscribers || [];
+const user = useAuthStore(state => state.user);
+
+console.log(subscribers, "SUBSCRIBERS DATA");
+const subscriptionPrice =
+  data?.subscriptionPrice ?? 0;
 
   const filteredSubscribers = useMemo(() => {
     return subscribers.filter((subscriber) => {
@@ -31,7 +40,15 @@ export default function SubscribersPage() {
       );
     });
   }, [subscribers, search]);
+const [price, setPrice] = useState(subscriptionPrice);
 
+useEffect(() => {
+  setPrice(subscriptionPrice);
+}, [subscriptionPrice]);
+const {
+  mutate: updatePrice,
+  isPending,
+} = useUpdateSubscriptionPrice();
   if (isLoading) {
     return (
       <div className="h-[70vh] flex items-center justify-center">
@@ -124,7 +141,37 @@ export default function SubscribersPage() {
             className="bg-transparent outline-none w-full"
           />
         </div>
+<h2 className="text-2xl font-black">
+    Monthly Subscription Price
+</h2>
 
+<p className="text-zinc-500 mb-5">
+    Current Price:
+    <span className="text-yellow-400 font-bold ml-2">
+        ${subscriptionPrice}
+    </span>
+</p>
+
+<div className="flex gap-4">
+    <input
+        type="number"
+        min="1"
+        step="0.01"
+        value={price}
+        onChange={(e) =>
+            setPrice(e.target.value)
+        }
+        className="flex-1 rounded-xl bg-zinc-800 px-5 py-4"
+    />
+
+    <button
+  disabled={isPending}
+  onClick={() => updatePrice(Number(price))}
+  className="bg-yellow-500 text-black font-black px-8 rounded-xl disabled:opacity-50"
+>
+  {isPending ? "Updating..." : "Update Price"}
+</button>
+</div>
         <table className="w-full text-left">
           <thead>
             <tr className="text-zinc-500 text-[10px] uppercase tracking-widest border-b border-white/5">

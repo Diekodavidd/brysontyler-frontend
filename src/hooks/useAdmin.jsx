@@ -11,7 +11,7 @@ import {
     rejectCreator,getAllCreators,getAllFans,
     getMemberships,
 } from "@/services/admin.service";
-import { deleteUser } from "../services/admin.service";
+import { approveContent, deleteUser, getPendingContent, getReviewedContent, rejectContent, requestChanges } from "../services/admin.service";
 
 export function useAdminStats() {
     return useQuery({
@@ -140,4 +140,96 @@ export function useDeleteUser() {
 
     });
 
+}
+
+export function usePendingContent() {
+
+    return useQuery({
+
+        queryKey:["pending-content"],
+
+        queryFn:getPendingContent,
+
+    });
+
+}
+
+export function useApproveContent(){
+
+    const qc = useQueryClient();
+
+    return useMutation({
+
+        mutationFn: approveContent,
+
+        onSuccess:()=>{
+
+            qc.invalidateQueries({
+                queryKey:["pending-content"],
+            });
+
+            qc.invalidateQueries({
+                queryKey:["admin-stats"],
+            });
+
+        }
+
+    });
+
+}
+export function useRejectContent(){
+
+    const qc = useQueryClient();
+
+    return useMutation({
+
+        mutationFn: rejectContent,
+
+        onSuccess:()=>{
+
+            qc.invalidateQueries({
+                queryKey:["pending-content"],
+            });
+
+            qc.invalidateQueries({
+                queryKey:["admin-stats"],
+            });
+
+        }
+
+    });
+
+}
+
+export function useRequestChanges(){
+
+    const qc = useQueryClient();
+
+    return useMutation({
+
+        mutationFn: requestChanges,
+
+        onSuccess:()=>{
+
+            qc.invalidateQueries({
+                queryKey:["pending-content"],
+            });
+
+            qc.invalidateQueries({
+                queryKey:["admin-stats"],
+            });
+
+        }
+
+    });
+
+}
+
+
+
+export function useReviewedContent() {
+  return useQuery({
+    queryKey: ["reviewed-content"],
+    queryFn: getReviewedContent,
+  });
 }

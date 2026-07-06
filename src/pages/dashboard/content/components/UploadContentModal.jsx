@@ -51,53 +51,57 @@ export default function UploadContentModal({
 
   const [thumbnailPreview, setThumbnailPreview] =
     useState("");
+const [previewFile, setPreviewFile] = useState(null);
 
- const [form, setForm] = useState({
+const previewInputRef = useRef(null);
+
+const [uploadProgress, setUploadProgress] = useState(0);
+const [previewVideo, setPreviewVideo] = useState("");
+const [form, setForm] = useState({
   title: "",
   description: "",
-
   category: "General",
-
   tags: "",
-
   visibility: "free",
 
-  type: "video",
-
   price: "",
-
   releaseDate: "",
-
   releaseTime: "",
-
   collaborator: "",
 
   allowComments: true,
-
   featured: false,
-
   status: "pending_review",
+
+  geoBlocking: false,
+  blockedCountries: [],
 });
   useEffect(() => {
     if (!open) {
+      setUploadProgress(0);
       setMediaFile(null);
       setThumbnailFile(null);
       setPreview("");
       setThumbnailPreview("");
+setPreviewFile(null);
+setPreviewVideo("");
 
-      setForm({
-        title: "",
-        description: "",
-        category: "",
-        tags: "",
-        visibility: "Free",
-        type: "video",
-        price: 0,
-        scheduledDate: "",
-        collaborator: "",
-        allowComments: true,
-        featured: false,
-      });
+     setForm({
+  title: "",
+  description: "",
+  category: "General",
+  tags: "",
+  visibility: "free",
+  price: "",
+  releaseDate: "",
+  releaseTime: "",
+  collaborator: "",
+  allowComments: true,
+  featured: false,
+  geoBlocking: false,
+  blockedCountries: [],
+  status: "pending_review",
+});
     }
   }, [open]);
 
@@ -112,19 +116,7 @@ export default function UploadContentModal({
       URL.createObjectURL(file)
     );
 
-    if (
-      file.type.startsWith("image")
-    ) {
-      setForm((prev) => ({
-        ...prev,
-        type: "image",
-      }));
-    } else {
-      setForm((prev) => ({
-        ...prev,
-        type: "video",
-      }));
-    }
+ 
   };
 
   const chooseThumbnail = (
@@ -138,7 +130,15 @@ export default function UploadContentModal({
       URL.createObjectURL(file)
     );
   };
+const choosePreview = (file) => {
+  if (!file) return;
 
+  setPreviewFile(file);
+
+  setPreviewVideo(
+    URL.createObjectURL(file)
+  );
+};
   const handleChange = (
     key,
     value
@@ -158,7 +158,15 @@ export default function UploadContentModal({
 if (!thumbnailFile) {
     return alert("Please upload a thumbnail.");
 }
+if (!mediaFile) {
+    return alert("Please upload a video.");
+}
 
+if (!previewFile) {
+    return alert(
+        "Please upload a preview video."
+    );
+}
 if (!form.title.trim()) {
     return alert("Title is required.");
 }
@@ -169,7 +177,10 @@ if (!form.title.trim()) {
     "video",
     mediaFile
 );
-
+payload.append(
+    "preview",
+    previewFile
+);
     if (thumbnailFile) {
       payload.append(
         "thumbnail",
@@ -196,17 +207,29 @@ if (!form.title.trim()) {
       "visibility",
       form.visibility
     );
-
+payload.append(
+    "geoBlocking",
+    JSON.stringify({
+        enabled: form.geoBlocking,
+        blockedCountries: form.blockedCountries,
+    })
+);
     payload.append(
       "price",
       form.price
     );
 
-    payload.append(
-      "type",
-      form.type
-    );
+payload.append(
+    "ownerType",
+    "creator"
+);
 
+payload.append(
+    "mediaType",
+    mediaFile.type.startsWith("image")
+        ? "image"
+        : "video"
+);
     payload.append(
       "featured",
       form.featured
@@ -250,15 +273,47 @@ payload.append(
             .filter(Boolean)
     )
 );
-for (const [key] of payload.entries()) {
-    console.log(key);
+console.log("========== FORM DATA ==========");
+
+for (const [key, value] of payload.entries()) {
+
+    if (value instanceof File) {
+
+        console.log(
+            key,
+            value.name,
+            value.size,
+            value.type
+        );
+
+    } else {
+
+        console.log(key, value);
+
+    }
+
 }
     uploadMutation.mutate(
-      payload,
-      {
-        onSuccess: () => {
-          onClose();
+    {
+        data: payload,
+        onUploadProgress: (progress) => {
+            setUploadProgress(progress);
         },
+    },
+    {
+        onSuccess: () => {
+    setUploadProgress(100);
+
+    setTimeout(() => {
+        onClose();
+    }, 500);
+},
+        onError: (error) => {
+            console.error("Upload failed:", error);
+            alert(
+                "Upload failed. Please try again."
+            );
+        }
       }
     );
   };
@@ -300,8 +355,7 @@ for (const [key] of payload.entries()) {
 
           </div>
 
-          <div className="grid-cols-1 lg:grid-cols-2 gap-10">
-
+<div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
             {/* LEFT */}
 
             <div className="space-y-8">
@@ -325,8 +379,7 @@ for (const [key] of payload.entries()) {
 
                   {preview ? (
 
-                    form.type ===
-                    "image" ? (
+                  mediaFile?.type.startsWith("image") ? (
 
                       <img
                         src={preview}
@@ -370,7 +423,65 @@ for (const [key] of payload.entries()) {
                   )}
 
                 </div>
+{/* PREVIEW VIDEO */}
 
+<div className="mt-6">
+
+  <label className="font-bold mb-3 block">
+    Preview Video
+  </label>
+
+  <div
+    onClick={() =>
+      previewInputRef.current?.click()
+    }
+    className="cursor-pointer rounded-3xl border border-sky-500/30 h-56 bg-black flex items-center justify-center overflow-hidden"
+  >
+
+    {previewVideo ? (
+
+      <video
+        src={previewVideo}
+        controls
+        className="w-full h-full object-cover rounded-3xl"
+      />
+
+    ) : (
+
+      <div className="text-center">
+
+        <Video
+          size={50}
+          className="mx-auto text-sky-400"
+        />
+
+        <p className="mt-4 font-bold">
+          Upload Preview Clip
+        </p>
+
+        <p className="text-zinc-500 text-sm mt-2">
+          Fans will watch this before purchasing.
+        </p>
+
+      </div>
+
+    )}
+
+  </div>
+
+  <input
+    hidden
+    ref={previewInputRef}
+    type="file"
+    accept="video/*"
+    onChange={(e) =>
+      choosePreview(
+        e.target.files?.[0]
+      )
+    }
+  />
+
+</div>
                 <input
                   hidden
                   ref={
@@ -506,19 +617,19 @@ for (const [key] of payload.entries()) {
 
 <option>Entertainment</option>
 
-<option>Lifestyle</option>
+<option>Threesome</option>
 
 <option>Fitness</option>
 
-<option>Music</option>
+<option>Solo</option>
 
-<option>Fashion</option>
+<option>Couples</option>
 
 <option>Podcast</option>
 
-<option>Education</option>
+<option>Behind the Scenes</option>
 
-<option>Gaming</option>
+<option>Group</option>
 
 <option>Adult</option>
 
@@ -574,18 +685,53 @@ Free
 Subscribers Only
 </option>
 
-<option value="ppv">
-Pay Per View
-</option>
 
-<option value="members_ppv">
-Members + Pay Per View
-</option>
 
 </select>
 
               </div>
+<div className="space-y-4 rounded-2xl border border-white/10 p-5">
 
+    <label className="flex items-center justify-between">
+
+        <span className="font-bold">
+            Enable Geo Blocking
+        </span>
+
+        <input
+            type="checkbox"
+            checked={form.geoBlocking}
+            onChange={(e)=>
+                handleChange(
+                    "geoBlocking",
+                    e.target.checked
+                )
+            }
+        />
+
+    </label>
+
+    {form.geoBlocking && (
+
+        <textarea
+            rows={4}
+            placeholder="Nigeria, Ghana, India"
+            value={form.blockedCountries.join(", ")}
+            onChange={(e)=>
+                handleChange(
+                    "blockedCountries",
+                    e.target.value
+                        .split(",")
+                        .map(country=>country.trim())
+                        .filter(Boolean)
+                )
+            }
+            className="w-full rounded-2xl bg-black border border-white/10 p-4"
+        />
+
+    )}
+
+</div>
               {/* PRICE */}
 
               {(form.visibility==="ppv" ||
@@ -763,7 +909,30 @@ Once approved, it will automatically publish on your selected release date and t
 
 </div>
               {/* BUTTONS */}
+{uploadMutation.isPending && (
+    <div className="space-y-3">
 
+        <div className="flex justify-between text-sm">
+
+            <span>Uploading...</span>
+
+            <span>{uploadProgress}%</span>
+
+        </div>
+
+        <div className="h-3 rounded-full bg-zinc-800 overflow-hidden">
+
+            <div
+                className="h-full bg-yellow-500 transition-all duration-300"
+                style={{
+                    width: `${uploadProgress}%`,
+                }}
+            />
+
+        </div>
+
+    </div>
+)}
 <div className="grid grid-cols-3 gap-4 pt-6">
                 <button
 type="button"

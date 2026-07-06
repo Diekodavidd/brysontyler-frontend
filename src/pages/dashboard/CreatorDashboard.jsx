@@ -11,17 +11,20 @@ import {
 } from "lucide-react";
 import { useAuthStore } from "../../store/useAuthStore";
 import { useMyContent } from "../../hooks/useContent";
-import { useSubscribers } from "../../hooks/useSubscribers";
+import { useCreatorSubscribers } from "../../hooks/useSubscribers";
 import { useRouter } from "@/compat/navigation";
 
 export default function CreatorDashboardPage() {
 const { push } = useRouter();
-    const { data: subscribers = [] } = useSubscribers();
+const { data: subscriberData } = useCreatorSubscribers();
 const { data: content = [] } = useMyContent();
 console.log(content)
 const user = useAuthStore((state) => state.user);
+const { data } = useCreatorSubscribers();
 
-  
+const subscribers = subscriberData?.subscribers ?? [];
+console.log(subscriberData);
+console.log(subscribers);
 const activeSubscribers = subscribers.filter(
   (sub) => sub.status === "active"
 );

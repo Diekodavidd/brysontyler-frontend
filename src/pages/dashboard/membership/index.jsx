@@ -46,8 +46,9 @@ const handleMembership = (plan) => {
   buyMembership(plan, {
     onSuccess: (data) => {
       const payment = data.payment;
+console.log(data);
 
-      navigate(`/dashboard/payment/${payment.payment_id}`);
+      navigate(`/dashboard/payment/${payment._id}`);
     },
 
     onError: (err) => {

@@ -1,328 +1,286 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import QRCode from "react-qr-code";
+import { useEffect } from "react";
 import {
-  Copy,
-  CheckCircle2,
-  Clock3,
-  Wallet,
-  ArrowLeft,
-  RefreshCw,
+    ArrowLeft,
+    RefreshCw,
+    ExternalLink,
+    CheckCircle2,
+    Clock3,
+    DollarSign,
 } from "lucide-react";
-import { useQueryClient } from "@tanstack/react-query";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { usePayment } from "@/hooks/usePayment";
 
-
 export default function PaymentPage() {
-  const { paymentId } = useParams();
-const queryClient = useQueryClient();
+    const { paymentId } = useParams();
 
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
-  const {
-    data,
-    error,
-    isError,
-    isLoading,
-    refetch,
-} = usePayment(paymentId);
+    const queryClient = useQueryClient();
 
-console.log(data);
-console.log(error);
-useEffect(() => {
-    if (!payment?.completed) return;
+    const {
+        data,
+        isLoading,
+        isError,
+        error,
+        refetch,
+    } = usePayment(paymentId);
 
-    queryClient.invalidateQueries({
-        queryKey: ["subscriptions"],
-    });
+    const payment = data?.payment;
 
-    queryClient.invalidateQueries({
-        queryKey: ["creators"],
-    });
+    useEffect(() => {
+        if (!payment?.completed) return;
 
-    setTimeout(() => {
-        navigate("/dashboard/subscriptions");
-    }, 1500);
+        queryClient.invalidateQueries({
+            queryKey: ["subscriptions"],
+        });
 
-}, [payment]);
-const payment = data?.payment;
+        queryClient.invalidateQueries({
+            queryKey: ["membership"],
+        });
 
-console.log("QUERY DATA:", data);
-console.log("PAYMENT:", payment);
-  const [timeLeft, setTimeLeft] = useState("");
+        queryClient.invalidateQueries({
+            queryKey: ["wallet"],
+        });
 
-  useEffect(() => {
-    if (!payment?.validUntil) return;
+        setTimeout(() => {
+            switch (payment.paymentType) {
+                case "membership":
+                    navigate("/dashboard/membership");
+                    break;
 
-    const timer = setInterval(() => {
-      const diff =
-        new Date(payment.validUntil) - new Date();
+                case "wallet":
+                    navigate("/dashboard/wallet");
+                    break;
 
-      if (diff <= 0) {
-        setTimeLeft("Expired");
-        clearInterval(timer);
-        return;
-      }
+                case "coins":
+                    navigate("/dashboard/coins");
+                    break;
 
-      const mins = Math.floor(diff / 60000);
+                case "subscription":
+                    navigate("/dashboard/subscriptions");
+                    break;
 
-      const secs = Math.floor(
-        (diff % 60000) / 1000
-      );
-
-      setTimeLeft(
-        `${mins}:${secs
-          .toString()
-          .padStart(2, "0")}`
-      );
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [payment]);
-
-useEffect(() => {
-  if (!payment) return;
-
-  if (payment.completed) {
-    const timer = setTimeout(() => {
-      switch (payment.paymentType) {
-        case "membership":
-          navigate("/dashboard/membership");
-          break;
-
-        case "wallet":
-          navigate("/dashboard/wallet");
-          break;
-
-        case "coins":
-          navigate("/dashboard/coins");
-          break;
-
-        case "subscription":
-          navigate("/dashboard/subscriptions");
-          break;
-
-        default:
-          navigate("/dashboard");
-      }
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }
-}, [payment, navigate]);
-
-  const copy = (text) => {
-    navigator.clipboard.writeText(text);
-  };
-
- if (isLoading || !payment) {
-  return (
-    <div className="py-32 text-center">
-      Loading Payment...
-    </div>
-  );
-}
-
-  return (
-    <div className="max-w-5xl mx-auto space-y-8">
-
-      <button
-        onClick={() => navigate(-1)}
-        className="flex items-center gap-2 text-zinc-400 hover:text-white"
-      >
-        <ArrowLeft size={18} />
-        Back
-      </button>
-
-      <div className="rounded-3xl border border-yellow-500/20 bg-zinc-900 p-8">
-
-        <div className="flex justify-between items-center">
-
-          <div>
-
-            <p className="uppercase tracking-[.35em] text-yellow-400 text-xs font-black">
-              Crypto Payment
-            </p>
-
-            <h1 className="text-4xl font-black mt-3">
-              {payment.membershipPlan} Membership
-            </h1>
-
-          </div>
-
-          <button
-            onClick={refetch}
-            className="rounded-xl bg-zinc-800 p-3"
-          >
-            <RefreshCw size={20} />
-          </button>
-
-        </div>
-
-      </div>
-
-      <div className="grid lg:grid-cols-2 gap-8">
-
-        <div className="rounded-3xl border border-white/5 bg-zinc-900 p-8">
-
-          <div className="flex justify-center">
-
-            <QRCode
-              value={payment.payAddress}
-              size={240}
-              bgColor="#fff"
-              fgColor="#000"
-            />
-
-          </div>
-
-          <p className="text-center text-zinc-500 mt-6">
-            Scan using your crypto wallet
-          </p>
-
-        </div>
-
-        <div className="space-y-5">
-
-          <Card
-            icon={<Wallet />}
-            title="Wallet Address"
-            value={payment.payAddress}
-            onCopy={() =>
-              copy(payment.payAddress)
+                default:
+                    navigate("/dashboard");
             }
-          />
+        }, 2000);
+    }, [payment]);
 
-          <Card
-            icon={<CheckCircle2 />}
-            title="Amount"
-            value={`${payment.payAmount} ${payment.payCurrency}`}
-          />
+    if (isLoading) {
+        return (
+            <div className="py-40 text-center text-white">
+                Loading payment...
+            </div>
+        );
+    }
 
-          <Card
-            icon={<Wallet />}
-            title="Network"
-            value={payment.network}
-          />
+    if (isError) {
+        return (
+            <div className="py-40 text-center text-red-500">
+                {error?.response?.data?.message ||
+                    "Unable to load payment."}
+            </div>
+        );
+    }
 
-          <Card
-            icon={<Clock3 />}
-            title="Expires In"
-            value={timeLeft}
-          />
+    if (!payment) {
+        return (
+            <div className="py-40 text-center">
+                Payment not found.
+            </div>
+        );
+    }
 
-          <Card
-  icon={<CheckCircle2 />}
-  title="Status"
-  value={
-    payment.completed
-      ? "Payment Completed ✅"
-      : payment.paymentStatus
-  }
-/>
+    return (
+        <div className="max-w-5xl mx-auto space-y-8">
+
+            <button
+                onClick={() => navigate(-1)}
+                className="flex items-center gap-2 text-zinc-400 hover:text-white"
+            >
+                <ArrowLeft size={18} />
+
+                Back
+            </button>
+
+            <div className="rounded-3xl bg-zinc-900 border border-yellow-500/20 p-8">
+
+                <div className="flex justify-between items-center">
+
+                    <div>
+
+                        <p className="uppercase tracking-[.35em] text-yellow-400 text-xs font-black">
+                            Secure Payment
+                        </p>
+
+                        <h1 className="text-4xl font-black mt-3">
+
+                            {payment.paymentType.toUpperCase()}
+
+                        </h1>
+
+                    </div>
+
+                    <button
+                        onClick={refetch}
+                        className="rounded-xl bg-zinc-800 p-3"
+                    >
+                        <RefreshCw size={20} />
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div className="grid lg:grid-cols-2 gap-8">
+
+                <div className="rounded-3xl bg-zinc-900 border border-white/5 p-8 flex flex-col justify-center">
+
+                    <h2 className="text-3xl font-black mb-5">
+                        Complete your payment
+                    </h2>
+
+                    <p className="text-zinc-400 mb-8 leading-8">
+
+                        You'll be redirected to NOWPayments where you can
+                        pay using your Debit Card, Credit Card or Crypto.
+
+                    </p>
+
+                    <button
+                        onClick={() =>
+                            window.open(
+                                payment.invoiceUrl,
+                                "_blank"
+                            )
+                        }
+                        className="py-5 rounded-2xl bg-yellow-500 text-black font-black flex justify-center items-center gap-3"
+                    >
+                        Continue To Payment
+
+                        <ExternalLink size={18} />
+                    </button>
+
+                </div>
+
+                <div className="space-y-5">
+
+                    <Card
+                        icon={<DollarSign />}
+                        title="Amount"
+                        value={`$${payment.amount}`}
+                    />
+
+                    <Card
+                        icon={<CheckCircle2 />}
+                        title="Status"
+                        value={
+                            payment.completed
+                                ? "Completed ✅"
+                                : payment.paymentStatus
+                        }
+                    />
+
+                    <Card
+                        icon={<Clock3 />}
+                        title="Provider"
+                        value="NOWPayments"
+                    />
+
+                    <Card
+                        icon={<CheckCircle2 />}
+                        title="Invoice ID"
+                        value={payment.invoiceId}
+                    />
+
+                </div>
+
+            </div>
+
+            {payment.completed && (
+
+                <div className="rounded-3xl border border-green-500/30 bg-green-500/10 p-8">
+
+                    <h2 className="text-3xl font-black text-green-400">
+
+                        Payment Successful 🎉
+
+                    </h2>
+
+                    <p className="mt-4 text-zinc-300">
+
+                        Your payment has been confirmed.
+
+                        Redirecting...
+
+                    </p>
+
+                </div>
+
+            )}
+
+            <div className="rounded-3xl border border-yellow-500/20 bg-yellow-500/10 p-8">
+
+                <h2 className="font-black text-xl">
+
+                    Instructions
+
+                </h2>
+
+                <ul className="mt-5 space-y-3 text-zinc-300">
+
+                    <li>
+                        • Click the button above.
+                    </li>
+
+                    <li>
+                        • Pay using Debit Card, Credit Card or Crypto.
+                    </li>
+
+                    <li>
+                        • Once payment is confirmed your account updates automatically.
+                    </li>
+
+                    <li>
+                        • You can refresh this page anytime.
+                    </li>
+
+                </ul>
+
+            </div>
 
         </div>
-
-      </div>
-{payment.completed && (
-  <div className="rounded-3xl border border-green-500/30 bg-green-500/10 p-6">
-    <h2 className="text-2xl font-black text-green-400">
-      Payment Successful 🎉
-    </h2>
-
-    <p className="mt-2 text-zinc-300">
-      Your payment has been confirmed and your account has already been updated.
-      Redirecting...
-    </p>
-  </div>
-)}
-      <div className="rounded-3xl border border-yellow-500/20 bg-yellow-500/10 p-8">
-
-        <h2 className="font-black text-xl">
-          Payment Instructions
-        </h2>
-
-        <ul className="space-y-3 mt-5 text-zinc-300">
-
-          <li>
-            • Send exactly{" "}
-            <strong>
-              {payment.payAmount}{" "}
-              {payment.payCurrency}
-            </strong>
-          </li>
-
-          <li>
-            • Send only on the{" "}
-            <strong>{payment.network}</strong>{" "}
-            network.
-          </li>
-
-          <li>
-            • Do not send from an unsupported
-            network.
-          </li>
-
-          <li>
-            • Membership activates
-            automatically after confirmation.
-          </li>
-
-          <li>
-            • This page refreshes every 5
-            seconds automatically.
-          </li>
-
-        </ul>
-
-      </div>
-
-    </div>
-  );
+    );
 }
 
 function Card({
-  title,
-  value,
-  icon,
-  onCopy,
+    icon,
+    title,
+    value,
 }) {
-  return (
-    <div className="rounded-2xl bg-zinc-900 border border-white/5 p-5">
+    return (
+        <div className="rounded-2xl bg-zinc-900 border border-white/5 p-5">
 
-      <div className="flex justify-between items-start">
+            <div className="flex items-center gap-3 text-yellow-400">
 
-        <div>
+                {icon}
 
-          <div className="flex items-center gap-3 text-yellow-400">
+                <span className="font-bold">
 
-            {icon}
+                    {title}
 
-            <p className="font-bold">
-              {title}
+                </span>
+
+            </div>
+
+            <p className="mt-4 text-lg font-semibold break-all">
+
+                {value}
+
             </p>
 
-          </div>
-
-          <p className="mt-4 break-all text-lg font-semibold">
-            {value}
-          </p>
-
         </div>
-
-        {onCopy && (
-          <button
-            onClick={onCopy}
-            className="rounded-xl bg-zinc-800 p-3 hover:bg-zinc-700"
-          >
-            <Copy size={18} />
-          </button>
-        )}
-
-      </div>
-
-    </div>
-  );
+    );
 }

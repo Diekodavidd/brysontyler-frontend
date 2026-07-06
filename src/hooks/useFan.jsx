@@ -24,3 +24,10 @@ export const usePayments = () =>
     queryKey: ["payments"],
     queryFn: fanService.getPayments,
   });
+
+export const useCreatorr = (id) =>
+  useQuery({
+    queryKey: ["creator", id],
+    queryFn: () => fanService.getCreatorById(id),
+    enabled: !!id,
+  });

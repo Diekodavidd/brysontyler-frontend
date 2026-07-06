@@ -11,3 +11,6 @@ export const getSubscriptions = () =>
 
 export const getPayments = () =>
   httpGet("/payment");
+
+export const getCreatorById = (id) =>
+  httpGet(`/fan/creator/${id}`);

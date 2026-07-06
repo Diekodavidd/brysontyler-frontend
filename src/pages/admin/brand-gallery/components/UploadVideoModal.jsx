@@ -87,7 +87,11 @@ const handleSubmit = async (e) => {
     "featured",
     String(form.featured)
   );
-
+data.append("type", "brand");
+data.append(
+    "visibility",
+    "free"
+);
   data.append("video", video);
   data.append("preview", preview);
   data.append("thumbnail", thumbnail);

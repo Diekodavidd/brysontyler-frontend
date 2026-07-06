@@ -3,8 +3,8 @@
 import { httpGet } from "@/lib/http";
 import { httpPost } from "../lib/http";
 
-export const getPayment = (paymentId) =>
-  httpGet(`/payments/now/${paymentId}`);
+export const getPayment = (invoiceId) =>
+    httpGet(`/payments/invoice/${invoiceId}`);
 
 export const createSubscriptionPayment = (creatorId) =>
   httpPost("/payments/subscription", {

@@ -73,12 +73,12 @@ free: content.filter(
       if (!matchesSearch) return false;
 
       switch (filter) {
-        case "videos":
-          return item.type === "video";
+      case "videos":
+  return item.mediaType === "video";
 
-        case "photos":
-          return item.type === "image";
-
+case "photos":
+  return item.mediaType === "image";
+  
       case "premium":
     return (
         item.visibility === "ppv" ||

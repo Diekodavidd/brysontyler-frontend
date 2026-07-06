@@ -7,6 +7,8 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useCreateSubscriptionPayment } from "@/hooks/usePayment";
+import { useCreatorr } from "@/hooks/useFan";
+import { useState } from "react";
 
 
 
@@ -19,16 +21,31 @@ export default function CreatorPreviewModal({
 }){
   if (!creator) return null;
 const navigate = useNavigate();
+const { data, isLoading } = useCreatorr(creator?._id);
+const [selectedPreview, setSelectedPreview] = useState(null);
+const fullCreator = data?.creator || creator;
+console.log("Creator Data:", fullCreator);
+
+const previews = fullCreator.contents?.slice(0, 6) || [];
 const { mutate, isPending } =
     useCreateSubscriptionPayment();
-  const previews =
-    creator.contents?.slice(0, 6) || [];
+  
 const alreadySubscribed =
     subscriptions.some(
         sub =>
-            sub.creatorId._id === creator._id &&
+            sub.creatorId._id === fullCreator._id &&
             sub.status === "active"
     );
+
+    if (isLoading) {
+  return (
+    <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/80">
+      <div className="text-white">
+        Loading creator...
+      </div>
+    </div>
+  );
+}
   return (
     <div className="fixed inset-0 z-[80] bg-black/80 backdrop-blur-lg flex items-center justify-center p-6">
 
@@ -39,10 +56,10 @@ const alreadySubscribed =
         <div className="relative">
 
 <div className="h-60 overflow-hidden rounded-t-3xl">
-  {creator.coverImage ? (
+  {fullCreator.coverImage ? (
     <img
-      src={creator.coverImage}
-      alt={`${creator.name} cover`}
+      src={fullCreator.coverImage}
+      alt={`${fullCreator.name} cover`}
       className="w-full h-full object-cover"
     />
   ) : (
@@ -63,15 +80,15 @@ const alreadySubscribed =
 
             <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-zinc-950 bg-zinc-800">
 
-              {creator.profileImage ? (
+              {fullCreator.profileImage ? (
                 <img
-                  src={creator.profileImage}
-                  alt={creator.name}
+                  src={fullCreator.profileImage}
+                  alt={fullCreator.name}
                   className="w-full h-full object-cover"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-yellow-500 text-black text-4xl font-black">
-                  {creator.name
+                  {fullCreator.name
                     ?.split(" ")
                     .map((n) => n[0])
                     .join("")
@@ -93,19 +110,19 @@ const alreadySubscribed =
 
               <h2 className="text-4xl font-black">
 
-                {creator.stageName || creator.name}
+                {fullCreator.stageName || fullCreator.name}
 
               </h2>
 
               <p className="text-zinc-500 mt-2">
 
-                @{creator.username}
+                @{fullCreator.username}
 
               </p>
 
               <p className="mt-6 text-zinc-300 max-w-2xl">
 
-                {creator.bio}
+                {fullCreator.bio}
 
               </p>
 
@@ -123,7 +140,7 @@ const alreadySubscribed =
 
               <h2 className="text-5xl font-black mt-3">
 
-                ${creator.subscriptionPrice}
+                ${fullCreator.subscriptionPrice}
 
               </h2>
 
@@ -140,67 +157,76 @@ const alreadySubscribed =
           {/* Preview */}
 
           <div className="mt-14">
+  <h3 className="text-2xl font-black">
+    Preview Content
+  </h3>
 
-            <h3 className="text-2xl font-black">
+  <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6 mt-6">
+    {previews.length > 0 ? (
+      previews.map((content) => (
+        <div
+          key={content._id}
+          onClick={() => setSelectedPreview(content)}
+          className="group cursor-pointer rounded-3xl overflow-hidden bg-zinc-900 border border-white/5 hover:border-yellow-500/40 transition-all duration-300"
+        >
+          <div className="relative h-56 overflow-hidden">
 
-              Preview Content
+            <video
+    src={content.previewUrl}
+    poster={content.thumbnail}
+    muted
+    loop
+    playsInline
+    preload="metadata"
+    onLoadedData={() => console.log("loaded")}
+    onCanPlay={() => console.log("can play")}
+    onPlay={() => console.log("playing")}
+    onError={(e) => console.log(e.target.error)}
+    onMouseEnter={(e) => e.target.play()}
+    onMouseLeave={(e) => {
+        e.target.pause();
+        e.target.currentTime = 0;
+    }}
 
-            </h3>
+              className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+            />
 
-            <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6 mt-6">
+            <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition flex items-center justify-center">
 
-              {previews.length > 0 ? (
-                previews.map((content) => (
+              <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center">
 
-                  <div
-                    key={content._id}
-                    className="rounded-3xl overflow-hidden bg-zinc-900 border border-white/5"
-                  >
+                <Play
+                  size={34}
+                  className="fill-white text-white ml-1"
+                />
 
-                    <div className="relative h-56">
-
-                      <img
-                        src={content.previewThumbnail}
-                        className="w-full h-full object-cover"
-                      />
-
-                      <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-
-                        <Play
-                          size={55}
-                          className="text-white"
-                        />
-
-                      </div>
-
-                    </div>
-
-                    <div className="p-5">
-
-                      <h4 className="font-bold">
-
-                        {content.title}
-
-                      </h4>
-
-                    </div>
-
-                  </div>
-
-                ))
-              ) : (
-
-                <div className="col-span-full text-center text-zinc-500 py-20">
-
-                  No preview content available.
-
-                </div>
-
-              )}
+              </div>
 
             </div>
 
           </div>
+
+          <div className="p-5">
+
+            <h4 className="font-bold text-lg">
+              {content.title}
+            </h4>
+
+            <p className="text-zinc-500 mt-2 text-sm line-clamp-2">
+              {content.description}
+            </p>
+
+          </div>
+
+        </div>
+      ))
+    ) : (
+      <div className="col-span-full text-center text-zinc-500 py-20">
+        No preview content available.
+      </div>
+    )}
+  </div>
+</div>
 
           {/* Features */}
 
@@ -258,10 +284,10 @@ const alreadySubscribed =
     disabled={isPending}
   onClick={() => {
   console.log("BUTTON CLICKED");
-  mutate(creator._id, {
+  mutate(fullCreator._id, {
     onSuccess: (res) => {
       console.log("SUCCESS", res);
-      navigate(`/dashboard/payment/${res.payment.payment_id}`);
+navigate(`/dashboard/payment/${res.payment.id}`);
     },
     onError: (err) => {
       console.log("ERROR", err);
@@ -274,7 +300,7 @@ const alreadySubscribed =
 
     {isPending
         ? "Creating Payment..."
-        : `Subscribe for $${creator.subscriptionPrice}/month`}
+        : `Subscribe for $${fullCreator.subscriptionPrice}/month`}
 </button>
 )}
         
@@ -284,7 +310,43 @@ const alreadySubscribed =
         </div>
 
       </div>
+{selectedPreview && (
+  <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex items-center justify-center p-6">
 
+    <div className="relative w-full max-w-5xl rounded-3xl overflow-hidden bg-black">
+
+      <button
+        onClick={() => setSelectedPreview(null)}
+        className="absolute top-5 right-5 z-10 w-12 h-12 rounded-full bg-black/60 hover:bg-black flex items-center justify-center"
+      >
+        <X />
+      </button>
+
+      <video
+        src={ selectedPreview.fileUrl}
+        controls
+        autoPlay
+        playsInline
+        poster={selectedPreview.thumbnail}
+        className="w-full max-h-[80vh] bg-black"
+      />
+
+      <div className="p-6 bg-zinc-950">
+
+        <h2 className="text-3xl font-black">
+          {selectedPreview.title}
+        </h2>
+
+        <p className="text-zinc-400 mt-4">
+          {selectedPreview.description}
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+)}
     </div>
   );
 }

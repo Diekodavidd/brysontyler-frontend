@@ -19,15 +19,18 @@ export const getPendingContent = () =>
 export const approveContent = (id) =>
   httpPatch(`/admin/content/${id}/approve`);
 
-export const rejectContent = (id, comment) =>
-  httpPatch(`/admin/content/${id}/reject`, {
+export const rejectContent = ({
+    id,
     comment,
-  });
+}) =>
+    httpPatch(
+        `/admin/content/${id}/reject`,
+        {
+            comment,
+        }
+    );
 
-export const requestChanges = (id, comment) =>
-  httpPatch(`/admin/content/${id}/request-changes`, {
-    comment,
-  });
+
 
 export const publishScheduledContent = () =>
   httpPost("/admin/content/publish");
@@ -59,3 +62,16 @@ export const rejectCreator = (id, reason) =>
 
   export const deleteUser = (id) =>
   httpDelete(`/admin/users/${id}`);
+
+
+  export const requestChanges = ({
+    id,
+    comment,
+}) =>
+    httpPatch(
+        `/admin/content/${id}/request-changes`,
+        { comment }
+    );
+
+    export const getReviewedContent = () =>
+  httpGet("/admin/content/reviewed");

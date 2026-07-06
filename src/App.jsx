@@ -145,7 +145,7 @@ export default function App() {
           <Route index element={<AdminPage />} />
           <Route path="payouts" element={<AdminPayoutsPage />} />
           <Route path="pending-creators" element={<AdminPendingCreatorsPage />} />
-          <Route path="content-review" element={<AdminContentReviewPage />} />
+          <Route path="content-approval" element={<AdminContentReviewPage />} />
           <Route path="notifications" element={<AdminNotificationsPage />} />
           <Route path="creators" element={<AdminCreatorsPage />} />
           <Route path="fans" element={<AdminFansPage />} />

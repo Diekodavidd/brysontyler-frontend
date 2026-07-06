@@ -12,66 +12,55 @@ import {
   PlayCircle,
 } from "lucide-react";
 
+import {
+  usePendingContent,
+  useApproveContent,
+  useRejectContent,
+} from "@/hooks/useAdmin";
+import { useReviewedContent } from "../../../hooks/useAdmin";
+
 export default function ContentReviewPage() {
   const [search, setSearch] = useState("");
   const [selectedContent, setSelectedContent] = useState(null);
 
-  const pendingContent = [
-    {
-      id: 1,
-      title: "Weekend in Santorini",
-      creator: "Jessica Adams",
-      category: "Travel",
-      membership: "VIP",
-      duration: "12:42",
-      uploaded: "15 mins ago",
-      thumbnail:
-        "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=800",
-      description:
-        "A cinematic travel vlog around Santorini featuring beaches, food and nightlife.",
-      status: "Pending Review",
-    },
-    {
-      id: 2,
-      title: "Morning Routine",
-      creator: "Michael Rivers",
-      category: "Lifestyle",
-      membership: "FREE",
-      duration: "08:14",
-      uploaded: "1 hour ago",
-      thumbnail:
-        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800",
-      description:
-        "Daily morning routine with productivity tips.",
-      status: "Pending Review",
-    },
-    {
-      id: 3,
-      title: "Luxury Hotel Experience",
-      creator: "Ashley Brooks",
-      category: "Luxury",
-      membership: "ELITE",
-      duration: "19:56",
-      uploaded: "Yesterday",
-      thumbnail:
-        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800",
-      description:
-        "Reviewing one of the world's most luxurious hotels.",
-      status: "Pending Review",
-    },
-  ];
+  const { data, isLoading } = usePendingContent();
+console.log("Pending Response:", data);
+  const approveMutation = useApproveContent();
+  const rejectMutation = useRejectContent();
+const [showRejectModal, setShowRejectModal] = useState(false);
+
+const [rejectionReason, setRejectionReason] =
+  useState("");
+  const pendingContent = data?.content || [];
 
   const filtered = useMemo(() => {
-    return pendingContent.filter(
-      (item) =>
-        item.title
-          .toLowerCase()
-          .includes(search.toLowerCase()) ||
-        item.creator
-          .toLowerCase()
-          .includes(search.toLowerCase())
+    const term = search.toLowerCase();
+
+    return pendingContent.filter((item) => {
+      return (
+        item.title?.toLowerCase().includes(term) ||
+        item.description?.toLowerCase().includes(term) ||
+        item.category?.toLowerCase().includes(term) ||
+        item.creatorId?.name?.toLowerCase().includes(term) ||
+        item.creatorId?.creatorVerification?.stageName
+          ?.toLowerCase()
+          .includes(term)
+      );
+    });
+  }, [pendingContent, search]);
+const {
+  data: reviewedData,
+} = useReviewedContent();
+
+const reviewedContent =
+  reviewedData?.content || [];
+  if (isLoading) {
+    return (
+      <div className="py-40 text-center text-zinc-500">
+        Loading pending content...
+      </div>
     );
-  }, [search]);
+  }
 
   return (
     <>
@@ -79,7 +68,7 @@ export default function ContentReviewPage() {
 
         {/* Header */}
 
-        <div className="flex justify-between items-end">
+        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-end gap-6">
 
           <div>
 
@@ -97,37 +86,47 @@ export default function ContentReviewPage() {
 
           </div>
 
-          <button className="rounded-2xl bg-amber-500 px-6 py-3 text-black font-black hover:bg-amber-400 transition">
-            Review Queue
+          <button className="self-start lg:self-auto rounded-2xl bg-amber-500 px-6 py-3 text-black font-black hover:bg-amber-400 transition">
+
+            {pendingContent.length} Pending
+
           </button>
 
         </div>
 
         {/* Stats */}
 
-        <div className="grid md:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
 
           <Stat
             title="Pending"
-            value="26"
+            value={pendingContent.length}
             icon={Clock3}
           />
 
           <Stat
             title="Approved Today"
-            value="41"
+            value={
+              pendingContent.filter(
+                (item) => item.status === "scheduled"
+              ).length
+            }
             icon={CheckCircle2}
           />
 
           <Stat
             title="Rejected"
-            value="7"
+            value={
+              pendingContent.filter(
+                (item) => item.status === "rejected"
+              ).length
+            }
             icon={XCircle}
           />
 
           <Stat
             title="Videos"
-            value="4.2K"
+            value={pendingContent.length}
             icon={Video}
           />
 
@@ -135,9 +134,9 @@ export default function ContentReviewPage() {
 
         {/* Search */}
 
-        <div className="flex justify-between gap-5">
+        <div className="flex flex-col lg:flex-row gap-5">
 
-          <div className="relative w-[420px]">
+          <div className="relative w-full lg:w-[420px]">
 
             <Search
               size={18}
@@ -146,16 +145,14 @@ export default function ContentReviewPage() {
 
             <input
               value={search}
-              onChange={(e) =>
-                setSearch(e.target.value)
-              }
+              onChange={(e) => setSearch(e.target.value)}
               placeholder="Search uploads..."
               className="w-full rounded-2xl border border-white/5 bg-[#090909] py-3 pl-12 pr-4 outline-none focus:border-amber-500"
             />
 
           </div>
 
-          <button className="rounded-2xl border border-white/10 bg-[#090909] px-6 hover:border-amber-500 flex items-center gap-2">
+          <button className="rounded-2xl border border-white/10 bg-[#090909] px-6 py-3 hover:border-amber-500 flex items-center justify-center gap-2">
 
             <Filter size={18} />
 
@@ -167,9 +164,9 @@ export default function ContentReviewPage() {
 
         {/* Table */}
 
-        <div className="overflow-hidden rounded-3xl border border-white/5">
+        <div className="overflow-x-auto rounded-3xl border border-white/5">
 
-          <table className="w-full">
+          <table className="w-full min-w-[950px]">
 
             <thead className="bg-[#090909]">
 
@@ -191,7 +188,7 @@ export default function ContentReviewPage() {
               {filtered.map((video) => (
 
                 <tr
-                  key={video.id}
+                  key={video._id}
                   className="border-t border-white/5 hover:bg-white/[0.02]"
                 >
 
@@ -199,10 +196,23 @@ export default function ContentReviewPage() {
 
                     <div className="flex items-center gap-4">
 
-                      <img
-                        src={video.thumbnail}
-                        className="h-20 w-28 rounded-xl object-cover"
-                      />
+                      {video.thumbnail || video.poster ? (
+
+                        <img
+                          src={video.thumbnail || video.poster}
+                          alt={video.title}
+                          className="h-20 w-28 rounded-xl object-cover flex-shrink-0"
+                        />
+
+                      ) : (
+
+                        <video
+                          src={video.videoUrl}
+                          className="h-20 w-28 rounded-xl object-cover"
+                          muted
+                        />
+
+                      )}
 
                       <div>
 
@@ -211,7 +221,7 @@ export default function ContentReviewPage() {
                         </h3>
 
                         <p className="text-zinc-500 text-sm mt-1">
-                          {video.duration}
+                          {video.duration || "-"}
                         </p>
 
                       </div>
@@ -220,21 +230,31 @@ export default function ContentReviewPage() {
 
                   </td>
 
-                  <td>{video.creator}</td>
+                  <td>
 
-                  <td>{video.category}</td>
+                    {video.creatorId?.creatorVerification?.stageName ||
+                      video.creatorId?.name ||
+                      "-"}
 
-                  <td>{video.membership}</td>
+                  </td>
 
-                  <td>{video.uploaded}</td>
+                  <td>{video.category || "-"}</td>
+
+                  <td>
+                    {video.protection?.premium
+                      ? "PREMIUM"
+                      : "FREE"}
+                  </td>
+
+                  <td>
+                    {new Date(video.createdAt).toLocaleDateString()}
+                  </td>
 
                   <td>
 
                     <button
-                      onClick={() =>
-                        setSelectedContent(video)
-                      }
-                      className="rounded-xl border border-white/10 p-3 hover:border-amber-500"
+                      onClick={() => setSelectedContent(video)}
+                      className="rounded-xl border border-white/10 p-3 hover:border-amber-500 transition"
                     >
 
                       <Eye size={18} />
@@ -247,157 +267,650 @@ export default function ContentReviewPage() {
 
               ))}
 
+              {filtered.length === 0 && (
+
+                <tr>
+
+                  <td
+                    colSpan={6}
+                    className="py-20 text-center text-zinc-500"
+                  >
+
+                    No pending uploads found.
+
+                  </td>
+
+                </tr>
+
+              )}
+
             </tbody>
 
           </table>
 
         </div>
+<div className="mt-16">
 
-      </div>
+  <div className="mb-8">
 
-      {/* Modal */}
+    <p className="uppercase tracking-[.3em] text-xs text-amber-500 font-black">
+      Review History
+    </p>
 
-      {selectedContent && (
+    <h2 className="text-3xl font-black mt-3">
+      Approved & Rejected Content
+    </h2>
 
-        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-8">
+    <p className="text-zinc-500 mt-2">
+      Previously reviewed uploads.
+    </p>
 
-          <div className="w-full max-w-5xl rounded-[32px] border border-white/10 bg-[#0b0b0b] overflow-hidden">
+  </div>
 
-            <img
-              src={selectedContent.thumbnail}
-              className="h-[340px] w-full object-cover"
-            />
+  <div className="overflow-x-auto rounded-3xl border border-white/5">
 
-            <div className="p-8">
+    <table className="w-full min-w-[1100px]">
 
-              <div className="flex justify-between">
+      <thead className="bg-[#090909]">
+
+        <tr className="text-left text-xs uppercase tracking-widest text-zinc-500">
+
+          <th className="p-5">Video</th>
+          <th>Creator</th>
+          <th>Status</th>
+          <th>Reviewed</th>
+          <th>Moderator</th>
+          <th></th>
+
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        {reviewedContent.map((video) => (
+
+          <tr
+            key={video._id}
+            className="border-t border-white/5 hover:bg-white/[0.02]"
+          >
+
+            <td className="p-5">
+
+              <div className="flex items-center gap-4">
+
+                <img
+                  src={
+                    video.thumbnail ||
+                    "https://placehold.co/400x250"
+                  }
+                  className="h-20 w-28 rounded-xl object-cover"
+                />
 
                 <div>
 
-                  <h2 className="text-4xl font-black">
-                    {selectedContent.title}
-                  </h2>
+                  <h3 className="font-black">
+                    {video.title}
+                  </h3>
 
-                  <div className="flex gap-6 mt-5 text-zinc-400">
-
-                    <span className="flex items-center gap-2">
-
-                      <User size={16} />
-
-                      {selectedContent.creator}
-
-                    </span>
-
-                    <span>
-
-                      {selectedContent.category}
-
-                    </span>
-
-                    <span>
-
-                      {selectedContent.membership}
-
-                    </span>
-
-                  </div>
+                  <p className="text-zinc-500 text-sm">
+                    {video.category}
+                  </p>
 
                 </div>
 
-                <button
-                  onClick={() =>
-                    setSelectedContent(null)
-                  }
-                >
-
-                  <XCircle size={30} />
-
-                </button>
-
               </div>
 
-              <p className="mt-8 text-zinc-400 leading-8">
+            </td>
 
-                {selectedContent.description}
+            <td>
 
-              </p>
+              {video.creatorId?.creatorVerification
+                ?.stageName ||
+                video.creatorId?.name}
 
-              <div className="grid grid-cols-4 gap-5 mt-10">
+            </td>
 
-                <Info
-                  title="Duration"
-                  value={selectedContent.duration}
-                />
+            <td>
 
-                <Info
-                  title="Uploaded"
-                  value={selectedContent.uploaded}
-                />
+              <span
+                className={`rounded-full px-4 py-2 text-xs font-bold
 
-                <Info
-                  title="Category"
-                  value={selectedContent.category}
-                />
+                ${
+                  video.status === "rejected"
+                    ? "bg-red-500/20 text-red-400"
 
-                <Info
-                  title="Access"
-                  value={selectedContent.membership}
-                />
+                    : video.status ===
+                      "changes_requested"
 
-              </div>
+                    ? "bg-yellow-500/20 text-yellow-400"
 
-              <div className="flex gap-4 mt-10">
+                    : "bg-green-500/20 text-green-400"
+                }
 
-                <button className="rounded-2xl bg-amber-500 px-6 py-4 text-black font-black flex items-center gap-2">
+              `}
+              >
 
-                  <PlayCircle size={18} />
+                {video.status.replace("_", " ")}
 
-                  Preview Video
+              </span>
 
-                </button>
+            </td>
 
-                <button className="rounded-2xl bg-green-500 px-6 py-4 text-black font-black flex items-center gap-2">
+            <td>
 
-                  <CheckCircle2 size={18} />
+              {video.reviewedAt
+                ? new Date(
+                    video.reviewedAt
+                  ).toLocaleString()
+                : "-"}
 
-                  Approve
+            </td>
 
-                </button>
+            <td>
 
-                <button className="rounded-2xl bg-red-500 px-6 py-4 font-black flex items-center gap-2">
+              {video.reviewedBy?.name || "-"}
 
-                  <XCircle size={18} />
+            </td>
 
-                  Reject
+            <td>
 
-                </button>
+              <button
+                onClick={() =>
+                  setSelectedContent(video)
+                }
+                className="rounded-xl border border-white/10 p-3 hover:border-amber-500"
+              >
 
-                <button className="rounded-2xl bg-zinc-800 px-6 py-4 font-black flex items-center gap-2 hover:bg-zinc-700">
+                <Eye size={18} />
 
-                  <Trash2 size={18} />
+              </button>
 
-                  Delete
+            </td>
 
-                </button>
+          </tr>
 
-              </div>
+        ))}
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>
+      </div>
+
+
+{selectedContent && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 lg:p-8">
+    <div className="w-full max-w-5xl max-h-[92vh] overflow-y-auto rounded-[32px] border border-white/10 bg-[#0b0b0b]">
+
+      {/* Preview */}
+
+     {/* ================= Preview ================= */}
+
+<div className="relative">
+
+  {selectedContent.fileUrl ? (
+
+    <video
+      controls
+      preload="metadata"
+      className="w-full h-[420px] object-contain bg-black"
+      poster={selectedContent.thumbnail}
+    >
+      <source
+        src={selectedContent.fileUrl}
+        type="video/mp4"
+      />
+      <source
+        src={selectedContent.fileUrl}
+        type="video/quicktime"
+      />
+      Your browser does not support video playback.
+    </video>
+
+  ) : selectedContent.previewUrl ? (
+
+    <video
+      controls
+      preload="metadata"
+      className="w-full h-[420px] object-contain bg-black"
+      poster={selectedContent.thumbnail}
+    >
+      <source
+        src={selectedContent.previewUrl}
+      />
+    </video>
+
+  ) : (
+
+    <img
+      src={
+        selectedContent.thumbnail ||
+        "https://placehold.co/1200x700"
+      }
+      className="w-full h-[420px] object-cover"
+      alt={selectedContent.title}
+    />
+
+  )}
+
+</div>
+
+      <div className="p-6 lg:p-8">
+
+        {/* Header */}
+
+        <div className="flex flex-col lg:flex-row lg:justify-between gap-6">
+
+          <div>
+
+            <h2 className="text-4xl font-black">
+              {selectedContent.title}
+            </h2>
+
+            <div className="flex flex-wrap gap-6 mt-5 text-zinc-400">
+
+              <span className="flex items-center gap-2">
+                <User size={16} />
+
+                {selectedContent.creatorId
+                  ?.creatorVerification?.stageName ||
+                  selectedContent.creatorId?.name}
+              </span>
+
+              <span>
+                {selectedContent.category}
+              </span>
+
+              <span>
+                {selectedContent.protection?.premium
+                  ? "Premium"
+                  : "Free"}
+              </span>
 
             </div>
 
           </div>
 
+          <button
+            onClick={() =>
+              setSelectedContent(null)
+            }
+            className="self-start rounded-xl border border-white/10 p-3 hover:border-red-500"
+          >
+            <XCircle size={28} />
+          </button>
+
         </div>
 
-      )}
-    </>
-  );
-}
+        {/* Description */}
+
+       <div className="mt-8">
+
+  <h3 className="text-lg font-bold mb-4">
+    Description
+  </h3>
+
+  <div className="rounded-2xl bg-black/30 p-6 text-zinc-300 leading-8">
+
+    {selectedContent.description ||
+      "No description provided."}
+
+  </div>
+
+</div>
+        {/* Details */}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 mt-10">
+
+  <Info
+    title="Creator"
+    value={
+      selectedContent.creatorId
+        ?.creatorVerification?.stageName ||
+      selectedContent.creatorId?.name
+    }
+  />
+
+  <Info
+    title="Category"
+    value={selectedContent.category}
+  />
+
+  <Info
+    title="Membership"
+    value={selectedContent.membership}
+  />
+
+  <Info
+    title="Visibility"
+    value={selectedContent.visibility}
+  />
+
+  <Info
+    title="Status"
+    value={selectedContent.status}
+  />
+
+  <Info
+    title="Media Type"
+    value={selectedContent.mediaType}
+  />
+
+  <Info
+    title="Owner Type"
+    value={selectedContent.ownerType}
+  />
+
+  <Info
+    title="Duration"
+    value={`${selectedContent.duration || 0} sec`}
+  />
+
+  <Info
+    title="Views"
+    value={selectedContent.views}
+  />
+
+  <Info
+    title="Price"
+    value={`$${selectedContent.price || 0}`}
+  />
+
+  <Info
+    title="Storage"
+    value={selectedContent.storageProvider}
+  />
+
+  <Info
+    title="Uploaded"
+    value={new Date(
+      selectedContent.createdAt
+    ).toLocaleString()}
+  />
+
+  <Info
+    title="Release Date"
+    value={new Date(
+      selectedContent.releaseDate
+    ).toLocaleDateString()}
+  />
+
+  <Info
+    title="Storage Key"
+    value={selectedContent.storageKey}
+  />
+
+  <Info
+    title="Preview Key"
+    value={selectedContent.previewStorageKey}
+  />
+
+</div>
+<div className="mt-10">
+
+<h3 className="font-bold mb-4">
+Tags
+</h3>
+
+<div className="flex flex-wrap gap-3">
+
+{selectedContent.tags?.length ? (
+
+selectedContent.tags.map((tag)=>(
+
+<span
+key={tag}
+className="rounded-full bg-amber-500/10 border border-amber-500/30 px-4 py-2 text-sm text-amber-400"
+>
+
+#{tag}
+
+</span>
+
+))
+
+) : (
+
+<p className="text-zinc-500">
+
+No tags added.
+
+</p>
+
+)}
+
+</div>
+
+</div>
+<div className="mt-10">
+
+<h3 className="font-bold mb-4">
+Geo Blocking
+</h3>
+
+<div className="rounded-2xl bg-black/30 p-5">
+
+<pre className="text-sm text-zinc-400 whitespace-pre-wrap">
+
+{JSON.stringify(
+selectedContent.geoBlocking,
+null,
+2
+)}
+
+</pre>
+
+</div>
+
+</div>
+<div className="mt-10">
+
+<h3 className="font-bold mb-5">
+Media Files
+</h3>
+
+<div className="space-y-4">
+
+<a
+href={selectedContent.fileUrl}
+target="_blank"
+rel="noreferrer"
+className="block rounded-xl bg-black/30 p-4 hover:border-amber-500 border border-white/10"
+>
+
+Original Video
+
+</a>
+
+{selectedContent.previewUrl && (
+
+<a
+href={selectedContent.previewUrl}
+target="_blank"
+rel="noreferrer"
+className="block rounded-xl bg-black/30 p-4 hover:border-amber-500 border border-white/10"
+>
+
+Preview Video
+
+</a>
+
+)}
+
+{selectedContent.thumbnail && (
+
+<a
+href={selectedContent.thumbnail}
+target="_blank"
+rel="noreferrer"
+className="block rounded-xl bg-black/30 p-4 hover:border-amber-500 border border-white/10"
+>
+
+Thumbnail
+
+</a>
+
+)}
+
+</div>
+
+</div>
+        {/* Actions */}
+
+        <div className="flex flex-col md:flex-row flex-wrap gap-4 mt-10">
+
+          <a
+            href={selectedContent.videoUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="rounded-2xl bg-amber-500 px-6 py-4 text-black font-black flex items-center justify-center gap-2 hover:bg-amber-400"
+          >
+            <PlayCircle size={18} />
+
+            Preview Video
+          </a>
+
+          <button
+            disabled={approveMutation.isPending}
+            onClick={() =>
+              approveMutation.mutate(
+                selectedContent._id,
+                {
+                  onSuccess: () =>
+                    setSelectedContent(null),
+                }
+              )
+            }
+            className="rounded-2xl bg-green-500 px-6 py-4 text-black font-black flex items-center justify-center gap-2 disabled:opacity-50"
+          >
+            <CheckCircle2 size={18} />
+
+            {approveMutation.isPending
+              ? "Approving..."
+              : "Approve"}
+          </button>
+
+         <button
+  onClick={() => setShowRejectModal(true)}
+  className="rounded-2xl bg-red-500 px-6 py-4 font-black flex items-center justify-center gap-2"
+>
+  <XCircle size={18} />
+
+  Reject
+</button>
+
+          <button className="rounded-2xl bg-zinc-800 px-6 py-4 font-black flex items-center justify-center gap-2 hover:bg-zinc-700">
+            <Trash2 size={18} />
+
+            Delete
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+)} {showRejectModal && (
+  <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm p-6">
+
+    <div className="w-full max-w-lg rounded-3xl border border-white/10 bg-[#0b0b0b] p-8">
+
+      <h2 className="text-2xl font-black">
+        Reject Content
+      </h2>
+
+      <p className="mt-3 text-zinc-500">
+        Please provide a reason for rejecting this
+        content. The creator will receive this
+        feedback.
+      </p>
+
+      <textarea
+        value={rejectionReason}
+        onChange={(e) =>
+          setRejectionReason(e.target.value)
+        }
+        rows={6}
+        placeholder="Enter rejection reason..."
+        className="
+          mt-6
+          w-full
+          rounded-2xl
+          border
+          border-white/10
+          bg-black/30
+          p-4
+          outline-none
+          resize-none
+          focus:border-red-500
+        "
+      />
+
+      <div className="flex justify-end gap-4 mt-8">
+
+        <button
+          onClick={() => {
+            setShowRejectModal(false);
+            setRejectionReason("");
+          }}
+          className="rounded-2xl border border-white/10 px-6 py-3 hover:border-white/30"
+        >
+          Cancel
+        </button>
+
+        <button
+          disabled={
+            rejectMutation.isPending ||
+            !rejectionReason.trim()
+          }
+          onClick={() => {
+            rejectMutation.mutate(
+              {
+                id: selectedContent._id,
+                comment: rejectionReason,
+              },
+              {
+                onSuccess: () => {
+                  setShowRejectModal(false);
+                  setSelectedContent(null);
+                  setRejectionReason("");
+                },
+              }
+            );
+          }}
+          className="
+            rounded-2xl
+            bg-red-500
+            px-6
+            py-3
+            font-black
+            disabled:opacity-50
+          "
+        >
+          {rejectMutation.isPending
+            ? "Rejecting..."
+            : "Reject Content"}
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+)} </>)}
+
 
 function Stat({ title, value, icon: Icon }) {
   return (
     <div className="rounded-3xl bg-[#080808] border border-white/5 p-6">
 
-      <div className="flex justify-between">
+      <div className="flex justify-between items-center">
 
         <Icon className="text-amber-500" />
 
@@ -423,10 +936,10 @@ function Info({ title, value }) {
         {title}
       </p>
 
-      <h3 className="mt-3 font-bold">
-        {value}
+      <h3 className="mt-3 font-bold break-words">
+        {value || "-"}
       </h3>
 
     </div>
-  );
+  )
 }
