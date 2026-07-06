@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { useCreateSubscriptionPayment } from "@/hooks/usePayment";
 import { useCreatorr } from "@/hooks/useFan";
 import { useState } from "react";
+import "./gasc.css"
 
 
 
@@ -322,14 +323,38 @@ navigate(`/dashboard/payment/${res.payment.id}`);
         <X />
       </button>
 
-      <video
-        src={ selectedPreview.fileUrl}
-        controls
-        autoPlay
-        playsInline
-        poster={selectedPreview.thumbnail}
-        className="w-full max-h-[80vh] bg-black"
+     
+   <div className="relative">
+
+  <video
+    src={selectedPreview.fileUrl}
+    controls
+    autoPlay
+    playsInline
+    poster={selectedPreview.thumbnail}
+    className="w-full max-h-[80vh] bg-black"
+  />
+
+  {/* Watermark */}
+  <div className="absolute inset-0 pointer-events-none overflow-hidden">
+
+    <div className="moving-watermark">
+
+      <img
+        src="https://res.cloudinary.com/zy7u4nqi/image/upload/v1783268228/favicon2_tzcc8h.jpg" // replace with your logo
+        alt="logo"
+        className="watermark-logo"
       />
+
+      <span className="watermark-text">
+        BRYSON TYLER
+      </span>
+
+    </div>
+
+  </div>
+
+</div>
 
       <div className="p-6 bg-zinc-950">
 

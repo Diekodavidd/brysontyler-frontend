@@ -1,0 +1,44 @@
+.moving-watermark {
+    position: absolute;
+    bottom: 30px;
+    left: -300px;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    opacity: .17;
+
+    animation: watermarkMove 18s linear infinite;
+
+    user-select: none;
+    white-space: nowrap;
+}
+
+.watermark-logo {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+
+    /* filter: brightness(0) invert(1); */
+}
+
+.watermark-text {
+    font-size: 30px;
+    font-weight: 900;
+    letter-spacing: 5px;
+    color: white;
+    text-transform: uppercase;
+}
+
+@keyframes watermarkMove {
+
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(calc(100vw + 600px));
+    }
+
+}
