@@ -61,9 +61,9 @@ export default function PreviewContentModal({
 
               {content.type === "image" ? (
 
-                content.mediaUrl ? (
+                content.fileUrl ? (
                   <img
-                    src={content.mediaUrl}
+                    src={content.fileUrl}
                     alt={content.title}
                     className="w-full h-full object-cover"
                   />
@@ -76,10 +76,10 @@ export default function PreviewContentModal({
 
               ) : (
 
-                content.mediaUrl ? (
+                content.fileUrl ? (
                   <video
                     controls
-                    src={content.mediaUrl}
+                    src={content.fileUrl}
                     className="w-full h-full"
                   />
                 ) : (
@@ -274,7 +274,20 @@ export default function PreviewContentModal({
                 />
 
               </div>
+{content.status === "rejected" && content.reviewComment && (
+  <div className="rounded-2xl border border-red-500/20 bg-red-500/10 p-6">
+    <div className="flex items-center gap-2 text-red-400 mb-3">
+      <MessageCircle size={18} />
+      <h4 className="font-black">
+        Reason for Rejection
+      </h4>
+    </div>
 
+    <p className="text-zinc-300 leading-7">
+      {content.reviewComment}
+    </p>
+  </div>
+)}
               <button
                 onClick={onClose}
                 className="w-full h-14 rounded-2xl bg-yellow-500 hover:bg-yellow-400 text-black font-black"

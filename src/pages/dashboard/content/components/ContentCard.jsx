@@ -112,7 +112,7 @@ export default function ContentCard({
 
         <div className="grid grid-cols-2 gap-4">
 
-          <div className="rounded-2xl bg-black p-4">
+          {/* <div className="rounded-2xl bg-black p-4">
 
             <div className="flex items-center gap-2 text-green-400">
 
@@ -133,9 +133,9 @@ export default function ContentCard({
 
             </h3>
 
-          </div>
+          </div> */}
 
-          <div className="rounded-2xl bg-black p-4">
+          {/* <div className="rounded-2xl bg-black p-4">
 
             <div className="flex items-center gap-2 text-yellow-400">
 
@@ -155,7 +155,7 @@ export default function ContentCard({
 
             </h3>
 
-          </div>
+          </div> */}
 
           <div className="rounded-2xl bg-black p-4">
 
@@ -179,7 +179,7 @@ export default function ContentCard({
 
           </div>
 
-          <div className="rounded-2xl bg-black p-4">
+          {/* <div className="rounded-2xl bg-black p-4">
 
             <div className="flex items-center gap-2 text-purple-400">
 
@@ -200,7 +200,7 @@ export default function ContentCard({
 
             </h3>
 
-          </div>
+          </div> */}
 
         </div>
 

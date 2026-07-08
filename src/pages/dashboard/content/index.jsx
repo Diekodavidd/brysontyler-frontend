@@ -152,22 +152,7 @@ className="w-full sm:w-auto justify-center bg-yellow-500 hover:bg-yellow-400 tex
 
         <StatsCards
           cards={[
-            {
-              title: "Revenue",
-              value: `$${stats.revenue}`,
-              color: "text-green-400",
-              icon: (
-                <DollarSign size={24} />
-              ),
-            },
-            {
-              title: "Sales",
-              value: stats.sales,
-              color: "text-yellow-400",
-              icon: (
-                <Crown size={24} />
-              ),
-            },
+           
             {
               title: "Premium",
               value: stats.premium,
