@@ -407,8 +407,8 @@ for (const [key, value] of payload.entries()) {
 
                       <h3 className="text-2xl font-black mt-6">
 
-                        Upload Video
-                        or Image
+                        Upload Full Video
+                        
 
                       </h3>
 
@@ -456,7 +456,7 @@ for (const [key, value] of payload.entries()) {
         />
 
         <p className="mt-4 font-bold">
-          Upload Preview Clip
+          Upload Preview Clip(4-10 seconds clip)
         </p>
 
         <p className="text-zinc-500 text-sm mt-2">
@@ -504,7 +504,7 @@ for (const [key, value] of payload.entries()) {
 
                 <label className="font-bold mb-3 block">
 
-                  Thumbnail
+                  Cover picture
 
                 </label>
 

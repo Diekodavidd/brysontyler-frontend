@@ -3,10 +3,11 @@ import {
   Crown,
   Play,
   Lock,
+  Loader2,
   CheckCircle,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useCreateSubscriptionPayment } from "@/hooks/usePayment";
+import { useCreateSubscription } from "@/hooks/usePayment";
 import { useCreatorr } from "@/hooks/useFan";
 import { useState } from "react";
 import "./gasc.css"
@@ -24,13 +25,45 @@ export default function CreatorPreviewModal({
 const navigate = useNavigate();
 const { data, isLoading } = useCreatorr(creator?._id);
 const [selectedPreview, setSelectedPreview] = useState(null);
+
 const fullCreator = data?.creator || creator;
 console.log("Creator Data:", fullCreator);
-
+const [showPaymentModal, setShowPaymentModal] = useState(false);
+const [selectedProvider, setSelectedProvider] = useState("nowpayments");
+const [isCreatingPayment, setIsCreatingPayment] = useState(false);
 const previews = fullCreator.contents?.slice(0, 6) || [];
-const { mutate, isPending } =
-    useCreateSubscriptionPayment();
-  
+const {
+    mutateAsync,
+    isPending,
+} = useCreateSubscription();
+const handleContinuePayment = async () => {
+    try {
+        setIsCreatingPayment(true);
+
+        const res = await mutateAsync({
+            creatorId: creator._id,
+            provider: selectedProvider,
+        });
+
+        setShowPaymentModal(false);
+
+        // navigate(`/dashboard/payment/${res.payment._id}`);
+
+
+    if (selectedProvider === "paxum") {
+        navigate(`/dashboard/payment/card/${res.payment._id}`);
+    } else {
+        navigate(`/dashboard/payment/${res.payment._id}`);
+    }
+
+    // setShowPaymentModal(false);
+
+    } catch (err) {
+        console.error(err);
+    } finally {
+        setIsCreatingPayment(false);
+    }
+};
 const alreadySubscribed =
     subscriptions.some(
         sub =>
@@ -283,18 +316,7 @@ const alreadySubscribed =
 ) : (
     <button
     disabled={isPending}
-  onClick={() => {
-  console.log("BUTTON CLICKED");
-  mutate(fullCreator._id, {
-    onSuccess: (res) => {
-      console.log("SUCCESS", res);
-navigate(`/dashboard/payment/${res.payment.id}`);
-    },
-    onError: (err) => {
-      console.log("ERROR", err);
-    },
-  });
-}}
+  onClick={() => setShowPaymentModal(true)}
     className="px-10 py-4 rounded-2xl bg-yellow-500 hover:bg-yellow-400 text-black font-black flex items-center gap-3"
 >
     <Lock size={18} />
@@ -365,6 +387,98 @@ navigate(`/dashboard/payment/${res.payment.id}`);
         <p className="text-zinc-400 mt-4">
           {selectedPreview.description}
         </p>
+
+      </div>
+
+    </div>
+
+  </div>
+)}
+{showPaymentModal && (
+  <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-5">
+
+    <div className="bg-zinc-900 rounded-3xl w-full max-w-lg p-8 border border-white/10">
+
+      <h2 className="text-3xl font-black">
+        Choose Payment Method
+      </h2>
+
+      <p className="text-zinc-400 mt-2">
+        Select how you'd like to pay.
+      </p>
+
+      <div className="space-y-4 mt-8">
+
+        <button
+          disabled={isCreatingPayment}
+onClick={() => setSelectedProvider("nowpayments")}
+       className={`w-full rounded-2xl p-5 border transition ${
+            selectedProvider === "nowpayments"
+              ? "border-pink-500 bg-pink-500/10"
+              : "border-white/10 hover:border-white/20"
+          }`}
+        >
+          <div className="text-left">
+            <h3 className="font-bold">
+              Crypto
+            </h3>
+
+            <p className="text-sm text-zinc-400">
+              BTC • ETH • USDT
+            </p>
+          </div>
+        </button>
+
+        <button
+          disabled={isCreatingPayment}
+onClick={() => setSelectedProvider("paxum")}
+        className={`w-full rounded-2xl p-5 border transition ${
+            selectedProvider === "paxum"
+              ? "border-pink-500 bg-pink-500/10"
+              : "border-white/10 hover:border-white/20"
+          }`}
+        >
+          <div className="text-left">
+            <h3 className="font-bold">
+              Credit / Debit Card
+            </h3>
+
+            <p className="text-sm text-zinc-400">
+              Secure card payment via Paxum
+            </p>
+          </div>
+        </button>
+
+      </div>
+
+      <div className="flex gap-4 mt-8">
+
+        <button
+          disabled={isCreatingPayment}
+          onClick={() => setShowPaymentModal(false)}
+          className="flex-1 h-12 rounded-xl border border-white/10 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Cancel
+        </button>
+
+        <button
+          onClick={handleContinuePayment}
+          disabled={isCreatingPayment}
+          className={`flex-1 h-12 rounded-xl flex items-center justify-center gap-2 transition ${
+            isCreatingPayment
+              ? "bg-pink-500/60 cursor-not-allowed"
+              : "bg-pink-600 hover:bg-pink-700"
+          }`}
+        >
+          {isCreatingPayment ? (
+            <>
+              <Loader2 size={18} className="animate-spin" />
+              Creating Payment...
+            </>
+          ) : (
+            "Continue"
+          )}
+        </button>
 
       </div>
 

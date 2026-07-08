@@ -10,7 +10,7 @@ export const getSubscriptions = () =>
   httpGet("/fan/subscriptions");
 
 export const getPayments = () =>
-  httpGet("/payment");
+  httpGet("/payments");
 
 export const getCreatorById = (id) =>
   httpGet(`/fan/creator/${id}`);

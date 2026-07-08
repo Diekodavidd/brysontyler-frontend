@@ -13,7 +13,9 @@ import {
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/store/useAuthStore";
-import { useWallet , useBuyCoins,useAddFunds } from "@/hooks/useWallet";
+import {  useBuyCoins,useDepositWallet } from "@/hooks/usePayment";
+import { useWallet  } from "@/hooks/useWallet";
+
 import AddFundsModal from "./components/AddFundsModal";
 
 
@@ -23,21 +25,30 @@ export default function FanWalletPage() {
 const [showModal, setShowModal] =
   useState(false);
 const user = useAuthStore((state) => state.user);
+const [showPaymentModal, setShowPaymentModal] = useState(false);
+const [selectedProvider, setSelectedProvider] = useState("nowpayments");
+const [isCreatingPayment, setIsCreatingPayment] = useState(false);
 
+const [paymentAction, setPaymentAction] = useState(null);
+// "wallet" | "coins"
+
+const [pendingAmount, setPendingAmount] = useState(0);
+
+const [pendingCoin, setPendingCoin] = useState({
+    coinType: "",
+    quantity: 1,
+});
 const {
   data,
   isLoading,
 } = useWallet();
-
 const {
-  mutate: buyCoins,
-  isPending,
+    mutateAsync: createCoinPayment,
 } = useBuyCoins();
 
 const {
-  mutate: addFunds,
-  isPending: addingFunds,
-} = useAddFunds();
+    mutateAsync: createWalletPayment,
+} = useDepositWallet();
 const wallet = data?.wallet;
 
 const transactions =
@@ -112,41 +123,58 @@ if (isLoading) {
 }
 
 const handleBuyCoins = (coinType, quantity) => {
+    setPendingCoin({
+        coinType,
+        quantity,
+    });
 
-    setLoadingCoin(coinType);
-
-    buyCoins(
-        {
-            coinType,
-            quantity,
-        },
-        {
-            onSuccess: ({ payment }) => {
-
-                navigate(
-                    `/dashboard/payment/${payment.payment_id}`
-                );
-
-            },
-
-            onSettled: () => {
-                setLoadingCoin(null);
-            },
-        }
-    );
-
+    setPaymentAction("coins");
+    setShowPaymentModal(true);
 };
 
 const handleAddFunds = (amount) => {
-  addFunds(amount, {
-    onSuccess: ({ payment }) => {
-      setShowModal(false);
+    setPendingAmount(amount);
+    setPaymentAction("wallet");
+    setShowModal(false);
+    setShowPaymentModal(true);
+};
 
-      navigate(
-        `/dashboard/payment/${payment.payment_id}`
-      );
-    },
-  });
+
+
+const handleContinuePayment = async () => {
+    try {
+        setIsCreatingPayment(true);
+
+        let res;
+
+        if (paymentAction === "wallet") {
+            res = await createWalletPayment({
+                amount: pendingAmount,
+                provider: selectedProvider,
+            });
+        }
+
+        if (paymentAction === "coins") {
+            res = await createCoinPayment({
+                coinType: pendingCoin.coinType,
+                quantity: pendingCoin.quantity,
+                provider: selectedProvider,
+            });
+        }
+
+        setShowPaymentModal(false);
+
+        // navigate(`/dashboard/payment/${res.payment._id}`);
+    if (selectedProvider === "paxum") {
+        navigate(`/dashboard/payment/card/${res.payment._id}`);
+    } else {
+        navigate(`/dashboard/payment/${res.payment._id}`);
+    }
+      }catch (err) {
+    console.error("Deposit Error:", err.response?.data || err);
+    } finally {
+        setIsCreatingPayment(false);
+    }
 };
   return (
     <div className="space-y-10">
@@ -549,11 +577,106 @@ tx.paymentType==="subscription" &&
 
       </div>
 <AddFundsModal
-  open={showModal}
-  onClose={() => setShowModal(false)}
-  onSubmit={handleAddFunds}
-  isPending={addingFunds}
+    open={showModal}
+    onClose={() => setShowModal(false)}
+    onSubmit={handleAddFunds}
+    isPending={isCreatingPayment}
 />
+{showPaymentModal && (
+  <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-5">
+
+    <div className="bg-zinc-900 rounded-3xl w-full max-w-lg p-8 border border-white/10">
+
+      <h2 className="text-3xl font-black">
+        Choose Payment Method
+      </h2>
+
+      <p className="text-zinc-400 mt-2">
+        Select how you'd like to pay.
+      </p>
+
+      <div className="space-y-4 mt-8">
+
+        <button
+          disabled={isCreatingPayment}
+          onClick={() => setSelectedProvider("nowpayments")}
+          className={`w-full rounded-2xl p-5 border transition ${
+            selectedProvider === "nowpayments"
+              ? "border-pink-500 bg-pink-500/10"
+              : "border-white/10 hover:border-white/20"
+          }`}
+        >
+          <div className="text-left">
+            <h3 className="font-bold">
+              Crypto
+            </h3>
+
+            <p className="text-sm text-zinc-400">
+              BTC • ETH • USDT
+            </p>
+          </div>
+        </button>
+
+        <button
+          disabled={isCreatingPayment}
+          onClick={() => setSelectedProvider("paxum")}
+          className={`w-full rounded-2xl p-5 border transition ${
+            selectedProvider === "paxum"
+              ? "border-pink-500 bg-pink-500/10"
+              : "border-white/10 hover:border-white/20"
+          }`}
+        >
+          <div className="text-left">
+            <h3 className="font-bold">
+              Credit / Debit Card
+            </h3>
+
+            <p className="text-sm text-zinc-400">
+              Secure card payment via Paxum
+            </p>
+          </div>
+        </button>
+
+      </div>
+
+      <div className="flex gap-4 mt-8">
+
+        <button
+          disabled={isCreatingPayment}
+          onClick={() => setShowPaymentModal(false)}
+          className="flex-1 h-12 rounded-xl border border-white/10 disabled:opacity-50"
+        >
+          Cancel
+        </button>
+
+        <button
+          onClick={handleContinuePayment}
+          disabled={isCreatingPayment}
+          className={`flex-1 h-12 rounded-xl flex items-center justify-center gap-2 transition ${
+            isCreatingPayment
+              ? "bg-pink-500/60 cursor-not-allowed"
+              : "bg-pink-600 hover:bg-pink-700"
+          }`}
+        >
+          {isCreatingPayment ? (
+            <>
+              <Loader2
+                size={18}
+                className="animate-spin"
+              />
+              Creating Payment...
+            </>
+          ) : (
+            "Continue"
+          )}
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+)}
     </div>
   );
 }

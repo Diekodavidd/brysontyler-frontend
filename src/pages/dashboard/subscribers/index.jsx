@@ -11,7 +11,7 @@ import { useAuthStore } from "../../../store/useAuthStore";
 
 export default function SubscribersPage() {
   const [search, setSearch] = useState("");
-
+const [showPricingModal, setShowPricingModal] = useState(false);
  const {
   data,
   isLoading,
@@ -49,6 +49,14 @@ const {
   mutate: updatePrice,
   isPending,
 } = useUpdateSubscriptionPrice();
+
+useEffect(() => {
+
+    if (subscriptionPrice <= 19.9) {
+        setShowPricingModal(true);
+    }
+
+}, [subscriptionPrice]);
   if (isLoading) {
     return (
       <div className="h-[70vh] flex items-center justify-center">
@@ -140,37 +148,70 @@ const {
             placeholder="Search subscribers..."
             className="bg-transparent outline-none w-full"
           />
+        
         </div>
-<h2 className="text-2xl font-black">
-    Monthly Subscription Price
-</h2>
+<div className="mb-10 rounded-3xl border border-yellow-500/20 bg-gradient-to-r from-yellow-500/10 to-zinc-900 p-8">
 
-<p className="text-zinc-500 mb-5">
-    Current Price:
-    <span className="text-yellow-400 font-bold ml-2">
-        ${subscriptionPrice}
-    </span>
-</p>
+    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
 
-<div className="flex gap-4">
-    <input
-        type="number"
-        min="1"
-        step="0.01"
-        value={price}
-        onChange={(e) =>
-            setPrice(e.target.value)
-        }
-        className="flex-1 rounded-xl bg-zinc-800 px-5 py-4"
-    />
+   <div>
 
-    <button
-  disabled={isPending}
-  onClick={() => updatePrice(Number(price))}
-  className="bg-yellow-500 text-black font-black px-8 rounded-xl disabled:opacity-50"
+    <p className="uppercase tracking-[0.25em] text-yellow-400 text-xs font-black">
+        Subscription Pricing
+    </p>
+
+    <h2 className="text-4xl font-black mt-3">
+        ${subscriptionPrice.toFixed(2)}
+        <span className="text-xl text-zinc-400 font-medium">
+            /month
+        </span>
+    </h2>
+<div className="mt-5">
+
+    {subscriptionPrice > 0 ? (
+        <span className="inline-flex items-center rounded-full bg-green-500/10 text-green-400 px-4 py-2 text-sm font-semibold">
+            ✓ Subscription pricing is active
+        </span>
+    ) : (
+        <span className="inline-flex items-center rounded-full bg-red-500/10 text-red-400 px-4 py-2 text-sm font-semibold">
+            Subscription price not set
+        </span>
+    )}
+
+</div>
+    <p className="text-zinc-400 mt-4 max-w-xl leading-7">
+        Every fan who subscribes to your page will automatically pay
+        <span className="text-white font-semibold">
+            {" "}${subscriptionPrice.toFixed(2)} per month
+        </span>
+        until they cancel their subscription.
+        You can change this price at any time.
+    </p>
+
+</div>
+        <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
+
+            {/* <input
+                type="number"
+                min={1}
+                step="0.01"
+                aria-describedby=""
+                value={price}
+                onChange={(e)=>setPrice(e.target.value)}
+                className="rounded-2xl bg-black border border-white/10 px-5 py-4 w-full sm:w-48"
+            /> */}
+
+              <button
+    onClick={()=>setShowPricingModal(true)}
+                className="px-8 py-5 rounded-2xl bg-yellow-500 hover:bg-yellow-400 text-black font-black disabled:opacity-50"
 >
-  {isPending ? "Updating..." : "Update Price"}
+    Change Subscription Price
 </button>
+
+        </div>
+
+    </div>
+
 </div>
         <table className="w-full text-left">
           <thead>
@@ -296,6 +337,73 @@ const {
 </tbody>
         </table>
       </div>
+      {showPricingModal && (
+
+<div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-5">
+
+    <div className="w-full max-w-xl rounded-3xl bg-zinc-900 border border-yellow-500/20 p-8">
+
+     <h2 className="text-3xl font-black">
+    Subscription Pricing
+</h2>
+
+<p className="text-zinc-400 mt-4 leading-7">
+    Choose how much fans will pay every month to access your
+    subscriber-only content.
+
+    <br /><br />
+
+    You can update this price whenever you like. Existing
+    subscriptions will not be affected until their next billing
+    cycle.
+</p>
+        <div className="mt-8">
+
+            <label className="text-sm text-zinc-500">
+                Monthly Price (USD)
+            </label>
+
+            <input
+                type="number"
+                min="1"
+                step="0.01"
+                value={price}
+                onChange={(e)=>setPrice(e.target.value)}
+                className="mt-3 w-full rounded-2xl bg-black border border-white/10 px-5 py-4"
+            />
+
+        </div>
+
+        <div className="flex gap-4 mt-8">
+
+            <button
+                onClick={()=>setShowPricingModal(false)}
+                className="flex-1 rounded-xl border border-white/10 h-12"
+            >
+                Later
+            </button>
+
+            <button
+                disabled={isPending}
+                onClick={()=>{
+                    updatePrice(Number(price),{
+                        onSuccess:()=>{
+                            setShowPricingModal(false);
+                        }
+                    });
+                }}
+                className="flex-1 rounded-xl bg-yellow-500 hover:bg-yellow-400 text-black font-black h-12"
+            >
+                {isPending ? "Saving..." : "Save Price"}
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+)}
     </>
   );
 }

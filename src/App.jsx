@@ -83,6 +83,7 @@ import CreatorLivePage from "@/pages/dashboard/live/creator";
 import LiveRoomPage from "@/pages/dashboard/live/fan/room";
 import CreatorRoomPage from "@/pages/dashboard/live/creator/room";
 import PaymentPage from "./pages/dashboard/payments";
+import CardPaymentPage from "./pages/cardPayment";
 
 function NotFound() {
   return (
@@ -170,6 +171,10 @@ export default function App() {
     <Route path="payouts" element={<DashboardPayoutsPage />} />
   <Route
  path="payment/:paymentId"  element={<PaymentPage />}/>
+ <Route
+    path="payment/card/:paymentId"
+    element={<CardPaymentPage />}
+/>
     <Route path="gallery" element={<DashboardGalleryPage />} />
     <Route path="collaborations" element={<DashboardCollaborationsPage />} />
     {/* <Route path="wallet" element={<DashBoardWalletPage />} /> */}

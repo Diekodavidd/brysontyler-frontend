@@ -68,14 +68,17 @@ const cards = [
 ];
 
 const watching =
-  subscriptionsData?.subscriptions?.slice(0, 2).map((sub) => ({
-    id: sub.creatorId._id,
-    creator: sub.creatorId.name,
-    title: `Watch new content from ${sub.creatorId.name}`,
-    progress: 100,
-    live: sub.creatorId?.isLive || false,
-  })) || [];
-
+  subscriptionsData?.subscriptions
+    ?.filter(sub => sub.creatorId)
+    .slice(0,2)
+    .map(sub => ({
+      id: sub.creatorId._id,
+      creator: sub.creatorId.name,
+      title: `Watch new content from ${sub.creatorId.name}`,
+      progress: 100,
+      live: sub.creatorId.isLive || false,
+    })) || [];
+    
 const notifications = [];
 if (user?.membership?.plan && user.membership.plan !== "FREE") {
   notifications.push({
@@ -84,6 +87,8 @@ if (user?.membership?.plan && user.membership.plan !== "FREE") {
   });
 }
 subscriptionsData?.subscriptions?.forEach((sub) => {
+  if (!sub.creatorId) return;
+
   notifications.push({
     icon: "⭐",
     text: `You're subscribed to ${sub.creatorId.name}.`,
@@ -284,8 +289,7 @@ gap-3 pb-4 border-b border-white/5"
   >
     <div>
       <h3 className="font-bold">
-        {sub.creatorId.name}
-      </h3>
+{sub.creatorId?.name ?? "Unknown Creator"}      </h3>
 
       <p className="text-zinc-500 text-sm">
         Ends {new Date(sub.endDate).toLocaleDateString()}
@@ -389,8 +393,16 @@ justify-between
 gap-2
 ">
     <span>
-        Subscription to {payment.creatorId.name}
-    </span>
+  {payment.paymentType === "subscription"
+    ? `Subscription to ${payment.creatorId?.name ?? "Unknown Creator"}`
+    : payment.paymentType === "membership"
+    ? `${payment.membershipPlan} Membership`
+    : payment.paymentType === "wallet"
+    ? "Wallet Deposit"
+    : payment.paymentType === "coins"
+    ? `${payment.coinPurchase?.quantity} ${payment.coinPurchase?.coinType} Coins`
+    : "Payment"}
+</span>
 
     <span className="text-zinc-500">
         ${payment.amount}

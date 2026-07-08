@@ -9,23 +9,36 @@ import { useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import {
   useMembership,
-  useCreateMembership,
 } from "@/hooks/useMembership";
+import {
+  useCreateMembership,
+} from "@/hooks/usePayment";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useState } from "react";
 export default function FanMembershipPage() {
  const user = useAuthStore((state) => state.user);
 const navigate = useNavigate();
 const [loadingPlan, setLoadingPlan] = useState(null);
+
+const [showPaymentModal, setShowPaymentModal] =
+    useState(false);
+
+const [selectedPlan, setSelectedPlan] =
+    useState(null);
+
+const [selectedProvider, setSelectedProvider] =
+    useState("nowpayments");
+
+const {
+  mutate: buyMembership,
+  isPending: isCreatingPayment,
+} = useCreateMembership();
  const {
     data,
     isLoading,
 } = useMembership();
 
-const {
-  mutate: buyMembership,
-  isPending,
-} = useCreateMembership();
+
 
 const membership =
     data?.membership ||
@@ -41,21 +54,30 @@ const status =
 const expiry =
     membership?.endDate;
 const handleMembership = (plan) => {
-  setLoadingPlan(plan);
+    setSelectedPlan(plan);
+    setShowPaymentModal(true);
+};
 
-  buyMembership(plan, {
-    onSuccess: (data) => {
-      const payment = data.payment;
-console.log(data);
 
-      navigate(`/dashboard/payment/${payment._id}`);
-    },
+const handleContinuePayment = () => {
+    buyMembership(
+        {
+            plan: selectedPlan,
+            provider: selectedProvider,
+        },
+        {
+           onSuccess: ({ payment }) => {
 
-    onError: (err) => {
-      console.log(err);
-      setLoadingPlan(null);
-    },
-  });
+    if (selectedProvider === "paxum") {
+        navigate(`/dashboard/payment/card/${payment._id}`);
+    } else {
+        navigate(`/dashboard/payment/${payment._id}`);
+    }
+
+    setShowPaymentModal(false);
+},
+        }
+    );
 };
 if (isLoading) {
 
@@ -426,7 +448,98 @@ disabled={loadingPlan !== null || currentPlan === "ELITE"}
   </div>
 
 </section>
+{showPaymentModal && (
+  <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-5">
 
+    <div className="bg-zinc-900 rounded-3xl w-full max-w-lg p-8 border border-white/10">
+
+      <h2 className="text-3xl font-black">
+        Choose Payment Method
+      </h2>
+
+      <p className="text-zinc-400 mt-2">
+        Select how you'd like to pay.
+      </p>
+
+      <div className="space-y-4 mt-8">
+
+        <button
+          disabled={isCreatingPayment}
+          onClick={() => setSelectedProvider("nowpayments")}
+          className={`w-full rounded-2xl p-5 border transition ${
+            selectedProvider === "nowpayments"
+              ? "border-pink-500 bg-pink-500/10"
+              : "border-white/10 hover:border-white/20"
+          }`}
+        >
+          <div className="text-left">
+            <h3 className="font-bold">
+              Crypto
+            </h3>
+
+            <p className="text-sm text-zinc-400">
+              BTC • ETH • USDT
+            </p>
+          </div>
+        </button>
+
+        <button
+          disabled={isCreatingPayment}
+          onClick={() => setSelectedProvider("paxum")}
+          className={`w-full rounded-2xl p-5 border transition ${
+            selectedProvider === "paxum"
+              ? "border-pink-500 bg-pink-500/10"
+              : "border-white/10 hover:border-white/20"
+          }`}
+        >
+          <div className="text-left">
+            <h3 className="font-bold">
+              Credit / Debit Card
+            </h3>
+
+            <p className="text-sm text-zinc-400">
+              Secure card payment via Paxum
+            </p>
+          </div>
+        </button>
+
+      </div>
+
+      <div className="flex gap-4 mt-8">
+
+        <button
+          disabled={isCreatingPayment}
+          onClick={() => setShowPaymentModal(false)}
+          className="flex-1 h-12 rounded-xl border border-white/10 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Cancel
+        </button>
+
+        <button
+          onClick={handleContinuePayment}
+          disabled={isCreatingPayment}
+          className={`flex-1 h-12 rounded-xl flex items-center justify-center gap-2 transition ${
+            isCreatingPayment
+              ? "bg-pink-500/60 cursor-not-allowed"
+              : "bg-pink-600 hover:bg-pink-700"
+          }`}
+        >
+          {isCreatingPayment ? (
+            <>
+              <Loader2 size={18} className="animate-spin" />
+              Creating Payment...
+            </>
+          ) : (
+            "Continue"
+          )}
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+)}
     </div>
   );
 }

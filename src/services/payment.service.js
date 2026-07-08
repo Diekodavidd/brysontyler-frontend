@@ -1,12 +1,87 @@
-// services/payment.service.js
+import { httpGet, httpPost, httpPatch } from "@/lib/http";
 
-import { httpGet } from "@/lib/http";
-import { httpPost } from "../lib/http";
+/*
+====================================
+Membership
+====================================
+*/
 
-export const getPayment = (invoiceId) =>
-    httpGet(`/payments/invoice/${invoiceId}`);
+export const createMembership = (plan, provider = "nowpayments") =>
+    httpPost("/payments/membership", {
+        plan,
+        provider,
+    });
 
-export const createSubscriptionPayment = (creatorId) =>
-  httpPost("/payments/subscription", {
+/*
+====================================
+Creator Subscription
+====================================
+*/
+
+export const createSubscription = (
     creatorId,
-  });
+    provider = "nowpayments"
+) =>
+    httpPost("/payments/subscription", {
+        creatorId,
+        provider,
+    });
+
+/*
+====================================
+Wallet Deposit
+====================================
+*/
+
+export const depositWallet = (
+    amount,
+    provider = "nowpayments"
+) =>
+    httpPost("/payments/wallet/deposit", {
+        amount,
+        provider,
+    });
+
+/*
+====================================
+Buy Coins
+====================================
+*/
+
+export const buyCoins = (
+    coinType,
+    quantity,
+    provider = "nowpayments"
+) =>
+    httpPost("/payments/wallet/coins", {
+        coinType,
+        quantity,
+        provider,
+    });
+
+/*
+====================================
+History
+====================================
+*/
+
+export const getPayments = () =>
+    httpGet("/payments");
+
+/*
+====================================
+Single Payment
+====================================
+*/
+
+export const getPayment = (paymentId) =>
+    httpGet(`/payments/${paymentId}`);
+
+/*
+====================================
+Cancel Payment
+====================================
+*/
+
+export const cancelPayment = (paymentId) =>
+    httpPatch(`/payments/${paymentId}/cancel`);
