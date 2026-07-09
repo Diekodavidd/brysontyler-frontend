@@ -49,14 +49,18 @@ const {
   mutate: updatePrice,
   isPending,
 } = useUpdateSubscriptionPrice();
-
+console.log("subscriptionPrice:", subscriptionPrice);
+console.log("typeof:", typeof subscriptionPrice);
 useEffect(() => {
+    if (!data) return;
 
-    if (subscriptionPrice <= 19.9) {
+    if (subscriptionPrice <= 0) {
         setShowPricingModal(true);
+    } else {
+        setShowPricingModal(false);
     }
+}, [data, subscriptionPrice]);
 
-}, [subscriptionPrice]);
   if (isLoading) {
     return (
       <div className="h-[70vh] flex items-center justify-center">
@@ -66,10 +70,10 @@ useEffect(() => {
   }
   return (
     <>
-      <header className="mb-12 flex justify-between items-center">
-        <div>
-          <h1 className="text-4xl font-black">
-            Subscribers
+<header className="mb-8 flex flex-col gap-6 lg:mb-12 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+<h1 className="text-3xl font-black sm:text-4xl">
+              Subscribers
           </h1>
 
           <p className="text-zinc-400 mt-2">
@@ -77,9 +81,8 @@ useEffect(() => {
           </p>
         </div>
 
-        <div className="flex gap-4">
-          <div className="bg-zinc-900 border border-white/5 px-4 py-3 rounded-full flex items-center gap-2">
-            <Users
+<div className="flex w-full sm:w-auto">
+<div className="flex w-full items-center justify-center gap-2 rounded-full border border-white/5 bg-zinc-900 px-4 py-3 sm:w-auto">            <Users
               size={18}
               className="text-yellow-500"
             />
@@ -91,24 +94,23 @@ useEffect(() => {
         </div>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-
-  <div className="bg-zinc-900 border border-white/5 p-8 rounded-3xl">
+<div className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+  <div className="rounded-3xl border border-white/5 bg-zinc-900 p-5 sm:p-8">
     <p className="text-zinc-500 text-xs uppercase tracking-widest">
       Total Subscribers
     </p>
 
-    <h3 className="text-3xl font-black mt-3">
+    <h3 className="mt-3 break-words text-2xl font-black sm:text-3xl">
       {subscribers.length}
     </h3>
   </div>
 
-  <div className="bg-zinc-900 border border-white/5 p-8 rounded-3xl">
+  <div className="rounded-3xl border border-white/5 bg-zinc-900 p-5 sm:p-8">
     <p className="text-zinc-500 text-xs uppercase tracking-widest">
       Active
     </p>
 
-    <h3 className="text-3xl font-black mt-3">
+    <h3 className="mt-3 break-words text-2xl font-black sm:text-3xl">
       {
         subscribers.filter(
           (sub) => sub.status === "active"
@@ -117,12 +119,12 @@ useEffect(() => {
     </h3>
   </div>
 
-  <div className="bg-zinc-900 border border-white/5 p-8 rounded-3xl">
+  <div className="rounded-3xl border border-white/5 bg-zinc-900 p-5 sm:p-8">
     <p className="text-zinc-500 text-xs uppercase tracking-widest">
       Monthly Revenue
     </p>
 
-    <h3 className="text-3xl font-black mt-3">
+    <h3 className="mt-3 break-words text-2xl font-black sm:text-3xl">
       $
       {subscribers.reduce(
         (sum, sub) => sum + (sub.amount || 0),
@@ -134,7 +136,7 @@ useEffect(() => {
 </div>
 
       <div className="bg-zinc-900 border border-white/5 rounded-3xl overflow-hidden">
-        <div className="p-6 border-b border-white/5 flex items-center gap-4">
+<div className="flex items-center gap-3 border-b border-white/5 p-4 sm:p-6">
           <Search
             className="text-zinc-500"
             size={18}
@@ -150,9 +152,8 @@ useEffect(() => {
           />
         
         </div>
-<div className="mb-10 rounded-3xl border border-yellow-500/20 bg-gradient-to-r from-yellow-500/10 to-zinc-900 p-8">
-
-    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
+<div className="mb-8 rounded-3xl border border-yellow-500/20 bg-gradient-to-r from-yellow-500/10 to-zinc-900 p-5 sm:p-8">
+<div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
 
    <div>
 
@@ -189,8 +190,7 @@ useEffect(() => {
     </p>
 
 </div>
-        <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
-
+<div className="flex w-full flex-col gap-4 lg:w-auto">
             {/* <input
                 type="number"
                 min={1}
@@ -203,8 +203,7 @@ useEffect(() => {
 
               <button
     onClick={()=>setShowPricingModal(true)}
-                className="px-8 py-5 rounded-2xl bg-yellow-500 hover:bg-yellow-400 text-black font-black disabled:opacity-50"
->
+className="w-full rounded-2xl bg-yellow-500 px-6 py-4 font-black text-black hover:bg-yellow-400 lg:w-auto">
     Change Subscription Price
 </button>
 
@@ -213,22 +212,23 @@ useEffect(() => {
     </div>
 
 </div>
-        <table className="w-full text-left">
-          <thead>
+<div className="overflow-x-auto">
+<table className="min-w-[700px] w-full text-left">
+            <thead>
             <tr className="text-zinc-500 text-[10px] uppercase tracking-widest border-b border-white/5">
-              <th className="px-8 py-4">
+              <th className="px-4 py-4 sm:px-6">
                 Subscriber
               </th>
 
-              <th className="px-8 py-4">
+              <th className="px-4 py-4 sm:px-6">
                 Tier
               </th>
 
-              <th className="px-8 py-4">
+              <th className="px-4 py-4 sm:px-6">
                 Joined
               </th>
 
-              <th className="px-8 py-4 text-right">
+              <th className="px-4 py-4 sm:px-6 text-right">
                 Actions
               </th>
             </tr>
@@ -248,43 +248,42 @@ useEffect(() => {
   key={subscriber._id}
   className="hover:bg-white/5 transition"
 >
-  <td className="px-8 py-6">
-    <div className="flex items-center gap-4">
-      <img
+  <td className="px-4 py-4 sm:px-6 sm:py-5">
+<div className="flex items-center gap-3">
+        <img
         src={
           fan.profileImage ||
           "https://ui-avatars.com/api/?name=" +
             encodeURIComponent(fan.name)
         }
         alt={fan.name}
-        className="w-12 h-12 rounded-full object-cover"
-      />
+className="h-10 w-10 rounded-full object-cover sm:h-12 sm:w-12"      />
 
       <div>
-        <p className="font-bold">
-          {fan.name}
+<p className="truncate font-bold">
+            {fan.name}
         </p>
 
-        <p className="text-xs text-zinc-500">
-          {fan.email}
+<p className="truncate text-xs text-zinc-500">
+            {fan.email}
         </p>
       </div>
     </div>
   </td>
 
-  <td className="px-8 py-6">
+  <td className="px-4 py-4 sm:px-6 sm:py-5">
     <span className="px-3 py-1 rounded-full bg-yellow-500/10 text-yellow-400 text-xs font-bold">
       ${subscriber.amount}/mo
     </span>
   </td>
 
-  <td className="px-8 py-6 text-zinc-400">
+  <td className="px-4 py-4 sm:px-6 sm:py-5 text-zinc-400">
     {new Date(
       subscriber.createdAt
     ).toLocaleDateString()}
   </td>
 
-  <td className="px-8 py-6 text-right">
+  <td className="px-4 py-4 sm:px-6 sm:py-5 text-right">
     <div className="flex justify-end gap-2">
       <button className="p-2 rounded-xl bg-zinc-800 hover:bg-zinc-700">
         <Mail size={16} />
@@ -336,15 +335,15 @@ useEffect(() => {
 
 </tbody>
         </table>
+        </div>
       </div>
       {showPricingModal && (
 
 <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-5">
 
-    <div className="w-full max-w-xl rounded-3xl bg-zinc-900 border border-yellow-500/20 p-8">
-
-     <h2 className="text-3xl font-black">
-    Subscription Pricing
+<div className="w-full max-w-xl rounded-3xl border border-yellow-500/20 bg-zinc-900 p-5 sm:p-8 max-h-[90vh] overflow-y-auto">
+<h2 className="text-2xl font-black sm:text-3xl">
+      Subscription Pricing
 </h2>
 
 <p className="text-zinc-400 mt-4 leading-7">
@@ -374,8 +373,7 @@ useEffect(() => {
 
         </div>
 
-        <div className="flex gap-4 mt-8">
-
+<div className="mt-8 flex flex-col gap-4 sm:flex-row">
             <button
                 onClick={()=>setShowPricingModal(false)}
                 className="flex-1 rounded-xl border border-white/10 h-12"

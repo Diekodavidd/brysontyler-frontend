@@ -68,7 +68,7 @@ export default function SubscriptionSettingsPage() {
 
       {/* Pricing */}
 
-      <div className="rounded-3xl bg-zinc-900 border border-white/5 p-8">
+      <div className="rounded-3xl bg-zinc-900 border border-white/5 p-5 sm:p-8">
 
         <div className="flex items-center gap-3 mb-6">
 
@@ -105,7 +105,7 @@ export default function SubscriptionSettingsPage() {
 
       <div className="rounded-3xl bg-zinc-900 border border-white/5 p-8">
 
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col sm:flex-row gap-5 sm:items-center sm:justify-between">
 
           <div>
 
@@ -173,7 +173,7 @@ export default function SubscriptionSettingsPage() {
 
           <div
             key={item.key}
-            className="bg-zinc-900 border border-white/5 rounded-3xl p-6 flex justify-between items-center"
+            className="bg-zinc-900 border border-white/5 rounded-3xl p-6 flex flex-col sm:flex-row gap-5 sm:items-center sm:justify-between"
           >
 
             <div>
@@ -215,7 +215,7 @@ export default function SubscriptionSettingsPage() {
 
       {/* Summary */}
 
-      <div className="rounded-3xl border border-yellow-500/20 bg-yellow-500/5 p-6">
+      <div className="flex flex-col sm:flex-row gap-5 sm:items-center sm:justify-between rounded-3xl border border-yellow-500/20 bg-yellow-500/5 p-6">
 
         <div className="flex gap-3">
 

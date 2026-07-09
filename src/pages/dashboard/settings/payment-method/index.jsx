@@ -15,7 +15,7 @@ export default function PaymentMethodsPage() {
           Payment Methods
         </p>
 
-        <h1 className="text-4xl font-black mt-2">
+        <h1 className="text-3xl sm:text-4xl">
           Billing & Cards
         </h1>
 
@@ -27,7 +27,7 @@ export default function PaymentMethodsPage() {
       {/* Cards */}
 
       {cards.length === 0 ? (
-        <div className="bg-zinc-900 border border-dashed border-white/10 rounded-3xl p-14 text-center">
+        <div className="bg-zinc-900 border border-dashed border-white/10 rounded-3xl p-8 sm:p-14 text-center">
           <div className="w-20 h-20 mx-auto rounded-full bg-yellow-500/10 flex items-center justify-center">
             <CreditCard
               className="text-yellow-400"
@@ -50,7 +50,7 @@ export default function PaymentMethodsPage() {
           {cards.map((card, index) => (
             <div
               key={index}
-              className="bg-zinc-900 border border-white/5 rounded-3xl p-6 flex justify-between items-center hover:border-yellow-500/40 transition"
+              className="bg-zinc-900 border border-white/5 rounded-3xl p-6 flex flex-col sm:flex-row gap-5 sm:items-center sm:justify-between hover:border-yellow-500/40 transition"
             >
               <div className="flex items-center gap-5">
                 <div className="w-14 h-14 rounded-2xl bg-yellow-500/10 flex items-center justify-center">
@@ -85,7 +85,7 @@ export default function PaymentMethodsPage() {
 
       {/* Footer */}
 
-      <button className="flex items-center gap-3 bg-yellow-500 hover:bg-yellow-400 text-black font-black px-6 py-4 rounded-2xl transition">
+      <button className="flex w-full sm:w-auto justify-center items-center gap-3 bg-yellow-500 hover:bg-yellow-400 text-black font-black px-6 py-4 rounded-2xl transition">
         <Plus size={18} />
         Add New Card
       </button>

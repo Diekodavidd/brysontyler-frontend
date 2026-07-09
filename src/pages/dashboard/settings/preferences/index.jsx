@@ -74,8 +74,8 @@ export default function PreferencesPage() {
     <div className="space-y-10">
       {/* Header */}
 
-      <div className="flex justify-between items-end">
-        <div>
+<div className="flex flex-col lg:flex-row gap-6 lg:items-end lg:justify-between">
+          <div>
           <p className="text-yellow-400 uppercase tracking-[0.3em] text-xs font-black">
             Settings
           </p>
@@ -118,8 +118,8 @@ export default function PreferencesPage() {
               key={item.key}
               className="bg-zinc-900 border border-white/5 rounded-3xl p-7 hover:border-yellow-500/30 transition"
             >
-              <div className="flex justify-between items-center">
-                <div className="flex items-start gap-5">
+              <div className="flex flex-col sm:flex-row gap-5 sm:items-center sm:justify-between">
+                <div className="flex items-start gap-4 flex-1">
                   <div className="w-14 h-14 rounded-2xl bg-black flex items-center justify-center">
                     <Icon
                       size={24}

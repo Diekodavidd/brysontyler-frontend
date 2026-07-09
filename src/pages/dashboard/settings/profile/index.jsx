@@ -47,8 +47,7 @@ const handleSave = async () => {
 
       {/* COVER */}
 
-      <div className="relative h-72 rounded-[32px] overflow-hidden bg-zinc-900 border border-white/5">
-
+<div className="relative h-40 sm:h-56 lg:h-72 rounded-3xl overflow-hidden bg-zinc-900 border border-white/5">
         {user?.coverImage ? (
           <img
             src={user.coverImage}
@@ -60,13 +59,12 @@ const handleSave = async () => {
 
        <button
     onClick={() => coverInputRef.current?.click()}
-    className="absolute top-6 right-6 bg-black/70 backdrop-blur px-5 py-3 rounded-2xl font-bold flex items-center gap-2"
->
+className="absolute top-3 right-3 sm:top-6 sm:right-6 bg-black/70 backdrop-blur px-3 py-2 sm:px-5 sm:py-3 rounded-xl sm:rounded-2xl font-bold flex items-center gap-2 text-sm">
     <Camera size={18} />
     Cover
 </button>
 
-        <div className="absolute left-10 bottom-5">
+        <div className="absolute left-4 sm:left-8 lg:left-10 bottom-4">
 
           <div className="relative">
 
@@ -75,7 +73,7 @@ const handleSave = async () => {
                 user?.profileImage ||
                 `https://ui-avatars.com/api/?name=${user?.name}`
               }
-              className="w-36 h-36 rounded-full object-cover border-4 border-black"
+              className="w-24 h-24 sm:w-32 sm:h-32 lg:w-36 lg:h-36 rounded-full object-cover border-4 border-black"
             />
 
             <button
@@ -91,16 +89,14 @@ const handleSave = async () => {
 
       </div>
 
-      <div className="pt-20 flex justify-between items-end">
-
+<div className="pt-16 sm:pt-20 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
         <div>
 
-          <h1 className="text-4xl font-black">
-            {user?.creatorVerification?.stageName || user?.name}
+<h1 className="text-2xl sm:text-3xl lg:text-4xl font-black break-words">
+              {user?.creatorVerification?.stageName || user?.name}
           </h1>
 
-          <div className="flex gap-3 mt-3">
-
+<div className="flex flex-wrap gap-3 mt-3">
             <span className="px-4 py-2 rounded-full bg-yellow-500/10 text-yellow-400 text-xs font-bold uppercase">
               {user?.creatorVerification?.category || "Creator"}
             </span>
@@ -119,10 +115,9 @@ const handleSave = async () => {
 
         </div>
 
-       <Button
-    onClick={handleSave}
-    className="bg-yellow-500 text-black px-8"
->
+<Button
+className="w-full sm:w-auto bg-yellow-500 text-black px-8"
+    onClick={handleSave}>
     Save Changes
 </Button>
 
@@ -184,7 +179,8 @@ const handleSave = async () => {
           Biography
         </label>
 
-      <textarea
+<textarea
+className="w-full min-h-[140px] rounded-2xl bg-zinc-900 border border-white/10 p-5 resize-none"
     value={form.bio}
     onChange={(e) =>
         setForm({
@@ -256,7 +252,7 @@ const handleSave = async () => {
 
       {/* ACCOUNT */}
 
-      <div className="grid lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
 
         <div className="rounded-3xl bg-zinc-900 border border-white/5 p-6">
 

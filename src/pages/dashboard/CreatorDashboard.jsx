@@ -115,95 +115,110 @@ const recentActivity = [
 }
       </div>
 
-      <h1 className="mt-7 text-6xl font-black leading-none tracking-tight">
-        Welcome Back,
-        <br />
+     <div className="flex flex-col gap-10 xl:flex-row xl:items-center xl:justify-between">
 
-        <span className="bg-gradient-to-r from-yellow-300 via-yellow-500 to-amber-600 bg-clip-text text-transparent">
-          {user?.creatorVerification?.stageName ||
-            user?.name}
-        </span>
-      </h1>
+  {/* Left Side */}
+  <div className="flex-1">
 
-      <p className="mt-6 max-w-2xl text-lg leading-8 text-zinc-400">
-        Welcome to your creator dashboard. Manage your premium
-        content, subscribers, livestreams and earnings from one place.
+    {/* <p className="uppercase tracking-[0.35em] text-yellow-500 text-xs sm:text-sm">
+      Creator Dashboard
+    </p> */}
+
+    <h1 className="mt-5 text-3xl font-black leading-tight tracking-tight sm:text-4xl md:text-5xl lg:text-6xl">
+      Welcome Back,
+      <br />
+
+      <span className="bg-gradient-to-r from-yellow-300 via-yellow-500 to-amber-600 bg-clip-text text-transparent break-words">
+        {user?.creatorVerification?.stageName ||
+          user?.name}
+      </span>
+    </h1>
+
+    <p className="mt-5 max-w-2xl text-sm leading-7 text-zinc-400 sm:text-base md:text-lg">
+      Welcome to your creator dashboard. Manage your premium
+      content, subscribers, livestreams and earnings from one place.
+    </p>
+
+  </div>
+
+  {/* Right Side */}
+  <div className="grid w-full grid-cols-2 gap-3 sm:gap-5 xl:max-w-md">
+
+    <div className="rounded-3xl border border-white/5 bg-white/[0.03] p-4 backdrop-blur-xl sm:p-6">
+
+      <p className="text-[10px] uppercase tracking-[.25em] text-zinc-500 sm:text-xs">
+        Subscribers
+      </p>
+
+      <h2 className="mt-3 text-2xl font-black text-yellow-400 sm:text-3xl lg:text-4xl">
+        {activeSubscribers.length}
+      </h2>
+
+      <p className="mt-2 text-xs text-zinc-500 sm:text-sm">
+        Active Members
       </p>
 
     </div>
 
-    <div className="grid w-full max-w-md grid-cols-2 gap-5">
+    <div className="rounded-3xl border border-white/5 bg-white/[0.03] p-4 backdrop-blur-xl sm:p-6">
 
-      <div className="rounded-3xl border border-white/5 bg-white/[0.03] p-6 backdrop-blur-xl">
+      <p className="text-[10px] uppercase tracking-[.25em] text-zinc-500 sm:text-xs">
+        Revenue
+      </p>
 
-        <p className="text-xs uppercase tracking-[.25em] text-zinc-500">
-          Subscribers
-        </p>
+      <h2 className="mt-3 break-words text-xl font-black text-emerald-400 sm:text-3xl lg:text-4xl">
+        ${totalRevenue.toLocaleString()}
+      </h2>
 
-        <h2 className="mt-3 text-4xl font-black text-yellow-400">
-          {activeSubscribers.length}
-        </h2>
+      <p className="mt-2 text-xs text-zinc-500 sm:text-sm">
+        Subscription Revenue
+      </p>
 
-        <p className="mt-2 text-sm text-zinc-500">
-          Active Members
-        </p>
+    </div>
 
-      </div>
+    <div className="rounded-3xl border border-white/5 bg-white/[0.03] p-4 backdrop-blur-xl sm:p-6">
 
-      <div className="rounded-3xl border border-white/5 bg-white/[0.03] p-6 backdrop-blur-xl">
+      <p className="text-[10px] uppercase tracking-[.25em] text-zinc-500 sm:text-xs">
+        Content
+      </p>
 
-        <p className="text-xs uppercase tracking-[.25em] text-zinc-500">
-          Revenue
-        </p>
+      <h2 className="mt-3 text-2xl font-black text-sky-400 sm:text-3xl lg:text-4xl">
+        {content.length}
+      </h2>
 
-        <h2 className="mt-3 text-4xl font-black text-emerald-400">
-          ${totalRevenue.toLocaleString()}
-        </h2>
+      <p className="mt-2 text-xs text-zinc-500 sm:text-sm">
+        Uploaded Posts
+      </p>
 
-        <p className="mt-2 text-sm text-zinc-500">
-          Subscription Revenue
-        </p>
+    </div>
 
-      </div>
+    <div className="rounded-3xl border border-white/5 bg-white/[0.03] p-4 backdrop-blur-xl sm:p-6">
 
-      <div className="rounded-3xl border border-white/5 bg-white/[0.03] p-6 backdrop-blur-xl">
+      <p className="text-[10px] uppercase tracking-[.25em] text-zinc-500 sm:text-xs">
+        Status
+      </p>
 
-        <p className="text-xs uppercase tracking-[.25em] text-zinc-500">
-          Content
-        </p>
+      <h2 className="mt-3 text-sm font-black text-pink-400 sm:text-lg lg:text-xl">
 
-        <h2 className="mt-3 text-4xl font-black text-sky-400">
-          {content.length}
-        </h2>
+        {creatorStatus === "approved"
+          ? "Verified"
+          : creatorStatus === "pending"
+          ? "Pending Review"
+          : creatorStatus === "rejected"
+          ? "Rejected"
+          : "Not Submitted"}
 
-        <p className="mt-2 text-sm text-zinc-500">
-          Uploaded Posts
-        </p>
+      </h2>
 
-      </div>
+      <p className="mt-2 text-xs text-zinc-500 sm:text-sm">
+        Creator Verification
+      </p>
 
-      <div className="rounded-3xl border border-white/5 bg-white/[0.03] p-6 backdrop-blur-xl">
+    </div>
 
-        <p className="text-xs uppercase tracking-[.25em] text-zinc-500">
-          Status
-        </p>
+  </div>
 
-        <h2 className="mt-3 text-xl font-black text-pink-400">
-{
-  creatorStatus === "approved"
-    ? "Verified"
-    : creatorStatus === "pending"
-    ? "Pending Review"
-    : creatorStatus === "rejected"
-    ? "Rejected"
-    : "Not Submitted"
-}     </h2>
-
-        <p className="mt-2 text-sm text-zinc-500">
-          Creator Verification
-        </p>
-
-      </div>
+</div>
 
     </div>
 

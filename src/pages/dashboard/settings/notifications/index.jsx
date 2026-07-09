@@ -78,8 +78,8 @@ export default function Notifications() {
           Notifications
         </p>
 
-        <h1 className="text-4xl font-black mt-2">
-          Notification Settings
+<h1 className="text-3xl sm:text-4xl font-black">
+            Notification Settings
         </h1>
 
         <p className="text-zinc-500 mt-3">
@@ -96,11 +96,9 @@ export default function Notifications() {
           return (
             <div
               key={item.key}
-              className="bg-zinc-900 border border-white/5 rounded-3xl p-6 flex justify-between items-center hover:border-yellow-500/30 transition"
-            >
+ className="bg-zinc-900 border border-white/5 rounded-3xl p-5 sm:p-6 flex flex-col sm:flex-row gap-5 sm:items-center sm:justify-between">            >
 
-              <div className="flex items-center gap-5">
-
+<div className="flex items-start gap-4">
                 <div className="w-14 h-14 rounded-2xl bg-yellow-500/10 flex items-center justify-center">
 
                   <Icon
@@ -116,8 +114,8 @@ export default function Notifications() {
                     {item.title}
                   </h2>
 
-                  <p className="text-zinc-500 text-sm mt-1">
-                    {item.description}
+<p className="text-sm text-zinc-500 mt-1 leading-6">
+                      {item.description}
                   </p>
 
                 </div>
@@ -126,7 +124,7 @@ export default function Notifications() {
 
               <button
                 onClick={() => toggle(item.key)}
-                className={`w-14 h-7 rounded-full transition relative ${
+                className={`self-end sm:self-auto w-14 h-7 ${
                   settings[item.key]
                     ? "bg-yellow-500"
                     : "bg-zinc-700"

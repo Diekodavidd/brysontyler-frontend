@@ -98,7 +98,7 @@ const Icon = badge.icon;
           Verification
         </p>
 
-        <h1 className="text-4xl font-black mt-2">
+        <h1 className="text-3xl sm:text-4xl">
           Identity Center
         </h1>
 
@@ -112,7 +112,7 @@ const Icon = badge.icon;
 
       <div className="rounded-3xl border border-white/5 bg-zinc-900 p-8">
 
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col sm:flex-row gap-5 sm:justify-between sm:items-center">
 
           <div>
 

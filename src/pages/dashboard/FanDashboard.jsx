@@ -14,12 +14,15 @@ import { useAuthStore } from "../../store/useAuthStore";
 import {
   useCreateMembership,
 } from "@/hooks/useMembership";
+import { useNavigate } from "react-router-dom";
+
 
 export default function FanDashboardPage() {
 const { data: dashboard } = useFanDashboard();
 const { data: subscriptionsData } = useSubscriptions();
 const { data: history } = useFanHistory();
 const { data: payments } = usePayments();
+const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
 
 
@@ -137,12 +140,12 @@ gap-6
           </p>
         </div>
 
-        <button className="w-full
-sm:w-auto
-px-6
-py-3 rounded-2xl bg-yellow-500 text-black font-black hover:bg-yellow-400 transition">
-          Discover Creators
-        </button>
+      <button
+  onClick={() => navigate("/dashboard/subscriptions")}
+  className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-yellow-500 text-black font-black hover:bg-yellow-400 transition"
+>
+  Discover Creators
+</button>
       </div>
 
       {/* Stats */}
