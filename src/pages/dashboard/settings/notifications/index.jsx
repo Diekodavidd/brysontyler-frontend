@@ -96,7 +96,7 @@ export default function Notifications() {
           return (
             <div
               key={item.key}
- className="bg-zinc-900 border border-white/5 rounded-3xl p-5 sm:p-6 flex flex-col sm:flex-row gap-5 sm:items-center sm:justify-between">            >
+ className="bg-zinc-900 border border-white/5 rounded-3xl p-5 sm:p-6 flex flex-col sm:flex-row gap-5 sm:items-center sm:justify-between">            
 
 <div className="flex items-start gap-4">
                 <div className="w-14 h-14 rounded-2xl bg-yellow-500/10 flex items-center justify-center">
