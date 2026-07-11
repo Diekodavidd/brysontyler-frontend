@@ -21,8 +21,37 @@ const handleChange = (e) => {
     setFile(image);
     setPreview(URL.createObjectURL(image));
 };
-const { mutate: uploadProfile } =
-    useUploadProfileImage();
+const {
+    mutate: uploadProfile,
+    isPending,
+} = useUploadProfileImage();
+
+const handleUpload = () => {
+
+    if (!file) {
+        router.push("/CoverImage");
+        return;
+    }
+
+    const formData = new FormData();
+
+    formData.append("image", file);
+
+    uploadProfile(formData, {
+
+        onSuccess: () => {
+            console.log("SUCCESS");
+            router.push("/CoverImage");
+        },
+
+         onError: (err) => {
+        console.log("ERROR");
+        console.log(err);
+        }
+
+    });
+
+};
   return (
     <div className="mx-auto max-w-2xl">
       <div className="mb-10">
@@ -86,8 +115,10 @@ const { mutate: uploadProfile } =
         />
       </div>
 
-      <Button
+      {/* <Button
               className="mt-10 h-16 w-full"
+ isLoading={isPending}
+     disabled={isPending}
 
     onClick={() => {
 
@@ -112,7 +143,17 @@ const { mutate: uploadProfile } =
 >
         Continue
         <ArrowRight className="ml-2" />
-      </Button>
+      </Button> */}
+
+      <Button
+    isLoading={isPending}
+    disabled={isPending}
+    className="mt-10 h-16 w-full"
+    onClick={handleUpload}
+>
+    Continue
+    <ArrowRight className="ml-2" />
+</Button>
 
       
     </div>

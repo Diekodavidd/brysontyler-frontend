@@ -8,7 +8,7 @@ let isLoggingOut = false;
 
 async function request(url, method, payload, config = {}) {
   const controller = new AbortController();
-  const timeout = config.timeout ?? 15000;
+const timeout = config.timeout ?? 60000;
   const id = setTimeout(() => controller.abort(), timeout);
 
   // Allow absolute URLs to pass through

@@ -20,9 +20,18 @@ export default function CreatorProfilePage() {
   } = useForm();
 
   const onSubmit = async (data) => {
-    await mutateAsync(data);
+  try {
+    console.log("Submitting:", data);
+
+    const res = await mutateAsync(data);
+
+    console.log(res);
+
     router.push("/ProfileImage");
-  };
+  } catch (err) {
+    console.error(err);
+  }
+};
 
   return (
     <div className="w-full max-w-3xl mx-auto">

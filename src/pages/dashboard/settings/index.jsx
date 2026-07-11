@@ -68,8 +68,7 @@ export default function SettingsHome() {
           <button
             key={item.title}
             onClick={() => router.push(item.path)}
-            className="rounded-3xl border border-white/10 bg-zinc-900 p-5 sm:p-6 lg:p-8 text-left hover:border-yellow-500 transition"
-          >
+className="rounded-3xl border border-white/10 bg-zinc-900 p-5 sm:p-6 lg:p-8 hover:border-yellow-500 hover:-translate-y-1 transition-all duration-300"          >
 <h2 className="text-lg sm:text-xl font-bold">
                 {item.title}
             </h2>

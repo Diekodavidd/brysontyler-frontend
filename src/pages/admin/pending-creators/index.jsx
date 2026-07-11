@@ -20,7 +20,8 @@ export default function PendingCreatorsPage() {
   const [search, setSearch] = useState("");
   const [selectedCreator, setSelectedCreator] =
     useState(null);
-
+    const [loadingAction, setLoadingAction] = useState(null);
+const [loadingId, setLoadingId] = useState(null);
   const {
     data,
     isLoading,
@@ -61,23 +62,32 @@ export default function PendingCreatorsPage() {
     });
   }, [creators, search]);
 
-  const handleApprove = (id) => {
-    approveMutation.mutate(id);
-  };
+ const handleApprove = (id) => {
+  setLoadingAction({
+    id,
+    type: "approve",
+  });
 
-  const handleReject = (id) => {
+  approveMutation.mutate(id, {
+    onSettled: () => setLoadingAction(null),
+  });
+};
+const handleReject = (id) => {
+  const reason = prompt("Reason for rejection?");
+  if (reason === null) return;
 
-    const reason = prompt(
-      "Reason for rejection:"
-    );
+  setLoadingAction({
+    id,
+    type: "reject",
+  });
 
-    if (reason === null) return;
-
-    rejectMutation.mutate({
-      id,
-      reason,
-    });
-  };
+  rejectMutation.mutate(
+    { id, reason },
+    {
+      onSettled: () => setLoadingAction(null),
+    }
+  );
+};
 
   if (isLoading) {
     return (
@@ -368,10 +378,21 @@ lg:w-full
 xl:w-auto
 "              >
 
-                <CheckCircle2 size={18} />
+               <CheckCircle2
+  className={
+    loadingAction?.id === creator._id &&
+    loadingAction?.type === "approve"
+      ? "animate-spin"
+      : ""
+  }
+/>
 
-                Approve
-
+{
+ loadingAction?.id === creator._id &&
+ loadingAction?.type === "approve"
+    ? "Approving..."
+    : "Approve"
+}
               </button>
 
               <button
@@ -396,10 +417,21 @@ sm:flex-1
 lg:w-full
 xl:w-auto
 "              >
+<XCircle
+  className={
+    loadingAction?.id === creator._id &&
+    loadingAction?.type === "reject"
+      ? "animate-spin"
+      : ""
+  }
+/>
 
-                <XCircle size={18} />
-
-                Reject
+{
+ loadingAction?.id === creator._id &&
+ loadingAction?.type === "reject"
+    ? "Rejecting..."
+    : "Reject"
+}
 
               </button>
 

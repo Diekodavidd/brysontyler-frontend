@@ -109,7 +109,9 @@ export const useGetAuthUser = (isAuthenticated) => {
     queryKey: ["authUser"],
     queryFn: authService.getAuthUser,
     enabled: isAuthenticated,
-    staleTime: 1000 * 60 * 5,
+    staleTime: 0,
+    refetchInterval: 30000, // every 30 seconds
+    refetchOnWindowFocus: true,
     retry: false,
   });
 };
@@ -209,4 +211,24 @@ export const useAdminLogin = () => {
       toast.error(getErrorMessage(err));
     },
   });
+};
+
+export const useSubmitCreatorReview = () => {
+    const setUser = useAuthStore((s) => s.setUser);
+
+    return useMutation({
+        mutationFn: authService.submitCreatorReview,
+
+        onSuccess: (res) => {
+            if (res.user) {
+                setUser(res.user);
+            }
+
+            toast.success("Application submitted successfully.");
+        },
+
+        onError: (err) => {
+            toast.error(getErrorMessage(err));
+        },
+    });
 };

@@ -86,7 +86,18 @@ const badges = {
 };
 
 const badge = badges[status] || badges.not_started;
+const diditStatus = (didit?.status || "not_started")
+  .toLowerCase()
+  .replace(/\s+/g, "_");
 
+const creatorStatus = (
+  user?.creatorApproval?.status || "pending"
+).toLowerCase();
+
+const isVerified =
+  diditStatus === "approved" ||
+  diditStatus === "active" ||
+  creatorStatus === "approved";
 const Icon = badge.icon;
 
   return (
@@ -142,7 +153,7 @@ const Icon = badge.icon;
 
       {/* CREATOR INFO */}
 
-      <div className="grid md:grid-cols-2 gap-6">
+      {/* <div className="grid md:grid-cols-2 gap-6">
 
         <div className="rounded-3xl bg-zinc-900 border border-white/5 p-7">
 
@@ -151,7 +162,7 @@ const Icon = badge.icon;
           </p>
 
           <h3 className="text-2xl font-black mt-3">
-            {creator?.stageName || "-"}
+            {creator?.creatorApplication?.stageName || "-"}
           </h3>
 
         </div>
@@ -170,7 +181,6 @@ const Icon = badge.icon;
 
       </div>
 
-      {/* SOCIAL LINKS */}
 
       <div className="rounded-3xl border border-white/5 bg-zinc-900 p-8">
 
@@ -212,39 +222,33 @@ const Icon = badge.icon;
 
         </div>
 
-      </div>
+      </div> */}
 
       {/* DIDIT */}
 
-      <div className="mt-8 flex justify-end">
-
-  {status !== "approved" && (
-
-   <button
- onClick={() => {
-
-    restartVerification(
-        {
-            callback:
-                `${window.location.origin}/dashboard/settings/identity-docs`,
-        },
-        {
+  <div className="mt-8 flex justify-end">
+  {!isVerified && (
+    <button
+      onClick={() => {
+        restartVerification(
+          {
+            callback: `${window.location.origin}/dashboard/settings/identity-docs`,
+          },
+          {
             onSuccess: ({ verificationUrl }) => {
-                window.location.href = verificationUrl;
+              window.location.href = verificationUrl;
             },
             onError: console.error,
-        }
-    );
-
-}}
-  className="rounded-2xl bg-yellow-500 px-6 py-3 font-black text-black"
->
-  Continue Verification
-</button>
-
+          }
+        );
+      }}
+      className="rounded-2xl bg-yellow-500 px-6 py-3 font-black text-black"
+    >
+      Continue Verification
+    </button>
   )}
-
 </div>
+
 
     </div>
   );

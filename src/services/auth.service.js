@@ -1,6 +1,6 @@
 import {
   httpGet,
-  httpPost,
+  httpPost,httpPatch,
 } from "../lib/http";
 import { clearToken } from "../lib/token";
 
@@ -71,3 +71,6 @@ export const getMe = () => httpGet("/auth/me");
 
 export const adminLogin = (credentials) =>
   httpPost("/auth/admin/login", credentials);
+
+export const submitCreatorReview = () =>
+    httpPatch("/auth/submit-review");

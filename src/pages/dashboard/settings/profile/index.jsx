@@ -31,10 +31,12 @@ const [form, setForm] = useState({
   country: user?.country || "",
   state: user?.state || "",
   city: user?.city || "",
-  stageName: user?.creatorVerification?.stageName || "",
+  stageName: user?.creatorApplication?.stageName || "",
   socialLinks:
-    user?.creatorVerification?.socialLinks || ["", "", ""],
+    user?.creatorApplication?.socialLinks || ["", "", ""],
 });
+const approvalStatus =
+  user?.creatorApproval?.status ?? "not_submitted";
 const handleSave = async () => {
 
     const res = await updateProfile(form);
@@ -93,23 +95,37 @@ className="absolute top-3 right-3 sm:top-6 sm:right-6 bg-black/70 backdrop-blur 
         <div>
 
 <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black break-words">
-              {user?.creatorVerification?.stageName || user?.name}
+              {user?.creatorApplication?.stageName || user?.name}
           </h1>
 
 <div className="flex flex-wrap gap-3 mt-3">
             <span className="px-4 py-2 rounded-full bg-yellow-500/10 text-yellow-400 text-xs font-bold uppercase">
-              {user?.creatorVerification?.category || "Creator"}
-            </span>
+{user?.role?.charAt(0).toUpperCase() +
+  user?.role?.slice(1)}            </span>
 
-            <span className="px-4 py-2 rounded-full bg-green-500/10 text-green-400 text-xs font-bold uppercase flex items-center gap-2">
 
-              <CheckCircle2 size={14} />
+             <span
+  className={`px-4 py-2 rounded-full text-xs font-bold uppercase flex items-center gap-2
+  ${
+    approvalStatus === "approved"
+      ? "bg-green-500/10 text-green-400"
+      : approvalStatus === "pending"
+      ? "bg-yellow-500/10 text-yellow-400"
+      : approvalStatus === "rejected"
+      ? "bg-red-500/10 text-red-400"
+      : "bg-zinc-700/20 text-zinc-400"
+  }`}
+>
+  <CheckCircle2 size={14} />
 
-              {user?.creatorVerification?.verified
-                ? "Verified"
-                : "Pending Review"}
-
-            </span>
+  {approvalStatus === "approved"
+    ? "Verified"
+    : approvalStatus === "pending"
+    ? "Pending Review"
+    : approvalStatus === "rejected"
+    ? "Rejected"
+    : "Not Submitted"}
+</span>
 
           </div>
 
@@ -138,7 +154,11 @@ className="w-full sm:w-auto bg-yellow-500 text-black px-8"
     placeholder="Display Name"
     icon={<User size={18} />}
   />
-
+{user?.role === "creator" && (
+  <>
+    {/* Stage Name Input */}
+    {/* Social Links */}
+  
   <Input
     value={form.stageName}
     onChange={(e) =>
@@ -149,7 +169,8 @@ className="w-full sm:w-auto bg-yellow-500 text-black px-8"
     }
     placeholder="Stage Name"
   />
-
+</>
+)}
   <Input
     value={form.email}
     disabled
@@ -231,14 +252,18 @@ className="w-full min-h-[140px] rounded-2xl bg-zinc-900 border border-white/10 p
       </div>
 
       {/* SOCIALS */}
-
+{user?.role === "creator" && (
+  <>
+    {/* Stage Name Input */}
+    {/* Social Links */}
+ 
       <div className="space-y-5">
 
         <h2 className="text-xl font-black">
           Social Links
         </h2>
 
-        {(user?.creatorVerification?.socialLinks || ["", "", ""]).map(
+        {(user?.creatorApplication?.socialLinks || ["", "", ""]).map(
           (link, index) => (
             <Input
               key={index}
@@ -249,7 +274,8 @@ className="w-full min-h-[140px] rounded-2xl bg-zinc-900 border border-white/10 p
         )}
 
       </div>
-
+ </>
+)}
       {/* ACCOUNT */}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
@@ -285,9 +311,13 @@ className="w-full min-h-[140px] rounded-2xl bg-zinc-900 border border-white/10 p
           </p>
 
           <h3 className="text-xl font-black mt-3">
-            {user?.creatorVerification?.verified
-              ? "Verified"
-              : "Pending"}
+           {approvalStatus === "approved"
+  ? "Verified"
+  : approvalStatus === "pending"
+  ? "Pending"
+  : approvalStatus === "rejected"
+  ? "Rejected"
+  : "Not Submitted"}
           </h3>
 
         </div>

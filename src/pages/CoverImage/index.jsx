@@ -24,9 +24,10 @@ const handleImage = (e) => {
     setFile(image);
     setPreview(URL.createObjectURL(image));
 };
-
-const { mutate: uploadCover } =
-    useUploadCoverImage();
+const {
+    mutate: uploadCover,
+    isPending,
+} = useUploadCoverImage();
 
 
   return (
@@ -116,7 +117,8 @@ const { mutate: uploadCover } =
 
       <Button
                 className="h-14"
-
+ isLoading={isPending}
+    disabled={isPending}
     onClick={() => {
 
         if (!file) {

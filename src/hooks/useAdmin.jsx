@@ -12,6 +12,7 @@ import {
     getMemberships,
 } from "@/services/admin.service";
 import { approveContent, deleteUser, getPendingContent, getReviewedContent, rejectContent, requestChanges } from "../services/admin.service";
+import { toast } from "react-toastify";
 
 export function useAdminStats() {
     return useQuery({
@@ -27,67 +28,54 @@ export function usePendingCreators() {
     });
 }
 
+
 export function useApproveCreator() {
+  const queryClient = useQueryClient();
 
-    const queryClient =
-        useQueryClient();
-
-   return useMutation({
-
+  return useMutation({
     mutationFn: approveCreator,
 
     onSuccess: () => {
+      toast.success("Creator approved successfully.");
 
-        queryClient.invalidateQueries({
-            queryKey: ["pending-creators"],
-        });
+      queryClient.invalidateQueries({
+        queryKey: ["pending-creators"],
+      });
 
-        queryClient.invalidateQueries({
-            queryKey: ["admin-stats"],
-        });
-
+      queryClient.invalidateQueries({
+        queryKey: ["admin-stats"],
+      });
     },
 
     onError: (err) => {
-        console.log(err);
+      toast.error(err.message || "Failed to approve creator.");
     },
-
-});
+  });
 }
 
 export function useRejectCreator() {
+  const queryClient = useQueryClient();
 
-    const queryClient =
-        useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, reason }) =>
+      rejectCreator(id, reason),
 
-    return useMutation({
+    onSuccess: () => {
+      toast.success("Creator rejected successfully.");
 
-        mutationFn: ({
-            id,
-            reason,
-        }) =>
-            rejectCreator(
-                id,
-                reason
-            ),
+      queryClient.invalidateQueries({
+        queryKey: ["pending-creators"],
+      });
 
-        onSuccess: () => {
-
-            queryClient.invalidateQueries({
-                queryKey: ["pending-creators"],
-            });
-
-            queryClient.invalidateQueries({
-                queryKey: ["admin-stats"],
-            });
-
-        },
-        onError: (err) => {
-        console.log(err);
+      queryClient.invalidateQueries({
+        queryKey: ["admin-stats"],
+      });
     },
 
-    });
-
+    onError: (err) => {
+      toast.error(err.message || "Failed to reject creator.");
+    },
+  });
 }
 
 export function useAllCreators() {

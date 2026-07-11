@@ -13,15 +13,29 @@ import { useAuthStore } from "../../store/useAuthStore";
 import { useMyContent } from "../../hooks/useContent";
 import { useCreatorSubscribers } from "../../hooks/useSubscribers";
 import { useRouter } from "@/compat/navigation";
+import Button from "../../components/ui/Button";
+import Modal from "../../components/ui/Modal";
+// import Modal from "@/components/ui/Modal";
+import { useEffect, useState } from "react";
+import {
+  useSubmitCreatorReview,
+  useGetAuthUser,
+} from "@/hooks/useAuth";
 
 export default function CreatorDashboardPage() {
 const { push } = useRouter();
+
 const { data: subscriberData } = useCreatorSubscribers();
 const { data: content = [] } = useMyContent();
 console.log(content)
 const user = useAuthStore((state) => state.user);
 const { data } = useCreatorSubscribers();
+const [open, setOpen] = useState(false);
 
+const {
+    mutate: submitReview,
+    isPending,
+} = useSubmitCreatorReview();
 const subscribers = subscriberData?.subscribers ?? [];
 console.log(subscriberData);
 console.log(subscribers);
@@ -33,9 +47,25 @@ const totalRevenue = activeSubscribers.reduce(
   (sum, sub) => sum + (sub.amount || 0),
   0
 );
+const isAuthenticated = useAuthStore(
+  (state) => state.isAuthenticated
+);
 
+const setUser = useAuthStore(
+  (state) => state.setUser
+);
+
+const { data: authUser } =
+  useGetAuthUser(isAuthenticated);
+
+useEffect(() => {
+  if (authUser) {
+    setUser(authUser);
+  }
+}, [authUser, setUser]);
 const creatorStatus =
-  user?.creatorApproval?.status || "not_submitted";
+  user?.creatorApproval?.status ;
+console.log(user);
 
 const verified = creatorStatus === "approved";
 
@@ -84,6 +114,7 @@ const recentActivity = [
     color: "text-yellow-400",
   },
 ];
+
       return (
         <>
   <div className="space-y-10">
@@ -195,7 +226,7 @@ const recentActivity = [
     <div className="rounded-3xl border border-white/5 bg-white/[0.03] p-4 backdrop-blur-xl sm:p-6">
 
       <p className="text-[10px] uppercase tracking-[.25em] text-zinc-500 sm:text-xs">
-        Status
+       Creator Verification
       </p>
 
       <h2 className="mt-3 text-sm font-black text-pink-400 sm:text-lg lg:text-xl">
@@ -209,10 +240,26 @@ const recentActivity = [
           : "Not Submitted"}
 
       </h2>
+{creatorStatus === "not_submitted" && (
+    <Button
+        onClick={() => setOpen(true)}
+        className="mt-3"
+    >
+        Submit For Review
+    </Button>
+)}
 
-      <p className="mt-2 text-xs text-zinc-500 sm:text-sm">
+{creatorStatus === "pending_review" && (
+    <Button
+        disabled
+        className="mt-3"
+    >
+        Awaiting Review
+    </Button>
+)}
+      {/* <p className="mt-2 text-xs text-zinc-500 sm:text-sm">
         Creator Verification
-      </p>
+      </p> */}
 
     </div>
 
@@ -797,6 +844,54 @@ activeSubscribers.length > 0 &&
 
 </div>
       </div>
+
+      {open && (
+<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+
+    <div
+        onClick={() => setOpen(false)}
+        className="absolute inset-0"
+    />
+
+    <div className="relative z-10 w-full max-w-md rounded-3xl bg-zinc-900 p-8 border border-yellow-500/20">
+
+        <h2 className="text-2xl font-black">
+            Submit Creator Application
+        </h2>
+
+        <p className="mt-4 text-zinc-400">
+            Are you sure you want to submit your creator profile for review?
+
+            Once submitted, our team will review your application before approving your account.
+        </p>
+
+        <div className="mt-8 flex justify-end gap-3">
+
+            <Button
+                onClick={() => setOpen(false)}
+            >
+                Cancel
+            </Button>
+
+            <Button
+                isLoading={isPending}
+                onClick={() =>
+                    submitReview(undefined,{
+                        onSuccess:()=>{
+                            setOpen(false);
+                        }
+                    })
+                }
+            >
+                Submit
+            </Button>
+
+        </div>
+
+    </div>
+
+</div>
+)}
     </>
   );
 }

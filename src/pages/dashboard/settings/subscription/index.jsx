@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   DollarSign,
   Gift,
@@ -7,18 +7,35 @@ import {
 } from "lucide-react";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
+import { useAuthStore } from "../../../../store/useAuthStore";
 
 export default function SubscriptionSettingsPage() {
-  const [settings, setSettings] = useState({
-    monthlyPrice: 24.99,
-    freeTrial: true,
-    trialDays: 7,
-    acceptTips: true,
-    privateMessages: true,
-    livestreamAccess: true,
-    downloadableContent: false,
-  });
+  
+const user = useAuthStore((state) => state.user);
 
+const [settings, setSettings] = useState({
+  monthlyPrice: user?.subscriptionPrice ?? 0,
+  freeTrial: user?.freeTrial ?? false,
+  trialDays: user?.trialDays ?? 0,
+  acceptTips: user?.acceptTips ?? true,
+  privateMessages: user?.privateMessages ?? true,
+  livestreamAccess: user?.livestreamAccess ?? true,
+  downloadableContent: user?.downloadableContent ?? false,
+});
+
+useEffect(() => {
+  if (!user) return;
+
+  setSettings({
+    monthlyPrice: user.subscriptionPrice ?? 0,
+    freeTrial: user.freeTrial ?? false,
+    trialDays: user.trialDays ?? 0,
+    acceptTips: user.acceptTips ?? true,
+    privateMessages: user.privateMessages ?? true,
+    livestreamAccess: user.livestreamAccess ?? true,
+    downloadableContent: user.downloadableContent ?? false,
+  });
+}, [user]);
   const toggle = (key) => {
     setSettings((prev) => ({
       ...prev,
@@ -87,15 +104,15 @@ export default function SubscriptionSettingsPage() {
           </label>
 
           <Input
-            type="number"
-            value={settings.monthlyPrice}
-            onChange={(e)=>
-              setSettings({
-                ...settings,
-                monthlyPrice:e.target.value
-              })
-            }
-          />
+  type="number"
+  value={settings?.monthlyPrice ?? ""}
+  onChange={(e) =>
+    setSettings((prev) => ({
+      ...prev,
+      monthlyPrice: Number(e.target.value),
+    }))
+  }
+/>
 
         </div>
 
@@ -121,11 +138,9 @@ export default function SubscriptionSettingsPage() {
 
           <button
             onClick={()=>toggle("freeTrial")}
-            className={`w-14 h-7 rounded-full relative ${
-              settings.freeTrial
-                ? "bg-yellow-500"
-                : "bg-zinc-700"
-            }`}
+           className={`w-14 h-7 rounded-full relative ${
+  settings?.freeTrial ? "bg-yellow-500" : "bg-zinc-700"
+}`}
           >
 
             <div
@@ -140,8 +155,7 @@ export default function SubscriptionSettingsPage() {
 
         </div>
 
-        {settings.freeTrial && (
-
+{settings?.freeTrial && (
           <div className="mt-6 max-w-xs">
 
             <label className="text-xs uppercase tracking-widest text-zinc-500 font-bold">
@@ -149,15 +163,15 @@ export default function SubscriptionSettingsPage() {
             </label>
 
             <Input
-              type="number"
-              value={settings.trialDays}
-              onChange={(e)=>
-                setSettings({
-                  ...settings,
-                  trialDays:e.target.value
-                })
-              }
-            />
+  type="number"
+  value={settings?.trialDays ?? ""}
+  onChange={(e) =>
+    setSettings((prev) => ({
+      ...prev,
+      trialDays: Number(e.target.value),
+    }))
+  }
+/>
 
           </div>
 
@@ -191,18 +205,16 @@ export default function SubscriptionSettingsPage() {
             <button
               onClick={()=>toggle(item.key)}
               className={`w-14 h-7 rounded-full relative ${
-                settings[item.key]
-                  ? "bg-yellow-500"
-                  : "bg-zinc-700"
-              }`}
+  settings?.[item.key] ? "bg-yellow-500" : "bg-zinc-700"
+}`}
             >
 
               <div
                 className={`absolute top-1 w-5 h-5 rounded-full transition ${
-                  settings[item.key]
-                    ? "left-8 bg-black"
-                    : "left-1 bg-white"
-                }`}
+  settings?.[item.key]
+    ? "left-8 bg-black"
+    : "left-1 bg-white"
+}`}
               />
 
             </button>
@@ -227,16 +239,15 @@ export default function SubscriptionSettingsPage() {
               Subscriber Benefits
             </h3>
 
-            <p className="text-zinc-400 mt-2 leading-7">
-              Fans will pay
-              <span className="text-yellow-400 font-bold">
-                {" "}$
-                {settings.monthlyPrice}
-                /month
-              </span>
-              {settings.freeTrial &&
-                ` after a ${settings.trialDays}-day free trial.`}
-            </p>
+           <p className="text-zinc-400 mt-2 leading-7">
+  Fans will pay
+  <span className="text-yellow-400 font-bold">
+    {" "}${settings?.monthlyPrice ?? 0}/month
+  </span>
+
+  {settings?.freeTrial &&
+    ` after a ${settings?.trialDays}-day free trial.`}
+</p>
 
           </div>
 
