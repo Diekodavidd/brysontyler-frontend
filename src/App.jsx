@@ -84,6 +84,7 @@ import LiveRoomPage from "@/pages/dashboard/live/fan/room";
 import CreatorRoomPage from "@/pages/dashboard/live/creator/room";
 import PaymentPage from "./pages/dashboard/payments";
 import CardPaymentPage from "./pages/cardPayment";
+import PublicProfilePage from "./pages/PublicProfilePage";
 
 function NotFound() {
   return (
@@ -115,8 +116,7 @@ export default function App() {
       <Route path="/all-streams" element={<AllStreamsPage />} />
       <Route path="/live/:id" element={<LivePage />} />
       <Route path="/onboarding" element={<OnboardingPage />} />
-
-      {/* ---------- Auth group (AuthLayout) ---------- */}
+<Route path="/profile/:username" element={<PublicProfilePage />} />      {/* ---------- Auth group (AuthLayout) ---------- */}
       <Route element={<AuthLayout />}>
         {/* Redirect to / if already signed in */}
         <Route element={<AuthRoute />}>

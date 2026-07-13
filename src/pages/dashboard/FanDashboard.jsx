@@ -15,6 +15,8 @@ import {
   useCreateMembership,
 } from "@/hooks/useMembership";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Share2, Copy, Check } from "lucide-react";
 
 
 export default function FanDashboardPage() {
@@ -25,7 +27,9 @@ const { data: payments } = usePayments();
 const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
 
+const subscriptionsQuery = useSubscriptions();
 
+console.log(subscriptionsQuery);
 const {
   mutate: buyMembership,
   isPending,
@@ -42,7 +46,21 @@ const status =
 const expiry =
   membership.endDate;
 console.log("Dashboard response:", dashboard);
+const [copied, setCopied] = useState(false);
 
+const username =
+  user?.name?.replace(/\s+/g, "").toLowerCase();
+
+const profileLink =
+`${window.location.origin}/profile/${username}`;
+
+const copyProfileLink = async () => {
+  await navigator.clipboard.writeText(profileLink);
+
+  setCopied(true);
+
+  setTimeout(() => setCopied(false), 2000);
+};
 const cards = [
   {
     title: "Membership",
@@ -100,7 +118,7 @@ subscriptionsData?.subscriptions?.forEach((sub) => {
 payments?.payments?.slice(0, 2).forEach((payment) => {
   notifications.push({
     icon: "💳",
-    text: `Payment of $${payment.amount} was successful.`,
+    text: `Payment of $${payment.amount} was initiated.`,
   });
 });
 
@@ -140,12 +158,26 @@ gap-6
           </p>
         </div>
 
-      <button
+     
+<div className="flex flex-wrap gap-3">
+
+<button
   onClick={() => navigate("/dashboard/subscriptions")}
-  className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-yellow-500 text-black font-black hover:bg-yellow-400 transition"
+  className="px-6 py-3 rounded-2xl bg-yellow-500 text-black font-black hover:bg-yellow-400 transition"
 >
   Discover Creators
 </button>
+
+{/* <button
+  onClick={copyProfileLink}
+  className="px-6 py-3 rounded-2xl border border-yellow-500/30 bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500 hover:text-black transition flex items-center gap-2"
+>
+  {copied ? <Check size={18}/> : <Copy size={18}/>}
+
+  {copied ? "Copied!" : "Share Profile"}
+</button> */}
+
+</div>
       </div>
 
       {/* Stats */}
@@ -306,10 +338,13 @@ gap-3 pb-4 border-b border-white/5"
 ))}
 
 
-{subscriptionsData?.subscriptions?.slice(0,4).map((sub)=>(
-<p key={sub._id}>
-⭐ You're subscribed to {sub.creatorId.name}
-</p>
+{subscriptionsData?.subscriptions
+  ?.filter(sub => sub.creatorId)
+  ?.slice(0,4)
+  ?.map((sub) => (
+    <p key={sub._id}>
+      ⭐ You're subscribed to {sub.creatorId?.name}
+    </p>
 ))}
           </div>
 

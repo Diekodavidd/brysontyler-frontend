@@ -21,7 +21,7 @@ import {
   useSubmitCreatorReview,
   useGetAuthUser,
 } from "@/hooks/useAuth";
-
+import { Share2, Copy, Check } from "lucide-react";
 export default function CreatorDashboardPage() {
 const { push } = useRouter();
 
@@ -31,7 +31,7 @@ console.log(content)
 const user = useAuthStore((state) => state.user);
 const { data } = useCreatorSubscribers();
 const [open, setOpen] = useState(false);
-
+const [copied, setCopied] = useState(false);
 const {
     mutate: submitReview,
     isPending,
@@ -42,7 +42,26 @@ console.log(subscribers);
 const activeSubscribers = subscribers.filter(
   (sub) => sub.status === "active"
 );
+const username =
+  user?.creatorApplication?.stageName ||
+  user?.name?.replace(/\s+/g, "").toLowerCase();
 
+const profileLink =
+  `${window.location.origin}/profile/${username}`;
+
+const copyProfileLink = async () => {
+  try {
+    await navigator.clipboard.writeText(profileLink);
+
+    setCopied(true);
+
+    setTimeout(() => {
+      setCopied(false);
+    }, 2000);
+  } catch (err) {
+    console.error(err);
+  }
+};
 const totalRevenue = activeSubscribers.reduce(
   (sum, sub) => sum + (sub.amount || 0),
   0
@@ -262,7 +281,30 @@ const recentActivity = [
       </p> */}
 
     </div>
+<div className="mt-6 flex flex-wrap gap-4">
 
+  <button
+    onClick={copyProfileLink}
+    className="flex items-center gap-2 rounded-2xl border border-yellow-500/30 bg-yellow-500/10 px-5 py-3 text-yellow-400 transition hover:bg-yellow-500 hover:text-black"
+  >
+    {copied ? <Check size={18} /> : <Copy size={18} />}
+    {copied ? "Copied!" : "Copy Profile Link"}
+  </button>
+
+  
+
+</div>
+<div  className="mt-6 flex flex-wrap gap-4">
+    <a
+    href={profileLink}
+    target="_blank"
+    rel="noreferrer"
+    className="flex items-center gap-2 rounded-2xl border border-white/10 bg-zinc-900 px-5 py-3 transition hover:border-yellow-500/30"
+  >
+    <Share2 size={18} />
+    View Public Profile
+  </a>
+  </div>
   </div>
 
 </div>
@@ -347,8 +389,8 @@ const recentActivity = [
 
   })}
 
-</section>
 
+</section>
 
 
     {/* LUXURY STATS */}
