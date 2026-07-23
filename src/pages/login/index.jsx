@@ -68,7 +68,7 @@ export default function LoginPage() {
       </div>
 
       {/* Social Login */}
-      <div className="grid grid-cols-2 gap-4">
+      {/* <div className="grid grid-cols-2 gap-4">
         <button
           type="button"
           className="h-14 rounded-2xl border border-white/10 bg-zinc-900 hover:border-white/30 transition-all flex items-center justify-center gap-3 font-semibold"
@@ -84,9 +84,9 @@ export default function LoginPage() {
           <Apple size={20} />
           Apple
         </button>
-      </div>
+      </div> */}
 
-      <div className="relative">
+      {/* <div className="relative">
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-white/10" />
         </div>
@@ -96,7 +96,7 @@ export default function LoginPage() {
             OR
           </span>
         </div>
-      </div>
+      </div> */}
 
       <form
         onSubmit={handleSubmit(onSubmit)}

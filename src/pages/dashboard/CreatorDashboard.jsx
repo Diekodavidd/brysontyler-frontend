@@ -2,7 +2,7 @@ import {
   Activity,
   Link as LinkIcon,
   BarChart3,
-  Clock,
+  Clock,Bell,
   Users,
   DollarSign,
   Video,
@@ -15,6 +15,7 @@ import { useCreatorSubscribers } from "../../hooks/useSubscribers";
 import { useRouter } from "@/compat/navigation";
 import Button from "../../components/ui/Button";
 import Modal from "../../components/ui/Modal";
+import { useNotifications } from "@/hooks/useNotifications";
 // import Modal from "@/components/ui/Modal";
 import { useEffect, useState } from "react";
 import {
@@ -48,7 +49,13 @@ const username =
 
 const profileLink =
   `${window.location.origin}/profile/${username}`;
+const {
+  data: notificationData,
+} = useNotifications();
 
+const recentNotifications =
+  notificationData?.notifications
+    ?.slice(0, 3) || [];
 const copyProfileLink = async () => {
   try {
     await navigator.clipboard.writeText(profileLink);
@@ -568,71 +575,136 @@ const recentActivity = [
 
   <div className="xl:col-span-2 space-y-8">
 
-    {/* RECENT ACTIVITY */}
+   <div className="rounded-3xl border border-white/5 bg-[#080808] p-8">
 
-    <section className="rounded-[32px] border border-white/5 bg-zinc-900 p-8">
+  <div className="flex items-center justify-between mb-8">
 
-      <div className="flex justify-between items-center mb-8">
+    <div className="flex items-center gap-3">
 
-        <div>
+      <Bell className="text-amber-500" />
 
-          <h2 className="text-2xl font-black">
-            Recent Activity
-          </h2>
+      <div>
 
-          <p className="text-zinc-500 mt-2">
-            Latest events happening on your account.
-          </p>
+        <h2 className="text-xl font-black">
+          Recent Notifications
+        </h2>
 
-        </div>
-
-        <Activity
-          className="text-yellow-400"
-          size={26}
-        />
+        <p className="text-xs text-zinc-500 mt-1">
+          Your latest account activity
+        </p>
 
       </div>
 
-      <div className="space-y-5">
-
-        {recentActivity.length ? (
-  recentActivity.map((item) => (
-    <div
-      key={item.id}
-      className="flex items-center justify-between border-b border-white/5 pb-5 last:border-0"
-    >
-      <div className="flex items-center gap-5">
-
-        <div
-          className={`h-4 w-4 rounded-full ${item.color}`}
-        />
-
-        <div>
-          <h3 className="font-bold">
-            {item.title}
-          </h3>
-
-          <p className="text-zinc-500 text-sm">
-            {item.subtitle}
-          </p>
-        </div>
-
-      </div>
-
-      <span className="text-xs text-zinc-500">
-        {item.time}
-      </span>
     </div>
-  ))
-) : (
-  <p className="text-zinc-500 text-center py-10">
-    No recent activity.
-  </p>
-)}
+
+    <button
+      onClick={() =>
+        navigate("/dashboard/notifications")
+      }
+      className="text-sm text-amber-500 hover:text-amber-400 font-bold"
+    >
+      View All
+    </button>
+
+  </div>
+
+
+  <div className="space-y-4">
+
+    {recentNotifications.length === 0 ? (
+
+      <div className="py-8 text-center">
+
+        <Bell
+          size={30}
+          className="mx-auto text-zinc-700"
+        />
+
+        <p className="text-sm text-zinc-500 mt-3">
+          No notifications yet.
+        </p>
 
       </div>
 
-    </section>
+    ) : (
+
+      recentNotifications.map((item) => (
+
+        <button
+          key={item._id}
+          onClick={() => {
+
+            if (item.link) {
+              navigate(item.link);
+            }
+
+          }}
+          className={`w-full text-left rounded-2xl px-5 py-4 transition ${
+            item.isRead
+              ? "bg-black/30 hover:bg-black/50"
+              : "bg-amber-500/5 border border-amber-500/10 hover:border-amber-500/30"
+          }`}
+        >
+
+          <div className="flex items-start gap-4">
+
+            <div className="mt-1">
+
+              <Bell
+                size={16}
+                className={
+                  item.isRead
+                    ? "text-zinc-600"
+                    : "text-amber-500"
+                }
+              />
+
+            </div>
+
+
+            <div className="flex-1">
+
+              <div className="flex items-center gap-2">
+
+                <p className="font-bold text-sm">
+                  {item.title}
+                </p>
+
+                {!item.isRead && (
+
+                  <span className="w-2 h-2 rounded-full bg-amber-500" />
+
+                )}
+
+              </div>
+
+
+              <p className="text-xs text-zinc-500 mt-1 line-clamp-2">
+                {item.message}
+              </p>
+
+
+              <p className="text-[10px] text-zinc-700 mt-2">
+
+                {new Date(
+                  item.createdAt
+                ).toLocaleString()}
+
+              </p>
+
+            </div>
+
+          </div>
+
+        </button>
+
+      ))
+
+    )}
+
+  </div>
+
+</div>
 
 
 

@@ -5,6 +5,8 @@ import {
   Wallet,
   FileText,
   UserCheck,
+  UserPlus,
+  ShieldCheck,
   Crown,
   Film,
   DollarSign,
@@ -84,10 +86,11 @@ const statsData = data?.stats;
         icon: DollarSign,
     },
 ];
-  const notifications =
-    data?.latestUsers?.map((user) => ({
-        text: `${user.name} joined as ${user.role}`,
-    })) || [];
+  // const notifications =
+  //   data?.latestUsers?.map((user) => ({
+  //       text: `${user.name} joined as ${user.role}`,
+  //   })) || [];
+  const notifications = data?.notifications || [];
 
   const pendingCreators =
     data?.pendingCreators || [];
@@ -163,95 +166,240 @@ if (isLoading) {
 
       {/* Notifications + Quick Actions */}
 
-      <div className="grid lg:grid-cols-2 gap-6">
-        <div className="rounded-3xl border border-white/5 bg-[#080808] p-8">
-          <div className="flex items-center gap-3 mb-8">
-            <Bell className="text-amber-500" />
-            <h2 className="text-xl font-black">
-              Recent Notifications
-            </h2>
+     <div className="grid lg:grid-cols-2 gap-6">
+
+  {/* RECENT NOTIFICATIONS */}
+
+<div className="rounded-3xl border border-white/5 bg-[#080808] p-8">
+
+  <div className="flex items-center justify-between mb-8">
+
+    <div className="flex items-center gap-3">
+
+      <Bell className="text-amber-500" />
+
+      <div>
+        <h2 className="text-xl font-black">
+          Recent Notifications
+        </h2>
+
+        <p className="text-sm text-zinc-500 mt-1">
+          Latest activity across the platform
+        </p>
+      </div>
+
+    </div>
+
+    <button
+      onClick={() => navigate("/admin/notifications")}
+      className="text-sm font-bold text-amber-500 hover:text-amber-400 transition"
+    >
+      View All
+    </button>
+
+  </div>
+
+
+  <div className="space-y-4">
+
+    {notifications.length > 0 ? (
+
+      notifications.slice(0, 4).map((item, i) => {
+
+        // Select icon based on notification type
+        let Icon = Bell;
+        let iconStyle = "text-zinc-400 bg-zinc-500/10";
+
+        if (item.type === "signup") {
+          Icon = UserPlus;
+          iconStyle = "text-blue-400 bg-blue-500/10";
+        }
+
+        if (item.type === "creator") {
+          Icon = ShieldCheck;
+          iconStyle = "text-green-400 bg-green-500/10";
+        }
+
+        if (item.type === "membership") {
+          Icon = Crown;
+          iconStyle = "text-yellow-400 bg-yellow-500/10";
+        }
+
+        if (item.type === "subscription") {
+          Icon = Users;
+          iconStyle = "text-purple-400 bg-purple-500/10";
+        }
+
+        if (item.type === "payment") {
+          Icon = DollarSign;
+          iconStyle = "text-emerald-400 bg-emerald-500/10";
+        }
+
+        if (item.type === "content") {
+          Icon = Upload;
+          iconStyle = "text-pink-400 bg-pink-500/10";
+        }
+
+        return (
+
+          <div
+            key={item.id || i}
+            className="
+              flex
+              items-center
+              gap-4
+              rounded-2xl
+              border
+              border-white/5
+              bg-black/30
+              px-5
+              py-4
+              hover:border-amber-500/20
+              transition
+            "
+          >
+
+            {/* ICON */}
+
+            <div
+              className={`
+                flex
+                h-11
+                w-11
+                shrink-0
+                items-center
+                justify-center
+                rounded-xl
+                ${iconStyle}
+              `}
+            >
+              <Icon size={18} />
+            </div>
+
+
+            {/* NOTIFICATION CONTENT */}
+
+            <div className="min-w-0 flex-1">
+
+              <p className="text-sm font-bold truncate">
+                {item.title}
+              </p>
+
+              <p className="text-xs text-zinc-500 mt-1 line-clamp-1">
+                {item.message}
+              </p>
+
+            </div>
+
+
+            {/* UNREAD INDICATOR */}
+
+            {item.unread && (
+              <span className="h-2 w-2 rounded-full bg-amber-500 shrink-0" />
+            )}
+
           </div>
 
-          <div className="space-y-4">
-            {notifications.map((item, i) => (
-              <div
-                key={i}
-                className="rounded-2xl bg-black/30 px-5 py-4 text-sm"
-              >
-                {item.text}
-              </div>
-            ))}
-          </div>
-        </div>
+        );
 
-        {/* <div className="rounded-3xl border border-white/5 bg-[#080808] p-8">
-          <h2 className="text-xl font-black mb-8">
-            Quick Actions
-          </h2>
+      })
 
-          <div className="grid grid-cols-2 gap-4">
-            <button className="rounded-2xl bg-amber-500 py-5 text-black font-black hover:bg-amber-400 transition flex flex-col items-center gap-2">
-              <Upload size={20} />
-              Upload Brand Video
-            </button>
+    ) : (
 
-            <button className="rounded-2xl bg-zinc-900 py-5 hover:bg-zinc-800 transition flex flex-col items-center gap-2">
-              <UserCheck size={20} />
-              Review Creators
-            </button>
+      <div className="py-10 text-center">
 
-            <button className="rounded-2xl bg-zinc-900 py-5 hover:bg-zinc-800 transition flex flex-col items-center gap-2">
-              <Wallet size={20} />
-              Memberships
-            </button>
+        <Bell
+          size={30}
+          className="mx-auto text-zinc-700 mb-3"
+        />
 
-            <button className="rounded-2xl bg-zinc-900 py-5 hover:bg-zinc-800 transition flex flex-col items-center gap-2">
-              <FileText size={20} />
-              Reports
-            </button>
-          </div>
-        </div> */}
-        <div className="rounded-3xl border border-white/5 bg-[#080808] p-8">
-  <h2 className="text-xl font-black mb-8">
-            Quick Actions
-          </h2>
-                    <div className="grid grid-cols-2 gap-4">
+        <p className="text-zinc-500 text-sm">
+          No recent notifications.
+        </p>
 
-  <button
-    onClick={() => navigate("/admin/gallery")}
-    className="rounded-2xl bg-amber-500 py-5 text-black font-black hover:bg-amber-400 transition flex flex-col items-center gap-2"
-  >
-    <Upload size={20} />
-    Upload Brand Video
-  </button>
+      </div>
 
-  <button
-    onClick={() => navigate("/admin/pending-creators")}
-    className="rounded-2xl bg-zinc-900 py-5 hover:bg-zinc-800 transition flex flex-col items-center gap-2"
-  >
-    <UserCheck size={20} />
-    Review Creators
-  </button>
+    )}
 
-  <button
-    onClick={() => navigate("/admin/memberships")}
-    className="rounded-2xl bg-zinc-900 py-5 hover:bg-zinc-800 transition flex flex-col items-center gap-2"
-  >
-    <Wallet size={20} />
-    Memberships
-  </button>
+  </div>
 
-  <button
-    onClick={() => navigate("/admin/reports")}
-    className="rounded-2xl bg-zinc-900 py-5 hover:bg-zinc-800 transition flex flex-col items-center gap-2"
-  >
-    <FileText size={20} />
-    Reports
-  </button>
+
+  {/* VIEW ALL */}
+
+  {notifications.length > 4 && (
+
+    <button
+      onClick={() => navigate("/admin/notifications")}
+      className="
+        mt-6
+        w-full
+        rounded-2xl
+        border
+        border-white/5
+        bg-zinc-900
+        py-3
+        text-sm
+        font-bold
+        text-zinc-400
+        hover:bg-zinc-800
+        hover:text-white
+        transition
+      "
+    >
+      View All Notifications
+    </button>
+
+  )}
+
+</div>
+
+
+  {/* QUICK ACTIONS */}
+  <div className="rounded-3xl border border-white/5 bg-[#080808] p-8">
+
+    <h2 className="text-xl font-black mb-8">
+      Quick Actions
+    </h2>
+
+    <div className="grid grid-cols-2 gap-4">
+
+      <button
+        onClick={() => navigate("/admin/gallery")}
+        className="rounded-2xl bg-amber-500 py-5 text-black font-black hover:bg-amber-400 transition flex flex-col items-center gap-2"
+      >
+        <Upload size={20} />
+        Upload Brand Video
+      </button>
+
+      <button
+        onClick={() => navigate("/admin/pending-creators")}
+        className="rounded-2xl bg-zinc-900 py-5 hover:bg-zinc-800 transition flex flex-col items-center gap-2"
+      >
+        <UserCheck size={20} />
+        Review Creators
+      </button>
+
+      <button
+        onClick={() => navigate("/admin/memberships")}
+        className="rounded-2xl bg-zinc-900 py-5 hover:bg-zinc-800 transition flex flex-col items-center gap-2"
+      >
+        <Wallet size={20} />
+        Memberships
+      </button>
+
+      <button
+        onClick={() => navigate("/admin/reports")}
+        className="rounded-2xl bg-zinc-900 py-5 hover:bg-zinc-800 transition flex flex-col items-center gap-2"
+      >
+        <FileText size={20} />
+        Reports
+      </button>
+
+    </div>
+
   </div>
 
 </div>
-      </div>
 
       {/* Pending Creators */}
 

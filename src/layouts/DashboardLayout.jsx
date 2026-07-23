@@ -71,6 +71,12 @@ const fanNavItems = [
   },
 
   {
+    name: "Notifications",
+    path: "/dashboard/notifications",
+    icon: Bell,
+  },
+
+  {
     name: "Messages",
     path: "/dashboard/messages",
     icon: MessageSquare,
@@ -115,53 +121,67 @@ const creatorNavItems = [
     path: "/dashboard",
     icon: BarChart3,
   },
+
   {
     name: "Content",
     path: "/dashboard/content",
     icon: Video,
   },
+
   {
     name: "Go Live",
     path: "/dashboard/live",
     icon: Radio,
   },
+
   {
     name: "Subscribers",
     path: "/dashboard/subscribers",
     icon: Users,
   },
+
+  {
+    name: "Notifications",
+    path: "/dashboard/notifications",
+    icon: Bell,
+  },
+
   {
     name: "Messages",
     path: "/dashboard/messages",
     icon: MessageSquare,
   },
+
   {
     name: "Wallet",
     path: "/dashboard/wallet",
     icon: Wallet,
   },
+
   {
     name: "Analytics",
     path: "/dashboard/analytics",
     icon: BarChart3,
   },
+
   {
     name: "Collaborations",
     path: "/dashboard/collaborations",
     icon: Heart,
   },
+
   {
     name: "Payouts",
     path: "/dashboard/payouts",
     icon: CreditCard,
   },
+
   {
     name: "Settings",
     path: "/dashboard/settings",
     icon: Settings,
   },
 ];
-
 
 const navItems =
   auth.user?.role === "creator"

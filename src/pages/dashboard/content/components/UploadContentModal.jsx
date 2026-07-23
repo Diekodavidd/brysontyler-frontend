@@ -57,53 +57,83 @@ const previewInputRef = useRef(null);
 
 const [uploadProgress, setUploadProgress] = useState(0);
 const [previewVideo, setPreviewVideo] = useState("");
-const [form, setForm] = useState({
+const initialForm = {
   title: "",
   description: "",
   category: "General",
   tags: "",
   visibility: "free",
-
   price: "",
   releaseDate: "",
   releaseTime: "",
   collaborator: "",
-
   allowComments: true,
   featured: false,
   status: "pending_review",
-
   geoBlocking: false,
   blockedCountries: [],
-});
+
+  featuredModels: [],
+};
+
+const [form, setForm] = useState(initialForm);
+
+const [externalModels, setExternalModels] = useState([]);
+
+const addExternalModel = () => {
+  setExternalModels((prev) => [
+    ...prev,
+    {
+      id: crypto.randomUUID(),
+      fullName: "",
+      email: "",
+      consentFile: null,
+    },
+  ]);
+};
+
+const removeExternalModel = (id) => {
+  setExternalModels((prev) =>
+    prev.filter(
+      (model) => model.id !== id
+    )
+  );
+};
+
+const updateExternalModel = (
+  id,
+  key,
+  value
+) => {
+  setExternalModels((prev) =>
+    prev.map((model) =>
+      model.id === id
+        ? {
+            ...model,
+            [key]: value,
+          }
+        : model
+    )
+  );
+};
   useEffect(() => {
-    if (!open) {
-      setUploadProgress(0);
-      setMediaFile(null);
-      setThumbnailFile(null);
-      setPreview("");
-      setThumbnailPreview("");
-setPreviewFile(null);
-setPreviewVideo("");
+  if (!open) {
+    setUploadProgress(0);
 
-     setForm({
-  title: "",
-  description: "",
-  category: "General",
-  tags: "",
-  visibility: "free",
-  price: "",
-  releaseDate: "",
-  releaseTime: "",
-  collaborator: "",
-  allowComments: true,
-  featured: false,
-  geoBlocking: false,
-  blockedCountries: [],
-  status: "pending_review",
-});
-    }
-  }, [open]);
+    setMediaFile(null);
+    setThumbnailFile(null);
+
+    setPreview("");
+    setThumbnailPreview("");
+
+    setPreviewFile(null);
+    setPreviewVideo("");
+
+    setExternalModels([]);
+
+    setForm(initialForm);
+  }
+}, [open]);
 
   if (!open) return null;
 
@@ -149,174 +179,254 @@ const choosePreview = (file) => {
     }));
   };
 
-  const submit = () => {
-
-    if (!mediaFile) {
-    return alert("Please upload a video.");
-}
-
-if (!thumbnailFile) {
-    return alert("Please upload a thumbnail.");
-}
-if (!mediaFile) {
-    return alert("Please upload a video.");
-}
-
-if (!previewFile) {
+const submit = () => {
+  if (!mediaFile) {
     return alert(
-        "Please upload a preview video."
+      "Please upload a video."
     );
-}
-if (!form.title.trim()) {
-    return alert("Title is required.");
-}
-    const payload =
-      new FormData();
+  }
+
+  if (!thumbnailFile) {
+    return alert(
+      "Please upload a thumbnail."
+    );
+  }
+
+  if (!previewFile) {
+    return alert(
+      "Please upload a preview video."
+    );
+  }
+
+  if (!form.title.trim()) {
+    return alert(
+      "Title is required."
+    );
+  }
+
+  // Validate external models
+
+  for (const model of externalModels) {
+    if (!model.fullName.trim()) {
+      return alert(
+        "Please enter the full legal name for every external model."
+      );
+    }
+
+    if (!model.consentFile) {
+      return alert(
+        `Please upload a signed consent form for ${model.fullName}.`
+      );
+    }
+  }
+
+
+  const payload = new FormData();
+
+
+  // Main files
 
   payload.append(
     "video",
     mediaFile
-);
-payload.append(
+  );
+
+  payload.append(
     "preview",
     previewFile
-);
-    if (thumbnailFile) {
-      payload.append(
-        "thumbnail",
-        thumbnailFile
-      );
-    }
+  );
 
-    payload.append(
-      "title",
-      form.title
-    );
+  payload.append(
+    "thumbnail",
+    thumbnailFile
+  );
 
-    payload.append(
-      "description",
-      form.description
-    );
 
-    payload.append(
-      "category",
-      form.category
-    );
+  // Content information
 
-    payload.append(
-      "visibility",
-      form.visibility
-    );
-payload.append(
-    "geoBlocking",
-    JSON.stringify({
-        enabled: form.geoBlocking,
-        blockedCountries: form.blockedCountries,
-    })
-);
-    payload.append(
-      "price",
-      form.price
-    );
+  payload.append(
+    "title",
+    form.title
+  );
 
-payload.append(
+  payload.append(
+    "description",
+    form.description
+  );
+
+  payload.append(
+    "category",
+    form.category
+  );
+
+  payload.append(
+    "visibility",
+    form.visibility
+  );
+
+  payload.append(
+    "price",
+    form.price
+  );
+
+  payload.append(
     "ownerType",
     "creator"
-);
+  );
 
-payload.append(
+  payload.append(
     "mediaType",
     mediaFile.type.startsWith("image")
-        ? "image"
-        : "video"
-);
-    payload.append(
-      "featured",
-      form.featured
-    );
+      ? "image"
+      : "video"
+  );
 
-    payload.append(
-      "allowComments",
-      form.allowComments
-    );
+  payload.append(
+    "featured",
+    String(form.featured)
+  );
 
-payload.append(
+  payload.append(
+    "allowComments",
+    String(form.allowComments)
+  );
+
+  payload.append(
     "releaseDate",
     form.releaseDate
-);
+  );
 
-payload.append(
+  payload.append(
     "releaseTime",
     form.releaseTime
-);
+  );
 
-payload.append(
-"status",
-"pending_review"
-);
+  payload.append(
+    "status",
+    "pending_review"
+  );
 
-   payload.append(
+
+  // Geo blocking
+
+  payload.append(
+    "geoBlocking",
+    JSON.stringify({
+      enabled:
+        form.geoBlocking,
+      blockedCountries:
+        form.blockedCountries,
+    })
+  );
+
+
+  // Existing creator
+
+  payload.append(
     "taggedCreators",
     JSON.stringify(
-        form.collaborator
-            ? [form.collaborator]
-            : []
+      form.collaborator
+        ? [form.collaborator]
+        : []
     )
-);
+  );
+
+
+  // Tags
 
   payload.append(
     "tags",
     JSON.stringify(
-        form.tags
-            .split(",")
-            .map(tag => tag.trim())
-            .filter(Boolean)
+      form.tags
+        .split(",")
+        .map((tag) =>
+          tag.trim()
+        )
+        .filter(Boolean)
     )
-);
-console.log("========== FORM DATA ==========");
+  );
 
-for (const [key, value] of payload.entries()) {
 
-    if (value instanceof File) {
+  // External model metadata
 
-        console.log(
-            key,
-            value.name,
-            value.size,
-            value.type
+  const externalModelData =
+    externalModels.map(
+      (model) => ({
+        id: model.id,
+        fullName:
+          model.fullName,
+        email:
+          model.email,
+      })
+    );
+
+  payload.append(
+    "externalModels",
+    JSON.stringify(
+      externalModelData
+    )
+  );
+
+
+  // External model consent files
+
+  externalModels.forEach(
+    (model) => {
+
+      if (model.consentFile) {
+
+        payload.append(
+          `consent_${model.id}`,
+          model.consentFile
         );
 
-    } else {
-
-        console.log(key, value);
+      }
 
     }
+  );
 
-}
-    uploadMutation.mutate(
+
+  uploadMutation.mutate(
     {
-        data: payload,
-        onUploadProgress: (progress) => {
-            setUploadProgress(progress);
+      data: payload,
+
+      onUploadProgress:
+        (progress) => {
+          setUploadProgress(
+            progress
+          );
         },
     },
-    {
-        onSuccess: () => {
-    setUploadProgress(100);
 
-    setTimeout(() => {
-        onClose();
-    }, 500);
-},
-        onError: (error) => {
-            console.error("Upload failed:", error);
-            alert(
-                "Upload failed. Please try again."
-            );
-        }
-      }
-    );
-  };
+    {
+      onSuccess: () => {
+
+        setUploadProgress(
+          100
+        );
+
+        setTimeout(() => {
+          onClose();
+        }, 500);
+
+      },
+
+      onError: (error) => {
+
+        console.error(
+          "Upload failed:",
+          error
+        );
+
+        alert(
+          error?.response?.data?.error ||
+          "Upload failed. Please try again."
+        );
+
+      },
+    }
+  );
+};
 
   return (
     <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur overflow-y-auto">
@@ -765,46 +875,210 @@ form.visibility==="members_ppv" ||
 
               )}
 
-              {/* COLLABORATOR */}
+   {/* FEATURED PEOPLE */}
 
-              <div>
+<div className="space-y-5">
 
-                <label className="font-bold mb-2 flex items-center gap-2">
+  <div>
+    <label className="font-bold mb-2 flex items-center gap-2">
+      <Users size={18} />
+      Featured People
+    </label>
 
-                  <Users size={18} />
+    <p className="text-sm text-zinc-500">
+      Add creators or models featured in this content.
+    </p>
+  </div>
 
-Approved Collaborator (Optional)
-                </label>
+  {/* EXISTING CREATOR */}
 
-                <select
-                  value={form.collaborator}
-                  onChange={(e) =>
-                    handleChange(
-                      "collaborator",
-                      e.target.value
-                    )
-                  }
-                  className="w-full rounded-2xl bg-black border border-white/10 p-4"
-                >
+  <div className="rounded-2xl border border-white/10 p-5">
 
-                  <option value="">
-                    None
-                  </option>
+    <label className="font-bold mb-2 block">
+      Existing Creator
+    </label>
 
-                  {creators.map((creator) => (
+    <select
+      value={form.collaborator}
+      onChange={(e) =>
+        handleChange(
+          "collaborator",
+          e.target.value
+        )
+      }
+      className="w-full rounded-2xl bg-black border border-white/10 p-4"
+    >
 
-                    <option
-                      key={creator._id}
-                      value={creator._id}
-                    >
-                      {creator.name}
-                    </option>
+      <option value="">
+        None
+      </option>
 
-                  ))}
+      {creators.map((creator) => (
+        <option
+          key={creator._id}
+          value={creator._id}
+        >
+          {creator.name}
+        </option>
+      ))}
 
-                </select>
+    </select>
 
-              </div>
+  </div>
+
+
+  {/* EXTERNAL MODELS */}
+
+  <div className="rounded-2xl border border-yellow-500/20 bg-yellow-500/5 p-5">
+
+    <div className="flex justify-between items-start">
+
+      <div>
+
+        <h3 className="font-black">
+          External Models
+        </h3>
+
+        <p className="text-sm text-zinc-500 mt-2">
+          If someone featured in your content does
+          not have an account, add them here and
+          upload their signed consent form.
+        </p>
+
+      </div>
+
+      <Users
+        size={24}
+        className="text-yellow-400"
+      />
+
+    </div>
+
+
+    {externalModels.map(
+      (model, index) => (
+
+        <div
+          key={model.id}
+          className="mt-5 rounded-2xl bg-black border border-white/10 p-5 space-y-4"
+        >
+
+          <div className="flex justify-between">
+
+            <h4 className="font-bold">
+              External Model {index + 1}
+            </h4>
+
+            <button
+              type="button"
+              onClick={() =>
+                removeExternalModel(model.id)
+              }
+              className="text-red-400 text-sm"
+            >
+              Remove
+            </button>
+
+          </div>
+
+
+          <input
+            type="text"
+            placeholder="Full legal name"
+            value={model.fullName}
+            onChange={(e) =>
+              updateExternalModel(
+                model.id,
+                "fullName",
+                e.target.value
+              )
+            }
+            className="w-full rounded-2xl bg-zinc-900 border border-white/10 p-4"
+          />
+
+
+          <input
+            type="email"
+            placeholder="Email address"
+            value={model.email}
+            onChange={(e) =>
+              updateExternalModel(
+                model.id,
+                "email",
+                e.target.value
+              )
+            }
+            className="w-full rounded-2xl bg-zinc-900 border border-white/10 p-4"
+          />
+
+
+          <div>
+
+            <label className="font-bold mb-2 block">
+              Signed Consent Form
+            </label>
+
+            <input
+              type="file"
+              accept=".pdf,.jpg,.jpeg,.png"
+              onChange={(e) =>
+                updateExternalModel(
+                  model.id,
+                  "consentFile",
+                  e.target.files?.[0] || null
+                )
+              }
+              className="w-full text-sm text-zinc-500"
+            />
+
+            {model.consentFile && (
+              <p className="text-xs text-green-400 mt-2">
+                ✓ {model.consentFile.name}
+              </p>
+            )}
+
+          </div>
+
+        </div>
+
+      )
+    )}
+
+
+    <button
+      type="button"
+      onClick={addExternalModel}
+      className="w-full mt-5 py-3 rounded-xl border border-yellow-500/30 text-yellow-400 font-bold"
+    >
+      + Add External Model
+    </button>
+
+
+    {/* DOWNLOAD FORM */}
+
+    <div className="mt-5 pt-5 border-t border-white/10">
+
+      <p className="text-sm text-zinc-400">
+        Need the official consent form?
+      </p>
+
+      <a
+  href="/forms/bryson-tyler-model-release-form.html"
+  download="bryson-tyler-model-release-form.html"
+  className="inline-flex items-center gap-2 mt-3 text-yellow-400 font-bold"
+>
+  <FileText size={18} />
+
+  Download Model Consent Form
+</a>
+        
+
+    </div>
+
+  </div>
+
+</div>
+
 
               {/* SCHEDULE */}
 

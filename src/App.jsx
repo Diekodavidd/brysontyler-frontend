@@ -57,6 +57,7 @@ import DashboardMessagesPage from "@/pages/dashboard/messages";
 import DashboardSubscribersPage from "@/pages/dashboard/subscribers";
 import DashboardHistoryPage from "@/pages/dashboard/history";
 import DashboardAnalyticsPage from "@/pages/dashboard/analytics";
+// import NotificationsPage from "@/pages/dashboard/notifications";
 import DashboardPayoutsPage from "@/pages/dashboard/payouts";
 import DashboardGalleryPage from "@/pages/dashboard/gallery";
 import DashboardCollaborationsPage from "@/pages/dashboard/collaboration";
@@ -85,6 +86,7 @@ import CreatorRoomPage from "@/pages/dashboard/live/creator/room";
 import PaymentPage from "./pages/dashboard/payments";
 import CardPaymentPage from "./pages/cardPayment";
 import PublicProfilePage from "./pages/PublicProfilePage";
+import NotificationsPage from "./pages/notifications";
 
 function NotFound() {
   return (
@@ -169,6 +171,7 @@ export default function App() {
     <Route path="membership" element={<DashBoardMembershipPage />} />
     <Route path="analytics" element={<DashboardAnalyticsPage />} />
     <Route path="payouts" element={<DashboardPayoutsPage />} />
+    <Route path="notifications" element={<NotificationsPage />} />
   <Route
  path="payment/:paymentId"  element={<PaymentPage />}/>
  <Route
