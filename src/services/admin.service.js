@@ -75,3 +75,67 @@ export const rejectCreator = (id, reason) =>
 
     export const getReviewedContent = () =>
   httpGet("/admin/content/reviewed");
+
+    export const getAdminPayouts = async () => {
+  const res = await httpGet(
+    "/admin/payouts"
+  );
+
+  return res;
+};
+
+export const getAdminPayoutStats = async () => {
+  const res = await httpGet(
+    "/admin/payouts/stats"
+  );
+
+  return res;
+};
+
+export const approveAdminPayout = (
+  id
+) => {
+  return httpPatch(
+    `/admin/payouts/${id}/approve`
+  );
+};
+
+export const declineAdminPayout = ({
+  id,
+  reason,
+}) => {
+  return httpPatch(
+    `/admin/payouts/${id}/decline`,
+    {
+      reason,
+    }
+  );
+};
+
+export const processAdminPayout = (
+  id
+) => {
+  return httpPatch(
+    `/admin/payouts/${id}/process`
+  );
+};
+
+export const completeAdminPayout = ({
+  id,
+  transactionId,
+}) => {
+  return httpPatch(
+    `/admin/payouts/${id}/complete`,
+    {
+      transactionId,
+    }
+  );
+};
+
+// ==============================
+// ADMIN REPORTS
+// ==============================
+
+export const getAdminReports = (range = 30) => {
+  return httpGet(`/admin/reports?range=${range}`);
+};

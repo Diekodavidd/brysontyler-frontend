@@ -9,36 +9,25 @@ import {
   DollarSign,
   ArrowUpRight,
 } from "lucide-react";
+import { useAdminPayouts, useAdminPayoutStats } from "../../../hooks/useAdmin";
 
 export default function AdminPayoutsPage() {
   const [search, setSearch] = useState("");
 
-  const payouts = [
-    {
-      id: 1,
-      creator: "Bryson Tyler",
-      amount: 1450,
-      method: "Bank Transfer",
-      status: "pending",
-      requested: "Jul 2, 2026",
-    },
-    {
-      id: 2,
-      creator: "Samuel James",
-      amount: 825,
-      method: "PayPal",
-      status: "approved",
-      requested: "Jul 1, 2026",
-    },
-    {
-      id: 3,
-      creator: "Chris Walker",
-      amount: 320,
-      method: "Bank Transfer",
-      status: "declined",
-      requested: "Jun 30, 2026",
-    },
-  ];
+const {
+  data,
+  isLoading,
+} = useAdminPayouts();
+
+const payouts =
+  data?.payouts || [];
+
+  const {
+  data: statsData,
+} = useAdminPayoutStats();
+
+const stats =
+  statsData?.stats || {};
 
   const filtered = payouts.filter((p) =>
     p.creator
@@ -46,18 +35,17 @@ export default function AdminPayoutsPage() {
       .includes(search.toLowerCase())
   );
 
-  const pending = payouts.filter(
-    (p) => p.status === "pending"
-  ).length;
+  const pending =
+  stats.pending || 0;
 
-  const approved = payouts.filter(
-    (p) => p.status === "approved"
-  ).length;
+const approved =
+  stats.approved || 0;
 
-  const totalAmount = payouts.reduce(
-    (sum, p) => sum + p.amount,
-    0
-  );
+const totalRequests =
+  stats.totalRequests || 0;
+
+const totalAmount =
+  stats.totalRequested || 0;
 
   return (
     <div className="space-y-8">
@@ -189,14 +177,12 @@ export default function AdminPayoutsPage() {
 
                 <td className="px-8 py-6 font-bold">
 
-                  {payout.creator}
-
+{payout.creatorId?.name}
                 </td>
 
                 <td className="font-bold text-green-400">
 
-                  ${payout.amount}
-
+${payout.amount.toLocaleString()}
                 </td>
 
                 <td>{payout.method}</td>
@@ -211,8 +197,9 @@ export default function AdminPayoutsPage() {
 
                 <td className="text-zinc-500">
 
-                  {payout.requested}
-
+{new Date(
+  payout.requestedAt
+).toLocaleDateString()}
                 </td>
 
                 <td>

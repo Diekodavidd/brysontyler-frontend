@@ -1,19 +1,33 @@
 import {
-    useMutation,
-    useQuery,
-    useQueryClient,
+  useMutation,
+  useQuery,
+  useQueryClient,
 } from "@tanstack/react-query";
 
-import {
-    getAdminStats,
-    getPendingCreators,
-    approveCreator,
-    rejectCreator,getAllCreators,getAllFans,
-    getMemberships,
-} from "@/services/admin.service";
-import { approveContent, deleteUser, getPendingContent, getReviewedContent, rejectContent, requestChanges } from "../services/admin.service";
-import { toast } from "react-toastify";
+import * as adminService from "@/services/admin.service";
 
+import {
+  getAdminStats,
+  getPendingCreators,
+  approveCreator,
+  rejectCreator,
+  getAllCreators,
+  getAllFans,
+  getMemberships,
+  getPendingContent,
+  approveContent,
+  rejectContent,
+  requestChanges,
+  getReviewedContent,
+  deleteUser,
+  getAdminPayouts,
+  getAdminPayoutStats,
+  approveAdminPayout,
+  declineAdminPayout,    getAdminReports,
+
+} from "@/services/admin.service";
+
+import { toast } from "react-toastify";
 export function useAdminStats() {
     return useQuery({
         queryKey: ["admin-stats"],
@@ -219,5 +233,97 @@ export function useReviewedContent() {
   return useQuery({
     queryKey: ["reviewed-content"],
     queryFn: getReviewedContent,
+  });
+}
+
+export function useAdminPayouts() {
+  return useQuery({
+    queryKey: ["admin-payouts"],
+    queryFn:
+      getAdminPayouts,
+
+    refetchInterval: 15000,
+
+    refetchOnWindowFocus: true,
+  });
+}
+
+export function useAdminPayoutStats() {
+  return useQuery({
+    queryKey: [
+      "admin-payout-stats",
+    ],
+
+    queryFn:
+      getAdminPayoutStats,
+
+    refetchInterval: 15000,
+
+    refetchOnWindowFocus: true,
+  });
+}
+
+
+export function useApproveAdminPayout() {
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn:
+      approveAdminPayout,
+
+    onSuccess: () => {
+      qc.invalidateQueries({
+        queryKey: ["admin-payouts"],
+      });
+
+      qc.invalidateQueries({
+        queryKey: [
+          "admin-payout-stats",
+        ],
+      });
+
+      toast.success(
+        "Payout approved."
+      );
+    },
+  });
+}
+
+export function useDeclineAdminPayout() {
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn:
+      declineAdminPayout,
+
+    onSuccess: () => {
+      qc.invalidateQueries({
+        queryKey: ["admin-payouts"],
+      });
+
+      qc.invalidateQueries({
+        queryKey: [
+          "admin-payout-stats",
+        ],
+      });
+
+      toast.success(
+        "Payout declined."
+      );
+    },
+  });
+}
+
+export function useAdminReports(range) {
+  return useQuery({
+    queryKey: ["admin-reports", range],
+
+    queryFn: () => getAdminReports(range),
+
+    staleTime: 30 * 1000,
+
+    refetchInterval: 60 * 1000,
+
+    refetchOnWindowFocus: true,
   });
 }
