@@ -87,8 +87,9 @@ const handleSubmit = async (e) => {
     "featured",
     String(form.featured)
   );
-data.append("type", "brand");
-data.append(
+data.append("ownerType", "brand");
+data.append("mediaType", "video");data.append(
+
     "visibility",
     "free"
 );
@@ -353,7 +354,7 @@ data.append(
               className="w-full rounded-2xl bg-[#111] border border-white/10 p-5 outline-none resize-none focus:border-amber-500"
             />
 
-            <label className="flex items-center gap-4">
+            {/* <label className="flex items-center gap-4">
 
               <input
                 type="checkbox"
@@ -373,7 +374,7 @@ data.append(
 
               </span>
 
-            </label>
+            </label> */}
 
             <div className="flex justify-end gap-4">
 

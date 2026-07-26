@@ -50,33 +50,34 @@ const deleteMutation =
     useDeleteBrandVideo();
 
 const filteredVideos = useMemo(() => {
-        return videos.filter((video) => {
-      const matchesSearch =
-        video.title
-          .toLowerCase()
-          .includes(search.toLowerCase());
+  return videos.filter((video) => {
+    const matchesSearch =
+      video.title
+        .toLowerCase()
+        .includes(search.toLowerCase());
 
-     const matchesMembership =
-    membershipFilter === "all" ||
-    video.membership?.toLowerCase() ===
+    const matchesMembership =
+      membershipFilter === "all" ||
+      video.membership?.toLowerCase() ===
         membershipFilter;
 
-  const matchesCategory =
-    categoryFilter === "all" ||
-    video.category?.toLowerCase() ===
+    const matchesCategory =
+      categoryFilter === "all" ||
+      video.category?.toLowerCase() ===
         categoryFilter.toLowerCase();
 
-      return (
-        matchesSearch &&
-        matchesMembership &&
-        matchesCategory
-      );
-    });
-  }, [
-    search,
-    membershipFilter,
-    categoryFilter,
-  ]);
+    return (
+      matchesSearch &&
+      matchesMembership &&
+      matchesCategory
+    );
+  });
+}, [
+  videos,
+  search,
+  membershipFilter,
+  categoryFilter,
+]);
 if (isLoading) {
   return (
     <div className="py-40 text-center">

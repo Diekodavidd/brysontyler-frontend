@@ -106,6 +106,7 @@ const watching =
       live: sub.creatorId.isLive || false,
     })) || [];
     
+const notifications = [];
 if (user?.membership?.plan && user.membership.plan !== "FREE") {
   notifications.push({
     icon: "👑",
@@ -366,36 +367,50 @@ gap-6">
 
         {/* Notifications */}
 
-        <div className="flex items-center justify-between mb-8">
+        <div className="bg-zinc-900 rounded-3xl border border-white/5 p-5 lg:p-8">
 
-    <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 mb-8">
 
-      <Bell className="text-amber-500" />
+            <Bell className="text-yellow-400" />
 
-      <div>
+            <h2 className="font-black">
+              Notifications
+            </h2>
 
-        <h2 className="text-xl font-black">
-          Recent Notifications
-        </h2>
+          </div>
 
-        <p className="text-xs text-zinc-500 mt-1">
-          Your latest account activity
-        </p>
+          <div className="space-y-5">
 
-      </div>
+{notifications.length ? (
 
-    </div>
+notifications.map((note,index)=>(
+<div
+    key={index}
+    className="flex items-start gap-3 pb-4 border-b border-white/5"
+>
 
-    <button
-      onClick={() =>
-        navigate("/dashboard/notifications")
-      }
-      className="text-sm text-amber-500 hover:text-amber-400 font-bold"
-    >
-      View All
-    </button>
+<span className="text-xl">
+    {note.icon}
+</span>
 
-  </div>
+<p className="text-zinc-300">
+    {note.text}
+</p>
+
+</div>
+))
+
+) : (
+
+<p className="text-zinc-500">
+You're all caught up.
+</p>
+
+)}
+
+</div>
+
+        </div>
 
         {/* Recent Activity */}
 
