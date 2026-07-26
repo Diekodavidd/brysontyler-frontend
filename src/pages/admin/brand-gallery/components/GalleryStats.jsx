@@ -1,5 +1,6 @@
 import {
   Video,
+  Image,
   Eye,
   Crown,
   Star,
@@ -7,66 +8,124 @@ import {
   PlayCircle,
 } from "lucide-react";
 
-export default function GalleryStats({ videos = [] }) {
-  const totalVideos = videos.length;
+export default function GalleryStats({
+  content = [],
+}) {
 
-  const featuredVideos = videos.filter(
-    (v) => v.featured
+  // ==============================
+  // MEDIA COUNTS
+  // ==============================
+
+const totalVideos = content.filter(
+  (item) =>
+    item.mediaType?.toLowerCase() === "video" ||
+    item.type?.toLowerCase() === "brand"
+).length;
+
+  const totalImages = content.filter(
+    (item) =>
+      item.mediaType?.toLowerCase() === "image"
   ).length;
 
-  const freeVideos = videos.filter(
-    (v) => v.membership?.toLowerCase() === "free"
+  const totalContent = content.length;
+
+
+  // ==============================
+  // OTHER STATS
+  // ==============================
+
+  const featuredContent = content.filter(
+    (item) => item.featured
   ).length;
 
-  const vipVideos = videos.filter(
-    (v) => v.membership?.toLowerCase() === "vip"
+  const freeContent = content.filter(
+    (item) =>
+      item.membership?.toLowerCase() === "free"
   ).length;
 
-  const eliteVideos = videos.filter(
-    (v) => v.membership?.toLowerCase() === "elite"
+  const vipContent = content.filter(
+    (item) =>
+      item.membership?.toLowerCase() === "vip"
   ).length;
 
-  const totalViews = videos.reduce(
-    (sum, video) => sum + (video.views || 0),
+  const eliteContent = content.filter(
+    (item) =>
+      item.membership?.toLowerCase() === "elite"
+  ).length;
+
+
+  // ==============================
+  // TOTAL VIEWS
+  // ==============================
+
+  const totalViews = content.reduce(
+    (sum, item) =>
+      sum + (Number(item.views) || 0),
     0
   );
 
+
+  // ==============================
+  // STATS
+  // ==============================
+
   const stats = [
     {
-      title: "Total Videos",
+      title: "Total Content",
+      value: totalContent,
+      icon: PlayCircle,
+      color: "text-amber-400",
+      bg: "bg-amber-500/10",
+    },
+
+    {
+      title: "Videos",
       value: totalVideos,
       icon: Video,
       color: "text-blue-400",
       bg: "bg-blue-500/10",
     },
+
+    {
+      title: "Images",
+      value: totalImages,
+      icon: Image,
+      color: "text-pink-400",
+      bg: "bg-pink-500/10",
+    },
+
     {
       title: "Featured",
-      value: featuredVideos,
+      value: featuredContent,
       icon: Star,
       color: "text-yellow-400",
       bg: "bg-yellow-500/10",
     },
+
     {
       title: "FREE",
-      value: freeVideos,
+      value: freeContent,
       icon: PlayCircle,
       color: "text-green-400",
       bg: "bg-green-500/10",
     },
+
     {
       title: "VIP",
-      value: vipVideos,
+      value: vipContent,
       icon: Crown,
       color: "text-purple-400",
       bg: "bg-purple-500/10",
     },
+
     {
       title: "ELITE",
-      value: eliteVideos,
+      value: eliteContent,
       icon: Lock,
       color: "text-red-400",
       bg: "bg-red-500/10",
     },
+
     {
       title: "Total Views",
       value: totalViews.toLocaleString(),
@@ -76,19 +135,54 @@ export default function GalleryStats({ videos = [] }) {
     },
   ];
 
+
+  // ==============================
+  // RENDER
+  // ==============================
+
   return (
-    <div className="grid grid-cols-2 xl:grid-cols-6 gap-5">
+    <div
+      className="
+        grid
+        grid-cols-2
+        md:grid-cols-3
+        xl:grid-cols-4
+        2xl:grid-cols-8
+        gap-5
+      "
+    >
+
       {stats.map((stat) => {
         const Icon = stat.icon;
 
         return (
           <div
             key={stat.title}
-            className="rounded-3xl border border-white/5 bg-[#090909] p-6 hover:border-amber-500/20 transition-all"
+            className="
+              rounded-3xl
+              border
+              border-white/5
+              bg-[#090909]
+              p-6
+              hover:border-amber-500/20
+              transition-all
+              duration-300
+            "
           >
-            <div className="flex items-center justify-between">
+
+            <div className="flex items-center justify-between gap-4">
+
               <div
-                className={`h-12 w-12 rounded-2xl flex items-center justify-center ${stat.bg}`}
+                className={`
+                  h-12
+                  w-12
+                  shrink-0
+                  rounded-2xl
+                  flex
+                  items-center
+                  justify-center
+                  ${stat.bg}
+                `}
               >
                 <Icon
                   size={22}
@@ -96,17 +190,29 @@ export default function GalleryStats({ videos = [] }) {
                 />
               </div>
 
-              <span className="text-3xl font-black">
+              <span className="text-2xl xl:text-3xl font-black">
                 {stat.value}
               </span>
+
             </div>
 
-            <p className="mt-6 text-xs uppercase tracking-[0.25em] text-zinc-500 font-black">
+            <p
+              className="
+                mt-6
+                text-xs
+                uppercase
+                tracking-[0.2em]
+                text-zinc-500
+                font-black
+              "
+            >
               {stat.title}
             </p>
+
           </div>
         );
       })}
+
     </div>
   );
 }

@@ -31,10 +31,9 @@ const [activeCategory, setActiveCategory] = useState("all");
   const [selectedVideo, setSelectedVideo] =
     useState(null);
 
-
 const {
-    data: videos = [],
-    isLoading,
+  data: content = [],
+  isLoading,
 } = useGallery();
 
 if (isLoading) {
@@ -45,78 +44,89 @@ if (isLoading) {
     </div>
   );
 }
-console.log("VIDEOS", videos);
+console.log("content", content);
  const FIVE_HOURS = 1000 * 60 * 60 * 5;
 
-const getFeaturedVideo = () => {
-    if (!videos.length) return null;
+const getFeaturedContent = () => {
+  if (!content.length) return null;
 
-    const saved = JSON.parse(
-        localStorage.getItem("hero-video") || "null"
+  const saved = JSON.parse(
+    localStorage.getItem("hero-content") || "null"
+  );
+
+  if (
+    saved &&
+    Date.now() - saved.time < FIVE_HOURS
+  ) {
+    const existing = content.find(
+      (item) => item._id === saved.id
     );
 
-    if (
-        saved &&
-        Date.now() - saved.time < FIVE_HOURS
-    ) {
-        const existing = videos.find(
-            v => v._id === saved.id
-        );
-
-        if (existing) return existing;
+    if (existing) {
+      return existing;
     }
+  }
 
-    const random =
-        videos[
-            Math.floor(
-                Math.random() * videos.length
-            )
-        ];
+  const random =
+    content[
+      Math.floor(
+        Math.random() * content.length
+      )
+    ];
 
-    localStorage.setItem(
-        "hero-video",
-        JSON.stringify({
-            id: random._id,
-            time: Date.now(),
-        })
-    );
+  localStorage.setItem(
+    "hero-content",
+    JSON.stringify({
+      id: random._id,
+      time: Date.now(),
+    })
+  );
 
-    return random;
+  return random;
 };
 
-const featured = getFeaturedVideo();
+const featured =
+  getFeaturedContent();
 
-const trending = videos.slice(0, 10);
 
-const originals = videos.filter(
-    v =>
-        v.brandCollection ===
-        "Bryson Tyler Originals"
+const trending = content.slice(0, 10);
+
+const originals = content.filter(
+  (item) =>
+    item.brandCollection
+      ?.toLowerCase()
+      .includes("bryson tyler originals")
 );
 
-const couples = videos.filter(
-    v => v.category === "Couples"
+const couples = content.filter(
+  (item) =>
+    item.category?.toLowerCase() ===
+    "couples"
+);
+const solo = content.filter(
+  (item) =>
+    item.category?.toLowerCase() === "solo"
 );
 
-const solo = videos.filter(
-    v => v.category === "Solo"
+const interviews = content.filter(
+  (item) =>
+    item.category?.toLowerCase() ===
+    "interviews"
 );
 
-const interviews = videos.filter(
-    v => v.category === "Interviews"
+const behindScenes = content.filter(
+  (item) =>
+    item.category?.toLowerCase() ===
+    "behind the scenes"
 );
 
-const behindScenes = videos.filter(
-    v => v.category === "Behind the Scenes"
-);
-
-const newReleases = [...videos]
-    .sort(
-        (a, b) =>
-            new Date(b.createdAt) -
-            new Date(a.createdAt)
-    )
-    .slice(0, 10);
+const newReleases = [...content]
+  .sort(
+    (a, b) =>
+      new Date(b.createdAt) -
+      new Date(a.createdAt)
+  )
+  .slice(0, 10);
   const documentaries = Array.from(
     { length: 10 },
     (_, i) => ({
@@ -128,41 +138,53 @@ const newReleases = [...videos]
     })
   );
 const rows = [
-    {
-        id: "trending",
-        title: "Trending Now",
-        videos: trending,
-    },
-    {
-        id: "exclusive",
-        title: "Bryson Tyler Originals",
-        videos: originals,
-    },
-    {
-        id: "couples",
-        title: "Couples",
-        videos: couples,
-    },
-    {
-        id: "new",
-        title: "New Releases",
-        videos: newReleases,
-    },
-    {
-        id: "behind-scenes",
-        title: "Behind the Scenes",
-        videos: behindScenes,
-    },
-    {
-        id: "solo",
-        title: "Solo",
-        videos: solo,
-    },
-    {
-        id: "interviews",
-        title: "Interviews",
-        videos: interviews,
-    },
+  {
+    id: "all",
+    title: "All Content",
+    videos: content,
+  },
+
+  {
+    id: "trending",
+    title: "Trending Now",
+    videos: trending,
+  },
+
+  {
+    id: "exclusive",
+    title: "Bryson Tyler Originals",
+    videos: originals,
+  },
+
+  {
+    id: "couples",
+    title: "Couples",
+    videos: couples,
+  },
+
+  {
+    id: "new",
+    title: "New Releases",
+    videos: newReleases,
+  },
+
+  {
+    id: "behind-scenes",
+    title: "Behind the Scenes",
+    videos: behindScenes,
+  },
+
+  {
+    id: "solo",
+    title: "Solo",
+    videos: solo,
+  },
+
+  {
+    id: "interviews",
+    title: "Interviews",
+    videos: interviews,
+  },
 ];
 
 const orderedRows =

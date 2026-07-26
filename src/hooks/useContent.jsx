@@ -102,3 +102,55 @@ export function useGallery() {
         queryFn: contentService.getGallery,
     });
 }
+
+export function useUploadBrandGallery() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: contentService.uploadBrandGallery,
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["brand-gallery"],
+      });
+
+      toast.success(
+        "Gallery images uploaded successfully."
+      );
+    },
+
+    onError: (error) => {
+      toast.error(
+        error?.message ||
+        "Failed to upload gallery images."
+      );
+    },
+  });
+}
+
+export function useUploadCreatorImages() {
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn:
+      contentService.uploadCreatorImages,
+
+    onSuccess: () => {
+      qc.invalidateQueries({
+        queryKey: ["creator-content"],
+      });
+
+      toast.success(
+        "Images uploaded successfully."
+      );
+    },
+
+    onError: (error) => {
+      toast.error(
+        error?.response?.data?.error ||
+        error?.message ||
+        "Image upload failed."
+      );
+    },
+  });
+}

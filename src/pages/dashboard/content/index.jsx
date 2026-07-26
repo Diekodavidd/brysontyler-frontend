@@ -1,9 +1,8 @@
 import { useMemo, useState } from "react";
 import {
-  Search,
   Plus,
-  DollarSign,
   Crown,
+  Eye,
   Video,
   Image as ImageIcon,
 } from "lucide-react";
@@ -13,22 +12,41 @@ import { useMyContent } from "@/hooks/useContent";
 import StatsCards from "./components/Statscard";
 import FilterBar from "./components/FilterBar";
 import ContentCard from "./components/ContentCard";
+
+import UploadContentChoiceModal from "./components/UploadContentChoiceModal";
 import UploadContentModal from "./components/UploadContentModal";
+import UploadImagesModal from "./components/UploadImagesModal";
+
 import EditContentModal from "./components/EditContentModal";
 import PreviewContentModal from "./components/PreviewContentModal";
 import DeleteContentModal from "./components/DeleteContentModal";
 import EmptyState from "./components/EmptyBadge";
 
 export default function ContentPage() {
-const {
-  data: content = [],
-  isLoading,
-} = useMyContent();
+  const {
+    data: content = [],
+    isLoading,
+  } = useMyContent();
 
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
 
-  const [showUpload, setShowUpload] = useState(false);
+  // ==============================
+  // UPLOAD MODALS
+  // ==============================
+
+  const [uploadChoiceOpen, setUploadChoiceOpen] =
+    useState(false);
+
+  const [uploadVideoOpen, setUploadVideoOpen] =
+    useState(false);
+
+  const [uploadImagesOpen, setUploadImagesOpen] =
+    useState(false);
+
+  // ==============================
+  // OTHER MODALS
+  // ==============================
 
   const [selectedContent, setSelectedContent] =
     useState(null);
@@ -39,72 +57,119 @@ const {
   const [deletingContent, setDeletingContent] =
     useState(null);
 
+  // ==============================
+  // STATS
+  // ==============================
+
   const stats = useMemo(() => {
+    const videos = content.filter(
+      (item) =>
+        item.mediaType?.toLowerCase() === "video"
+    ).length;
+
+    const photos = content.filter(
+      (item) =>
+        item.mediaType?.toLowerCase() === "image"
+    ).length;
+
+    const premium = content.filter(
+      (item) =>
+        item.visibility === "ppv" ||
+        item.visibility === "members_ppv"
+    ).length;
+
+    const free = content.filter(
+      (item) =>
+        item.visibility === "free"
+    ).length;
+
     return {
+      videos,
+      photos,
+      premium,
+      free,
+
+      total: content.length,
+
       revenue: content.reduce(
-        (sum, item) => sum + (item.revenue || 0),
+        (sum, item) =>
+          sum + (Number(item.revenue) || 0),
         0
       ),
 
       sales: content.reduce(
-        (sum, item) => sum + (item.sales || 0),
+        (sum, item) =>
+          sum + (Number(item.sales) || 0),
         0
       ),
-premium: content.filter(
-  item =>
-    item.visibility === "ppv" ||
-    item.visibility === "members_ppv"
-).length,
-
-free: content.filter(
-  item =>
-    item.visibility === "free"
-).length,
     };
   }, [content]);
+
+  // ==============================
+  // FILTER CONTENT
+  // ==============================
 
   const filteredContent = useMemo(() => {
     return content.filter((item) => {
       const matchesSearch =
         item.title
           ?.toLowerCase()
-          .includes(search.toLowerCase());
+          .includes(
+            search.toLowerCase()
+          );
 
       if (!matchesSearch) return false;
 
+      const mediaType =
+        item.mediaType?.toLowerCase();
+
       switch (filter) {
-      case "videos":
-  return item.mediaType === "video";
+        case "videos":
+          return mediaType === "video";
 
-case "photos":
-  return item.mediaType === "image";
-  
-      case "premium":
-    return (
-        item.visibility === "ppv" ||
-        item.visibility === "members_ppv"
-    );
+        case "photos":
+          return mediaType === "image";
 
-case "subscriber":
-    return item.visibility === "subscribers";
+        case "premium":
+          return (
+            item.visibility === "ppv" ||
+            item.visibility === "members_ppv"
+          );
 
-case "free":
-    return item.visibility === "free";
+        case "subscriber":
+          return (
+            item.visibility === "subscribers"
+          );
 
-       case "draft":
-  return item.status === "draft";
+        case "free":
+          return (
+            item.visibility === "free"
+          );
 
-case "scheduled":
-  return (
-    item.status === "scheduled" ||
-    item.status === "pending_review"
-  );
+        case "draft":
+          return (
+            item.status === "draft"
+          );
+
+        case "scheduled":
+          return (
+            item.status === "scheduled" ||
+            item.status === "pending_review"
+          );
 
         default:
           return true;
       }
     });
-  }, [content, search, filter]);
+  }, [
+    content,
+    search,
+    filter,
+  ]);
+
+  // ==============================
+  // LOADING
+  // ==============================
 
   if (isLoading) {
     return (
@@ -116,22 +181,26 @@ case "scheduled":
 
   return (
     <>
-<div className="space-y-6 lg:space-y-10">
-        {/* HEADER */}
+      <div className="space-y-6 lg:space-y-10">
 
-<div className="flex flex-col xl:flex-row xl:justify-between xl:items-end gap-6">
+        {/* ==============================
+            HEADER
+        ============================== */}
+
+        <div className="flex flex-col xl:flex-row xl:justify-between xl:items-end gap-6">
+
           <div>
 
             <p className="uppercase tracking-[.3em] text-xs font-black text-yellow-400">
               Creator Studio
             </p>
 
-<h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mt-3">              Content Library
-
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mt-3">
+              Content Library
             </h1>
 
-<p className="text-sm sm:text-base text-zinc-500 mt-4 max-w-3xl leading-7">              Upload premium videos,
-              photos and exclusive
+            <p className="text-sm sm:text-base text-zinc-500 mt-4 max-w-3xl leading-7">
+              Upload premium videos, photos and exclusive
               content for your fans.
             </p>
 
@@ -139,40 +208,80 @@ case "scheduled":
 
           <button
             onClick={() =>
-              setShowUpload(true)
+              setUploadChoiceOpen(true)
             }
-className="w-full sm:w-auto justify-center bg-yellow-500 hover:bg-yellow-400 text-black rounded-2xl px-6 lg:px-8 py-4 font-black flex items-center gap-3"          >
+            className="
+              w-full
+              sm:w-auto
+              justify-center
+              bg-yellow-500
+              hover:bg-yellow-400
+              text-black
+              rounded-2xl
+              px-6
+              lg:px-8
+              py-4
+              font-black
+              flex
+              items-center
+              gap-3
+              transition
+            "
+          >
             <Plus size={18} />
+
             Upload Content
           </button>
 
         </div>
 
-        {/* STATS */}
+        {/* ==============================
+            STATS
+        ============================== */}
 
         <StatsCards
           cards={[
-           
+            {
+              title: "Videos",
+              value: stats.videos,
+              color: "text-blue-400",
+              icon: (
+                <Video size={24} />
+              ),
+            },
+
+            {
+              title: "Photos",
+              value: stats.photos,
+              color: "text-pink-400",
+              icon: (
+                <ImageIcon size={24} />
+              ),
+            },
+
             {
               title: "Premium",
               value: stats.premium,
               color: "text-red-400",
               icon: (
-                <Video size={24} />
+                <Crown size={24} />
               ),
             },
+
             {
               title: "Free",
               value: stats.free,
               color: "text-sky-400",
               icon: (
-                <ImageIcon size={24} />
+                <Eye size={24} />
               ),
             },
           ]}
         />
 
-        {/* FILTER */}
+        {/* ==============================
+            FILTER
+        ============================== */}
 
         <FilterBar
           search={search}
@@ -181,66 +290,130 @@ className="w-full sm:w-auto justify-center bg-yellow-500 hover:bg-yellow-400 tex
           setFilter={setFilter}
         />
 
-        {/* CONTENT */}
+        {/* ==============================
+            CONTENT
+        ============================== */}
 
         {filteredContent.length === 0 ? (
+
           <EmptyState />
+
         ) : (
+
           <div className="grid xl:grid-cols-3 lg:grid-cols-2 gap-7">
 
             {filteredContent.map((item) => (
+
               <ContentCard
                 key={item._id}
                 item={item}
+
                 onPreview={() =>
                   setSelectedContent(item)
                 }
+
                 onEdit={() =>
                   setEditingContent(item)
                 }
+
                 onDelete={() =>
                   setDeletingContent(item)
                 }
               />
+
             ))}
 
           </div>
+
         )}
 
       </div>
 
-      {/* MODALS */}
+      {/* ==============================
+          UPLOAD CHOICE
+      ============================== */}
+
+      <UploadContentChoiceModal
+        open={uploadChoiceOpen}
+
+        onClose={() =>
+          setUploadChoiceOpen(false)
+        }
+
+        onSelectVideo={() => {
+          setUploadChoiceOpen(false);
+          setUploadVideoOpen(true);
+        }}
+
+        onSelectImages={() => {
+          setUploadChoiceOpen(false);
+          setUploadImagesOpen(true);
+        }}
+      />
+
+      {/* ==============================
+          VIDEO UPLOAD
+      ============================== */}
 
       <UploadContentModal
-        open={showUpload}
+        open={uploadVideoOpen}
+
         onClose={() =>
-          setShowUpload(false)
+          setUploadVideoOpen(false)
         }
       />
+
+      {/* ==============================
+          IMAGE UPLOAD
+      ============================== */}
+
+      <UploadImagesModal
+        open={uploadImagesOpen}
+
+        onClose={() =>
+          setUploadImagesOpen(false)
+        }
+      />
+
+      {/* ==============================
+          PREVIEW
+      ============================== */}
 
       <PreviewContentModal
         open={!!selectedContent}
         content={selectedContent}
+
         onClose={() =>
           setSelectedContent(null)
         }
       />
 
+      {/* ==============================
+          EDIT
+      ============================== */}
+
       <EditContentModal
         open={!!editingContent}
         content={editingContent}
+
         onClose={() =>
           setEditingContent(null)
         }
       />
 
+      {/* ==============================
+          DELETE
+      ============================== */}
+
       <DeleteContentModal
         open={!!deletingContent}
         content={deletingContent}
+
         onClose={() =>
           setDeletingContent(null)
         }
       />
+
     </>
   );
 }

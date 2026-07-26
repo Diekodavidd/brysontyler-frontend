@@ -1,5 +1,6 @@
 import {
   httpGet,
+  httpPost,
   httpDelete,
   httpPatch,
 } from "@/lib/http";
@@ -9,8 +10,13 @@ import axios from "axios";
 
 const API = import.meta.env.VITE_API_URL;
 
+// =====================================================
+// CREATOR CONTENT
+// =====================================================
+
 export const getMyContent = async () => {
   const res = await httpGet("/content/my-content");
+
   return res.content;
 };
 
@@ -36,12 +42,11 @@ export const uploadContent = async ({
         if (!progressEvent.total) return;
 
         const percent = Math.round(
-  (progressEvent.loaded * 95) /
-  progressEvent.total
-);
+          (progressEvent.loaded * 95) /
+            progressEvent.total
+        );
 
-onUploadProgress?.(percent);
-
+        onUploadProgress?.(percent);
       },
     }
   );
@@ -72,23 +77,33 @@ export const updateContent = ({
   });
 };
 
+// =====================================================
+// BRAND GALLERY
+// =====================================================
+
 export const getBrandGallery = async () => {
   const res = await httpGet("/content/brand");
+
   return res.videos;
 };
 
 export const uploadBrandVideo = async (formData) => {
   const token = getToken();
 
-  console.log("TOKEN FROM SERVICE:", token);
+  console.log(
+    "TOKEN FROM SERVICE:",
+    token
+  );
 
   const res = await fetch(
     `${API}/content/upload-brand`,
     {
       method: "POST",
+
       headers: {
         Authorization: `Bearer ${token}`,
       },
+
       body: formData,
     }
   );
@@ -96,48 +111,88 @@ export const uploadBrandVideo = async (formData) => {
   const data = await res.json();
 
   if (!res.ok) {
-    throw new Error(data.error || "Upload failed");
+    throw new Error(
+      data.error || "Upload failed"
+    );
   }
 
   return data;
 };
 
+export const uploadBrandGallery = async (
+  formData
+) => {
+  const token = getToken();
 
-// export const uploadBrandVideo = async ({
-//   data,
-//   onUploadProgress,
-// }) => {
-//   const token = getToken();
+  const res = await fetch(
+    `${API}/content/upload-brand-gallery`,
+    {
+      method: "POST",
 
-//   const res = await axios.post(
-//     `${API}/content/upload-brand`,
-//     data,
-//     {
-//       headers: {
-//         Authorization: `Bearer ${token}`,
-//       },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
 
-//       onUploadProgress: (progressEvent) => {
-//         if (!progressEvent.total) return;
+      body: formData,
+    }
+  );
 
-//         const percent = Math.round(
-//           (progressEvent.loaded * 100) /
-//             progressEvent.total
-//         );
+  const data = await res.json();
 
-//         onUploadProgress?.(percent);
-//       },
-//     }
-//   );
+  if (!res.ok) {
+    throw new Error(
+      data.error ||
+        "Gallery upload failed"
+    );
+  }
 
-//   return res.data;
-// };
-
-export const deleteBrandVideo = (id) => {
-  return httpDelete(`/content/brand/${id}`);
+  return data;
 };
 
+export const deleteBrandVideo = (id) => {
+  return httpDelete(
+    `/content/brand/${id}`
+  );
+};
+
+// =====================================================
+// GENERAL GALLERY
+// =====================================================
+
 export const getGallery = async () => {
-    const res = await httpGet("/content/gallery");
-    return res.videos;
+  const res = await httpGet(
+    "/content/gallery"
+  );
+
+  return res.content || [];
+};
+
+export const uploadCreatorImages = async ({
+  data,
+  onUploadProgress,
+}) => {
+  const token = getToken();
+
+  const res = await axios.post(
+    `${API}/content/upload-images`,
+    data,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+
+      onUploadProgress: (progressEvent) => {
+        if (!progressEvent.total) return;
+
+        const percent = Math.round(
+          (progressEvent.loaded * 95) /
+            progressEvent.total
+        );
+
+        onUploadProgress?.(percent);
+      },
+    }
+  );
+
+  return res.data;
 };
