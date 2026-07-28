@@ -68,17 +68,27 @@ const handleSubmit = async (e) => {
     return alert("Please upload a video.");
 
   if (!preview)
-    return alert("Please upload a preview video.");
+    return alert(
+      "Please upload a preview video."
+    );
 
   if (!thumbnail)
-    return alert("Please upload a thumbnail.");
+    return alert(
+      "Please upload a thumbnail."
+    );
 
   const data = new FormData();
 
   data.append("title", form.title);
-  data.append("description", form.description);
+  data.append(
+    "description",
+    form.description
+  );
   data.append("category", form.category);
-  data.append("membership", form.membership);
+  data.append(
+    "membership",
+    form.membership
+  );
   data.append(
     "brandCollection",
     form.brandCollection
@@ -87,21 +97,42 @@ const handleSubmit = async (e) => {
     "featured",
     String(form.featured)
   );
-data.append("ownerType", "brand");
-data.append("mediaType", "video");data.append(
 
-    "visibility",
-    "free"
-);
+  data.append("ownerType", "brand");
+  data.append("mediaType", "video");
+  data.append("visibility", "free");
+
   data.append("video", video);
   data.append("preview", preview);
   data.append("thumbnail", thumbnail);
 
-  uploadMutation.mutate(data, {
-    onSuccess: () => {
-      onClose();
+  uploadMutation.mutate(
+    {
+      data,
+      onUploadProgress: (percent) => {
+        console.log(
+          `Upload Progress: ${percent}%`
+        );
+
+        // If you later add a progress bar:
+        // setUploadProgress(percent);
+      },
     },
-  });
+    {
+      onSuccess: () => {
+        onClose();
+      },
+
+      onError: (err) => {
+        console.error(err);
+        alert(
+          err?.response?.data?.error ||
+            err.message ||
+            "Upload failed."
+        );
+      },
+    }
+  );
 };
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-8">

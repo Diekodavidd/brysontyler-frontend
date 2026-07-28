@@ -13,6 +13,8 @@ export default function GalleryCard({
   onDelete,
   onEdit,
 }) {
+
+  
   const isImage =
     video?.mediaType === "image";
 

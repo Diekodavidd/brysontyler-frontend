@@ -42,13 +42,13 @@ export default function DeleteVideoModal({
 
         <h2 className="mt-8 text-center text-3xl font-black">
 
-          Delete Video?
+          Delete Content?
 
         </h2>
 
         <p className="mt-4 text-center text-zinc-400 leading-7">
 
-          You're about to permanently remove
+          You're about to permanently remove 
 
           <span className="block mt-2 font-bold text-white">
 
@@ -56,7 +56,7 @@ export default function DeleteVideoModal({
 
           </span>
 
-          from the Bryson Tyler gallery.
+          from the Bryson Tyler Brand gallery.
 
           <br />
 
@@ -68,10 +68,14 @@ export default function DeleteVideoModal({
 
         <div className="mt-8 overflow-hidden rounded-2xl border border-white/10">
 
-        <img
-  src={video.thumbnail || "/placeholder.jpg"}
-  alt={video.title}
-  className="h-52 w-full object-cover"
+    <img
+    src={
+        video.thumbnail ||
+        video.images?.[0]?.url ||
+        "/placeholder.jpg"
+    }
+    alt={video.title}
+    className="h-52 w-full object-cover"
 />
 
         </div>
@@ -103,7 +107,17 @@ export default function DeleteVideoModal({
             </p>
 
           </div>
+<div>
+    <p className="text-zinc-500">
+        Type
+    </p>
 
+    <p className="mt-1 font-bold capitalize">
+        {video.mediaType === "image"
+            ? "Image Gallery"
+            : "Video"}
+    </p>
+</div>
           <div>
 
             <p className="text-zinc-500">

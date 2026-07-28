@@ -12,7 +12,7 @@ import GalleryGrid from "./components/GalleryGrid";
 import DeleteVideoModal from "./components/DeleteVideoModal";
 import VideoPreviewModal from "./components/VideoPreviewModal";
 import EmptyGallery from "./components/EmptyGallery";
-
+import EditContentModal from "./components/EditContentModal";
 import {
   useBrandGallery,
   useDeleteBrandVideo,
@@ -20,7 +20,7 @@ import {
 
 export default function BrandGalleryPage() {
   const [search, setSearch] = useState("");
-
+const [editVideo, setEditVideo] = useState(null);
   const [membershipFilter, setMembershipFilter] =
     useState("all");
 
@@ -378,10 +378,11 @@ export default function BrandGalleryPage() {
         ) : (
 
           <GalleryGrid
-            videos={filteredItems}
-            onPreview={setPreviewVideo}
-            onDelete={setDeleteVideo}
-          />
+    videos={filteredItems}
+    onPreview={setPreviewVideo}
+    onDelete={setDeleteVideo}
+    onEdit={setEditVideo}
+/>
 
         )}
 
@@ -435,12 +436,17 @@ export default function BrandGalleryPage() {
       ================================= */}
 
       <VideoPreviewModal
-        video={previewVideo}
-        open={!!previewVideo}
-        onClose={() =>
-          setPreviewVideo(null)
-        }
-      />
+  video={previewVideo}
+  open={!!previewVideo}
+  onClose={() => setPreviewVideo(null)}
+  onDelete={(video) => {
+    setPreviewVideo(null);
+
+    setTimeout(() => {
+      setDeleteVideo(video);
+    }, 150);
+  }}
+/>
 
 
       {/* =================================
@@ -467,7 +473,12 @@ export default function BrandGalleryPage() {
           )
         }
       />
-
+<EditContentModal
+    mode="brand"
+    open={!!editVideo}
+    content={editVideo}
+    onClose={() => setEditVideo(null)}
+/>
     </>
   );
 }

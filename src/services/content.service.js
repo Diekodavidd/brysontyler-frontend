@@ -87,38 +87,40 @@ export const getBrandGallery = async () => {
   return res.videos;
 };
 
-export const uploadBrandVideo = async (formData) => {
+
+export const uploadBrandVideo = async ({
+  data,
+  onUploadProgress,
+}) => {
   const token = getToken();
 
-  console.log(
-    "TOKEN FROM SERVICE:",
-    token
-  );
-
-  const res = await fetch(
+  const res = await axios.post(
     `${API}/content/upload-brand`,
+    data,
     {
-      method: "POST",
-
       headers: {
         Authorization: `Bearer ${token}`,
       },
 
-      body: formData,
+      timeout: 0,
+      maxBodyLength: Infinity,
+      maxContentLength: Infinity,
+
+      onUploadProgress: (progressEvent) => {
+        if (!progressEvent.total) return;
+
+        const percent = Math.round(
+          (progressEvent.loaded * 100) /
+            progressEvent.total
+        );
+
+        onUploadProgress?.(percent);
+      },
     }
   );
 
-  const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(
-      data.error || "Upload failed"
-    );
-  }
-
-  return data;
+  return res.data;
 };
-
 export const uploadBrandGallery = async (
   formData
 ) => {

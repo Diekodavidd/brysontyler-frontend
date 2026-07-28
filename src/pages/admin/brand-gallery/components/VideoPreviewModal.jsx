@@ -12,7 +12,8 @@ export default function VideoPreviewModal({
   open,
   video,
   onClose,
-}) {
+  onDelete,
+}){
   if (!open || !video) return null;
 
   const isImage =
@@ -435,14 +436,12 @@ export default function VideoPreviewModal({
 
             </button>
 
-            <button className="rounded-xl bg-red-600 px-6 py-3">
-
-              Delete{" "}
-              {isImage
-                ? "Gallery"
-                : "Video"}
-
-            </button>
+           <button
+  onClick={() => onDelete(video)}
+  className="rounded-xl bg-red-600 px-6 py-3"
+>
+  Delete {isImage ? "Gallery" : "Video"}
+</button>
 
             <button className="rounded-xl bg-amber-500 px-6 py-3 text-black">
 
