@@ -90,7 +90,17 @@ const featured =
 
 
 const trending = content.slice(0, 10);
+const freeVideos = content.filter(
+  (item) => item.membership?.toLowerCase() === "free"
+);
 
+const vipVideos = content.filter(
+  (item) => item.membership?.toLowerCase() === "vip"
+);
+
+const eliteVideos = content.filter(
+  (item) => item.membership?.toLowerCase() === "elite"
+);
 const originals = content.filter(
   (item) =>
     item.brandCollection
@@ -140,50 +150,23 @@ const newReleases = [...content]
 const rows = [
   {
     id: "all",
-    title: "All Content",
+    title: "All Videos",
     videos: content,
   },
-
   {
-    id: "trending",
-    title: "Trending Now",
-    videos: trending,
+    id: "free",
+    title: "Free Videos",
+    videos: freeVideos,
   },
-
   {
-    id: "exclusive",
-    title: "Bryson Tyler Originals",
-    videos: originals,
+    id: "vip",
+    title: "VIP Videos",
+    videos: vipVideos,
   },
-
   {
-    id: "couples",
-    title: "Couples",
-    videos: couples,
-  },
-
-  {
-    id: "new",
-    title: "New Releases",
-    videos: newReleases,
-  },
-
-  {
-    id: "behind-scenes",
-    title: "Behind the Scenes",
-    videos: behindScenes,
-  },
-
-  {
-    id: "solo",
-    title: "Solo",
-    videos: solo,
-  },
-
-  {
-    id: "interviews",
-    title: "Interviews",
-    videos: interviews,
+    id: "elite",
+    title: "Elite Videos",
+    videos: eliteVideos,
   },
 ];
 

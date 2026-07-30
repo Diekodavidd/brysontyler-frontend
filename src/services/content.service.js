@@ -100,11 +100,10 @@ export const uploadBrandVideo = async ({
     {
       headers: {
         Authorization: `Bearer ${token}`,
+         "Content-Type": "multipart/form-data",
       },
 
       timeout: 0,
-      maxBodyLength: Infinity,
-      maxContentLength: Infinity,
 
       onUploadProgress: (progressEvent) => {
         if (!progressEvent.total) return;

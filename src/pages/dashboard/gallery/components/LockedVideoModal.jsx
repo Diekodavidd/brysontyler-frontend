@@ -7,13 +7,14 @@ import {
   ArrowRight,
   PlayCircle,
 } from "lucide-react";
-
+import { useRouter } from "@/compat/navigation";
 export default function LockedVideoModal({
   open,
   video,
   membership,
   onClose,
 }) {
+  const router = useRouter();
   if (!open || !video) return null;
 
   const upgradeTo =
@@ -279,14 +280,17 @@ lg:p-8">
 
                 </div>
 
-                <button
-                  className="mt-10 w-full rounded-2xl bg-yellow-500 hover:bg-yellow-400 transition py-4 text-black font-black flex items-center justify-center gap-3"
-                >
-                  Upgrade Membership
-
-                  <ArrowRight size={18} />
-
-                </button>
+               <button
+  type="button"
+  onClick={() => {
+    onClose();
+    router.push("/dashboard/membership");
+  }}
+  className="mt-10 w-full rounded-2xl bg-yellow-500 hover:bg-yellow-400 transition py-4 text-black font-black flex items-center justify-center gap-3"
+>
+  Upgrade Membership
+  <ArrowRight size={18} />
+</button>
 
                 <button
                   onClick={onClose}

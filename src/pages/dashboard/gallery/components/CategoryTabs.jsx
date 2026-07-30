@@ -14,17 +14,11 @@ export default function CategoryTabs({
   active,
   onChange,
 }) {
-  const tabs = [
+const tabs = [
   { id: "all", label: "All", icon: Grid2x2 },
-  { id: "new", label: "New Releases", icon: Sparkles },
-  { id: "trending", label: "Trending", icon: TrendingUp },
-  { id: "exclusive", label: "Exclusive", icon: Crown },
-  { id: "couples", label: "Couples", icon: Film },
-  { id: "solo", label: "Solo", icon: Camera },
-  { id: "group", label: "Solo", icon: Camera },
-  { id: "threesome", label: "Solo", icon: Camera },
-  { id: "behind-scenes", label: "Behind the Scenes", icon: Clapperboard },
-  { id: "interviews", label: "Interviews", icon: Mic2 },
+  { id: "free", label: "Free", icon: Film },
+  { id: "vip", label: "VIP", icon: Sparkles },
+  { id: "elite", label: "Elite", icon: Crown },
 ];
 
   return (
