@@ -319,7 +319,7 @@ export default function VideoPreviewModal({
 
             {/* DURATION */}
 
-            <div className="rounded-2xl bg-black/40 p-5">
+            {/* <div className="rounded-2xl bg-black/40 p-5">
 
               <p className="text-xs uppercase tracking-[.25em] text-zinc-500">
                 Duration
@@ -337,11 +337,11 @@ export default function VideoPreviewModal({
 
               </h3>
 
-            </div>
+            </div> */}
 
             {/* VIEWS */}
 
-            <div className="rounded-2xl bg-black/40 p-5">
+            {/* <div className="rounded-2xl bg-black/40 p-5">
 
               <p className="text-xs uppercase tracking-[.25em] text-zinc-500">
                 Views
@@ -355,7 +355,7 @@ export default function VideoPreviewModal({
 
               </h3>
 
-            </div>
+            </div> */}
 
             {/* ACCESS */}
 

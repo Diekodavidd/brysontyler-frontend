@@ -10,7 +10,6 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-
 import { useEffect, useState } from "react";
 
 export default function VideoPlayerModal({
@@ -18,9 +17,14 @@ export default function VideoPlayerModal({
   video,
   onClose,
 }) {
-  const [activeImage, setActiveImage] =
-    useState(0);
+  const [activeImage, setActiveImage] = useState(0);
 
+  useEffect(() => {
+    setActiveImage(0);
+  }, [video?._id]);
+
+  // IMPORTANT:
+  // Hooks must always run before any early return.
   if (!open || !video) return null;
 
   /*
@@ -30,18 +34,14 @@ export default function VideoPlayerModal({
   */
 
   const mediaType =
-    video.mediaType?.toLowerCase() ||
-    "video";
+    video.mediaType?.toLowerCase() || "video";
 
-  const isImage =
-    mediaType === "image";
-
-  const isVideo =
-    mediaType === "video";
+  const isImage = mediaType === "image";
+  const isVideo = mediaType === "video";
 
   /*
   ==========================================
-  MEMBERSHIP
+  MEMBERSHIP BADGES
   ==========================================
   */
 
@@ -65,14 +65,6 @@ export default function VideoPlayerModal({
   ==========================================
   IMAGE GALLERY
   ==========================================
-  
-  Priority:
-  
-  1. video.images[]
-  2. video.fileUrl
-  3. video.mediaUrl
-  4. video.url
-  5. video.thumbnail
   */
 
   const imageList =
@@ -85,16 +77,16 @@ export default function VideoPlayerModal({
           video.url ||
           video.thumbnail
         )
-        ? [
-            {
-              url:
-                video.fileUrl ||
-                video.mediaUrl ||
-                video.url ||
-                video.thumbnail,
-            },
-          ]
-        : [];
+      ? [
+          {
+            url:
+              video.fileUrl ||
+              video.mediaUrl ||
+              video.url ||
+              video.thumbnail,
+          },
+        ]
+      : [];
 
   /*
   ==========================================
@@ -110,16 +102,6 @@ export default function VideoPlayerModal({
 
   /*
   ==========================================
-  RESET IMAGE WHEN CONTENT CHANGES
-  ==========================================
-  */
-
-  useEffect(() => {
-    setActiveImage(0);
-  }, [video?._id]);
-
-  /*
-  ==========================================
   IMAGE NAVIGATION
   ==========================================
   */
@@ -129,8 +111,7 @@ export default function VideoPlayerModal({
 
     setActiveImage(
       (prev) =>
-        (prev + 1) %
-        imageList.length
+        (prev + 1) % imageList.length
     );
   };
 
@@ -139,8 +120,7 @@ export default function VideoPlayerModal({
 
     setActiveImage(
       (prev) =>
-        (prev - 1 +
-          imageList.length) %
+        (prev - 1 + imageList.length) %
         imageList.length
     );
   };
@@ -151,159 +131,132 @@ export default function VideoPlayerModal({
   return (
     <div
       className="
-        fixed
-        inset-0
-        z-[999]
-        bg-black/90
-        backdrop-blur-xl
-        flex
-        items-center
-        justify-center
-        p-3
-        sm:p-5
-        lg:p-8
-      "
+      fixed
+      inset-0
+      z-[999]
+      bg-black/90
+      backdrop-blur-xl
+      flex
+      items-center
+      justify-center
+      p-3
+      sm:p-5
+      lg:p-8
+    "
     >
-
       <div
         className="
-          relative
-          w-full
-          max-w-7xl
-          max-h-[95vh]
-          overflow-y-auto
-          rounded-[28px]
-          lg:rounded-[36px]
-          bg-[#090909]
-          border
-          border-white/10
-        "
+        relative
+        w-full
+        max-w-7xl
+        max-h-[95vh]
+        overflow-y-auto
+        rounded-[28px]
+        lg:rounded-[36px]
+        bg-[#090909]
+        border
+        border-white/10
+      "
       >
-
-        {/* =====================================
-            CLOSE
-        ===================================== */}
+        {/* CLOSE */}
 
         <button
           onClick={onClose}
           className="
-            absolute
-            top-4
-            right-4
-            lg:top-6
-            lg:right-6
-            z-50
-            w-10
-            h-10
-            lg:w-12
-            lg:h-12
-            rounded-full
-            bg-black/70
-            hover:bg-red-600
-            transition
-            flex
-            items-center
-            justify-center
-          "
+          absolute
+          top-4
+          right-4
+          lg:top-6
+          lg:right-6
+          z-50
+          w-10
+          h-10
+          lg:w-12
+          lg:h-12
+          rounded-full
+          bg-black/70
+          hover:bg-red-600
+          transition
+          flex
+          items-center
+          justify-center
+        "
         >
           <X size={20} />
         </button>
-
 
         {/* =====================================
             MEDIA
         ===================================== */}
 
         {isVideo ? (
-
-          /* ===================================
-             VIDEO PLAYER
-          =================================== */
-
           <div
             className="
-              aspect-video
-              bg-black
-              flex
-              items-center
-              justify-center
-            "
+            aspect-video
+            bg-black
+            flex
+            items-center
+            justify-center
+          "
           >
-
             {videoUrl ? (
-
               <video
                 src={videoUrl}
                 controls
                 autoPlay
                 playsInline
                 className="
-                  w-full
-                  h-full
-                  object-contain
-                "
+                w-full
+                h-full
+                object-contain
+              "
               />
-
             ) : (
-
               <div
                 className="
-                  flex
-                  flex-col
-                  items-center
-                  justify-center
-                  gap-4
-                  text-zinc-600
-                "
+                flex
+                flex-col
+                items-center
+                justify-center
+                gap-4
+                text-zinc-600
+              "
               >
-
                 <Play size={70} />
 
                 <p className="text-sm">
                   Video unavailable
                 </p>
-
               </div>
-
             )}
-
           </div>
-
         ) : (
-
-          /* ===================================
-             IMAGE GALLERY
-          =================================== */
-
           <div
             className="
-              bg-black
-              min-h-[400px]
-              lg:min-h-[650px]
-              flex
-              flex-col
-              items-center
-              justify-center
-              p-4
-              lg:p-8
-            "
+            bg-black
+            min-h-[400px]
+            lg:min-h-[650px]
+            flex
+            flex-col
+            items-center
+            justify-center
+            p-4
+            lg:p-8
+          "
           >
-
             <div
               className="
-                relative
-                w-full
-                flex-1
-                min-h-[350px]
-                lg:min-h-[550px]
-                flex
-                items-center
-                justify-center
-              "
+              relative
+              w-full
+              flex-1
+              min-h-[350px]
+              lg:min-h-[550px]
+              flex
+              items-center
+              justify-center
+            "
             >
-
               {currentImage ? (
-
                 <img
                   src={currentImage}
                   alt={
@@ -311,190 +264,33 @@ export default function VideoPlayerModal({
                     "Gallery image"
                   }
                   className="
-                    max-w-full
-                    max-h-[65vh]
-                    lg:max-h-[600px]
-                    object-contain
-                    rounded-2xl
-                  "
+                  max-w-full
+                  max-h-[65vh]
+                  lg:max-h-[600px]
+                  object-contain
+                  rounded-2xl
+                "
                 />
-
               ) : (
-
                 <div
                   className="
-                    flex
-                    flex-col
-                    items-center
-                    justify-center
-                    gap-4
-                    text-zinc-600
-                  "
+                  flex
+                  flex-col
+                  items-center
+                  justify-center
+                  gap-4
+                  text-zinc-600
+                "
                 >
-
                   <ImageIcon size={80} />
 
                   <p className="text-sm">
                     Image unavailable
                   </p>
-
                 </div>
-
               )}
 
-
-              {/* PREVIOUS */}
-
-              {imageList.length > 1 && (
-
-                <button
-                  onClick={previousImage}
-                  className="
-                    absolute
-                    left-2
-                    lg:left-6
-                    top-1/2
-                    -translate-y-1/2
-                    w-11
-                    h-11
-                    lg:w-14
-                    lg:h-14
-                    rounded-full
-                    bg-black/70
-                    hover:bg-yellow-500
-                    hover:text-black
-                    transition
-                    flex
-                    items-center
-                    justify-center
-                  "
-                >
-                  <ChevronLeft />
-                </button>
-
-              )}
-
-
-              {/* NEXT */}
-
-              {imageList.length > 1 && (
-
-                <button
-                  onClick={nextImage}
-                  className="
-                    absolute
-                    right-2
-                    lg:right-6
-                    top-1/2
-                    -translate-y-1/2
-                    w-11
-                    h-11
-                    lg:w-14
-                    lg:h-14
-                    rounded-full
-                    bg-black/70
-                    hover:bg-yellow-500
-                    hover:text-black
-                    transition
-                    flex
-                    items-center
-                    justify-center
-                  "
-                >
-                  <ChevronRight />
-                </button>
-
-              )}
-
-            </div>
-
-
-            {/* IMAGE COUNTER */}
-
-            {imageList.length > 1 && (
-
-              <div
-                className="
-                  mt-4
-                  text-sm
-                  text-zinc-400
-                "
-              >
-                {activeImage + 1} /{" "}
-                {imageList.length}
-              </div>
-
-            )}
-
-
-            {/* THUMBNAILS */}
-
-            {imageList.length > 1 && (
-
-              <div
-                className="
-                  flex
-                  gap-3
-                  mt-5
-                  max-w-full
-                  overflow-x-auto
-                  pb-2
-                "
-              >
-
-                {imageList.map(
-                  (image, index) => (
-
-                    <button
-                      key={
-                        image.storageKey ||
-                        image.url ||
-                        index
-                      }
-                      onClick={() =>
-                        setActiveImage(
-                          index
-                        )
-                      }
-                      className={`
-                        shrink-0
-                        w-16
-                        h-20
-                        lg:w-20
-                        lg:h-24
-                        rounded-xl
-                        overflow-hidden
-                        border-2
-                        transition
-                        ${
-                          activeImage ===
-                          index
-                            ? "border-yellow-500"
-                            : "border-white/10"
-                        }
-                      `}
-                    >
-
-                      <img
-                        src={image.url}
-                        alt={`${video.title} ${
-                          index + 1
-                        }`}
-                        className="
-                          w-full
-                          h-full
-                          object-cover
-                        "
-                      />
-
-                    </button>
-
-                  )
-                )}
-
-              </div>
-
-            )}
+                            </div>
 
           </div>
 
@@ -548,11 +344,9 @@ export default function VideoPlayerModal({
 
                 <Crown size={15} />
 
-                {video.membership ||
-                  "Free"}
+                {video.membership || "Free"}
 
               </div>
-
 
               {/* MEDIA TYPE */}
 
@@ -588,7 +382,6 @@ export default function VideoPlayerModal({
 
               </div>
 
-
               {/* TITLE */}
 
               <h1
@@ -601,7 +394,6 @@ export default function VideoPlayerModal({
               >
                 {video.title}
               </h1>
-
 
               {/* DESCRIPTION */}
 
@@ -620,14 +412,13 @@ export default function VideoPlayerModal({
 
             </div>
 
-
             {/* =================================
                 RIGHT
             ================================= */}
 
             <div className="space-y-6">
 
-              {/* THUMBNAIL / IMAGE */}
+              {/* THUMBNAIL */}
 
               {isVideo &&
                 video.thumbnail && (
@@ -647,8 +438,7 @@ export default function VideoPlayerModal({
 
               )}
 
-
-              {/* IMAGE GALLERY PREVIEW */}
+              {/* IMAGE PREVIEW */}
 
               {isImage &&
                 imageList.length > 0 && (
@@ -675,7 +465,6 @@ export default function VideoPlayerModal({
                 </div>
 
               )}
-
 
               {/* DETAILS */}
 
@@ -726,14 +515,12 @@ export default function VideoPlayerModal({
                     </span>
 
                     <span className="font-bold text-right">
-                      {video.category ||
-                        "General"}
+                      {video.category || "General"}
                     </span>
 
                   </div>
 
-
-                  {/* DURATION */}
+                  {/* DURATION
 
                   {isVideo && (
 
@@ -766,8 +553,7 @@ export default function VideoPlayerModal({
 
                     </div>
 
-                  )}
-
+                  )} */}
 
                   {/* IMAGE COUNT */}
 
@@ -801,10 +587,8 @@ export default function VideoPlayerModal({
                     </div>
 
                   )}
-
-
-                  {/* VIEWS */}
-
+                                    {/* VIEWS */}
+{/* 
                   <div
                     className="
                       flex
@@ -813,7 +597,6 @@ export default function VideoPlayerModal({
                       gap-5
                     "
                   >
-
                     <span
                       className="
                         text-zinc-500
@@ -827,12 +610,9 @@ export default function VideoPlayerModal({
                     </span>
 
                     <span className="font-bold">
-                      {(video.views || 0)
-                        .toLocaleString()}
+                      {(video.views || 0).toLocaleString()}
                     </span>
-
-                  </div>
-
+                  </div> */}
 
                   {/* UPLOADED */}
 
@@ -844,7 +624,6 @@ export default function VideoPlayerModal({
                       gap-5
                     "
                   >
-
                     <span
                       className="
                         text-zinc-500
@@ -859,14 +638,10 @@ export default function VideoPlayerModal({
 
                     <span className="font-bold">
                       {video.createdAt
-                        ? new Date(
-                            video.createdAt
-                          ).toLocaleDateString()
+                        ? new Date(video.createdAt).toLocaleDateString()
                         : "N/A"}
                     </span>
-
                   </div>
-
 
                   {/* MEMBERSHIP */}
 
@@ -878,7 +653,6 @@ export default function VideoPlayerModal({
                       gap-5
                     "
                   >
-
                     <span className="text-zinc-500">
                       Membership
                     </span>
@@ -895,18 +669,15 @@ export default function VideoPlayerModal({
                         ${current}
                       `}
                     >
-                      {video.membership ||
-                        "Free"}
+                      {video.membership || "Free"}
                     </span>
-
                   </div>
 
                 </div>
 
               </div>
 
-
-              {/* CLOSE */}
+              {/* CLOSE BUTTON */}
 
               <button
                 onClick={onClose}
@@ -916,7 +687,9 @@ export default function VideoPlayerModal({
                   border
                   border-white/10
                   py-4
+                  font-bold
                   hover:border-yellow-500
+                  hover:bg-yellow-500/5
                   transition
                 "
               >
