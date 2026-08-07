@@ -139,3 +139,70 @@ export const completeAdminPayout = ({
 export const getAdminReports = (range = 30) => {
   return httpGet(`/admin/reports?range=${range}`);
 };
+
+// ==============================
+// MANUAL MEMBERSHIP UPGRADE
+// ==============================
+
+export const manualUpgradeMembership = ({
+  id,
+  plan,
+  duration,
+}) => {
+  return httpPatch(
+    `/admin/fans/${id}/membership`,
+    {
+      plan,
+      duration,
+    }
+  );
+};
+
+// ==============================
+// BANK TRANSFER RECEIPTS
+// ==============================
+
+
+
+export const getBankTransferPayments = () =>
+  httpGet("/admin/payments/bank-transfer");
+
+export const approveBankTransferPayment = (id) =>
+  httpPatch(
+    `/admin/payments/bank-transfer/${id}/approve`
+  );
+
+export const rejectBankTransferPayment = ({
+  id,
+  reason,
+}) =>
+  httpPatch(
+    `/admin/payments/bank-transfer/${id}/reject`,
+    { reason }
+  );
+
+
+export const getAdminLive = () =>
+  httpGet("/admin/live");
+
+export const getCurrentAdminLive = () =>
+  httpGet("/admin/live/current");
+
+export const getAdminLiveStats = () =>
+  httpGet("/admin/live/stats");
+
+export const createAdminLive = (payload) =>
+  httpPost("/admin/live/create", payload);
+
+
+export const getAdminLiveSession = (id) =>
+  httpGet(`/admin/live/${id}`);
+
+export const joinAdminLiveSession = (id) =>
+  httpPost(`/admin/live/${id}/join`, {});
+
+export const leaveAdminLiveSession = (id) =>
+  httpPost(`/admin/live/${id}/leave`, {});
+
+export const endAdminLiveSession = (id) =>
+  httpPost(`/admin/live/end/${id}`, {});

@@ -17,6 +17,8 @@ import {
 
 import { toast } from "react-toastify";
 
+import api from "@/lib/api";
+
 /* ===========================
    QUERIES
 =========================== */
@@ -170,4 +172,53 @@ export const useEndLive = () => {
       );
     },
   });
+};
+
+export const useLikeLive = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (sessionId) => {
+      const { data } = await api.post(`/live/${sessionId}/like`);
+      return data;
+    },
+
+    onSuccess: (_, sessionId) => {
+      queryClient.invalidateQueries(["live-session", sessionId]);
+    },
+  });
+};
+
+export const useTipLive = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async ({
+            sessionId,
+            coinType,
+            quantity,
+        }) => {
+
+            const { data } = await api.post(
+                `/live/${sessionId}/tip`,
+                {
+                    coinType,
+                    quantity,
+                }
+            );
+
+            return data;
+        },
+
+        onSuccess: (_, variables) => {
+            queryClient.invalidateQueries([
+                "live-session",
+                variables.sessionId,
+            ]);
+
+            queryClient.invalidateQueries([
+                "auth-user",
+            ]);
+        },
+    });
 };

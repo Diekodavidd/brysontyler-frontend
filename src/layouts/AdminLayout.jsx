@@ -13,6 +13,9 @@ import {
   Film,
   Users,
   ShieldAlert,
+  Radio,
+  HandCoins,
+  CreditCard,
 } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 
@@ -49,6 +52,11 @@ export default function AdminDashboardLayout() {
     icon: Users,
   },
   {
+  name: "Payments",
+  path: "/admin/payments",
+  icon: CreditCard,
+},
+  {
     name: "Brand Gallery",
     path: "/admin/gallery",
     icon: Film,
@@ -59,10 +67,16 @@ export default function AdminDashboardLayout() {
     icon: Crown,
   },
   {
+  name: "Live Studio",
+  path: "/admin/live",
+  icon: Radio,
+},
+  {
     name: "Payout Requests",
     path: "/admin/payouts",
-    icon: Wallet,
+    icon: HandCoins,
   },
+  
    {
     name: "Notifications",
     path: "/admin/notifications",

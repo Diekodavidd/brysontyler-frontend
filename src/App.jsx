@@ -39,6 +39,7 @@ import AdminPayoutsPage from "@/pages/admin/payouts";
 import AdminPendingCreatorsPage from "@/pages/admin/pending-creators";
 import AdminCreatorsPage from "@/pages/admin/creators";
 import AdminFansPage from "@/pages/admin/fans";
+import AdminLivePage from "@/pages/admin/AdminLive";
 import AdminLoginPage from "@/pages/admin/login";
 import AdminContentReviewPage from "@/pages/admin/content-review";
 import AdminNotificationsPage from "@/pages/admin/notifications";
@@ -47,6 +48,8 @@ import AdminSettingsPage from "@/pages/admin/settings";
 import AdminGalleryPage from "@/pages/admin/brand-gallery";
 import AdminMembershipsPage from "@/pages/admin/memberships";
 import AdminReportsPage from "@/pages/admin/reports";
+import AdminLiveRoom from "@/pages/admin/AdminLive/AdminLiveRoom";
+import AdminPaymentsPage from "@/pages/admin/payments";
 
 // Dashboard pages
 import DashboardPage from "@/pages/dashboard";
@@ -84,6 +87,7 @@ import CreatorLivePage from "@/pages/dashboard/live/creator";
 import LiveRoomPage from "@/pages/dashboard/live/fan/room";
 import CreatorRoomPage from "@/pages/dashboard/live/creator/room";
 import PaymentPage from "./pages/dashboard/payments";
+import BankTransferPaymentPage from "./pages/dashboard/bankTransferPage";
 import CardPaymentPage from "./pages/cardPayment";
 import PublicProfilePage from "./pages/PublicProfilePage";
 import NotificationsPage from "./pages/notifications";
@@ -147,12 +151,17 @@ export default function App() {
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminPage />} />
           <Route path="payouts" element={<AdminPayoutsPage />} />
+          <Route path="payments" element={<AdminPaymentsPage />} />
           <Route path="pending-creators" element={<AdminPendingCreatorsPage />} />
           <Route path="content-approval" element={<AdminContentReviewPage />} />
           <Route path="notifications" element={<AdminNotificationsPage />} />
           <Route path="creators" element={<AdminCreatorsPage />} />
           <Route path="fans" element={<AdminFansPage />} />
-          <Route path="gallery" element={<AdminGalleryPage />} />
+<Route path="live" element={<AdminLivePage />} />
+<Route
+  path="live/room/:id"
+  element={<AdminLiveRoom />}
+/>          <Route path="gallery" element={<AdminGalleryPage />} />
           <Route path="memberships" element={<AdminMembershipsPage />} />
           <Route path="reports" element={<AdminReportsPage />} />
           <Route path="security" element={<AdminSecurityPage />} />
@@ -178,6 +187,12 @@ export default function App() {
     path="payment/card/:paymentId"
     element={<CardPaymentPage />}
 />
+
+<Route
+    path="payment/bank/:paymentId"
+    element={<BankTransferPaymentPage />}
+/>
+
     <Route path="gallery" element={<DashboardGalleryPage />} />
     <Route path="collaborations" element={<DashboardCollaborationsPage />} />
     {/* <Route path="wallet" element={<DashBoardWalletPage />} /> */}

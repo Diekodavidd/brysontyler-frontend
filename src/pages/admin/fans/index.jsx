@@ -14,17 +14,18 @@ import {
 
 import {
   useAllFans,
-  useDeleteUser,
+  useDeleteUser,useManualUpgradeMembership
 } from "@/hooks/useAdmin";
 
 export default function FansPage() {
   const [search, setSearch] = useState("");
   const [selectedFan, setSelectedFan] = useState(null);
-
+const upgradeMembership =
+  useManualUpgradeMembership();
   const { data, isLoading } = useAllFans();
 
   const deleteMutation = useDeleteUser();
-
+const [membershipPlan, setMembershipPlan] = useState("VIP");
   const fans = data?.fans || [];
 
   const filteredFans = useMemo(() => {
@@ -37,7 +38,14 @@ export default function FansPage() {
       );
     });
   }, [fans, search]);
+const handleMembershipUpgrade = () => {
+  if (!selectedFan) return;
 
+  upgradeMembership.mutate({
+    id: selectedFan._id,
+    plan: membershipPlan,
+  });
+};
   const premiumFans = filteredFans.filter(
     (fan) => fan.membership?.plan !== "FREE"
   );
@@ -442,6 +450,79 @@ export default function FansPage() {
                   </p>
 
                 </div>
+
+                {/* Membership Management */}
+
+<div className="mt-10 rounded-3xl border border-amber-500/20 bg-amber-500/5 p-6">
+
+  <h3 className="mb-6 flex items-center gap-2 text-xl font-black">
+
+    <Crown className="text-amber-400" />
+
+    Membership Management
+
+  </h3>
+
+  <div className="grid gap-5 md:grid-cols-2">
+
+    <div>
+
+      <label className="mb-2 block text-sm font-bold text-zinc-400">
+        Current Plan
+      </label>
+
+      <div
+        className={`rounded-2xl px-4 py-4 font-black ${
+          selectedFan.membership?.plan === "FREE"
+            ? "bg-green-500/10 text-green-400"
+            : selectedFan.membership?.plan === "VIP"
+            ? "bg-yellow-500/10 text-yellow-400"
+            : "bg-red-500/10 text-red-400"
+        }`}
+      >
+        {selectedFan.membership?.plan || "FREE"}
+      </div>
+
+    </div>
+
+    <div>
+
+      <label className="mb-2 block text-sm font-bold text-zinc-400">
+        Upgrade To
+      </label>
+
+      <select
+        value={membershipPlan}
+        onChange={(e) =>
+          setMembershipPlan(e.target.value)
+        }
+        className="w-full rounded-2xl border border-white/10 bg-[#111] px-4 py-4 outline-none focus:border-amber-500"
+      >
+        <option value="VIP">
+          VIP
+        </option>
+
+        <option value="ELITE">
+          ELITE
+        </option>
+
+      </select>
+
+    </div>
+
+  </div>
+
+  <button
+    onClick={handleMembershipUpgrade}
+    disabled={upgradeMembership.isPending}
+    className="mt-6 w-full rounded-2xl bg-amber-500 py-4 font-black text-black transition hover:bg-amber-400 disabled:opacity-60"
+  >
+    {upgradeMembership.isPending
+      ? "Updating Membership..."
+      : `Upgrade to ${membershipPlan}`}
+  </button>
+
+</div>
 
                 {/* Actions */}
 

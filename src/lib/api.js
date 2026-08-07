@@ -44,9 +44,10 @@ body: payload
       throw new Error("Session expired");
     }
 
-    if (!res.ok) {
-      throw data || { message: "Request failed" };
-    }
+   if (!res.ok) {
+  console.log("BACKEND ERROR:", data);
+  throw new Error(data.message || "Request failed");
+}
 
     return data;
   } catch (error) {

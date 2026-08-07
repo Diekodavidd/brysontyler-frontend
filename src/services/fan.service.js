@@ -1,4 +1,7 @@
-import { httpGet } from "@/lib/http";
+import {
+  httpGet,
+  httpPatch,
+} from "@/lib/http";
 
 export const getDashboard = () =>
   httpGet("/fan/dashboard");
@@ -14,3 +17,26 @@ export const getPayments = () =>
 
 export const getCreatorById = (id) =>
   httpGet(`/fan/creator/${id}`);
+
+// ===============================
+// BANK TRANSFER
+// ===============================
+
+export const uploadBankReceipt = ({
+    paymentId,
+    file,
+}) => {
+
+    console.log("FILE:", file);
+
+    const formData = new FormData();
+
+    formData.append("receipt", file);
+
+    console.log(formData.get("receipt"));
+
+    return httpPatch(
+        `/fan/payments/${paymentId}/receipt`,
+        formData
+    );
+};

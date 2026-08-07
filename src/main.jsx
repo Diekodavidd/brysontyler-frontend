@@ -11,7 +11,8 @@ import { BrysonLoader } from "@/components/ui/BrysonLoader";
 // import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'react-toastify/dist/ReactToastify.css';
 
-createRoot(document.getElementById("root")).render(  <StrictMode>
+createRoot(document.getElementById("root")).render( 
+   <StrictMode>
     <BrowserRouter>
       <Providers>
         <ToastContainer

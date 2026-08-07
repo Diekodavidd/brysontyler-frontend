@@ -23,8 +23,11 @@ import {
   getAdminPayouts,
   getAdminPayoutStats,
   approveAdminPayout,
-  declineAdminPayout,    getAdminReports,
-
+  declineAdminPayout,    getAdminReports, manualUpgradeMembership,
+getBankTransferPayments,
+approveBankTransferPayment,
+rejectBankTransferPayment,
+getCurrentAdminLive,getAdminLiveStats,createAdminLive,endAdminLiveSession,getAdminLive
 } from "@/services/admin.service";
 
 import { toast } from "react-toastify";
@@ -327,3 +330,188 @@ export function useAdminReports(range) {
     refetchOnWindowFocus: true,
   });
 }
+
+export function useManualUpgradeMembership() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: manualUpgradeMembership,
+
+    onSuccess: (data) => {
+      toast.success(
+        data?.message ||
+          "Membership updated successfully."
+      );
+
+      queryClient.invalidateQueries({
+        queryKey: ["fans"],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ["memberships"],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ["admin-stats"],
+      });
+    },
+
+    onError: (err) => {
+      toast.error(
+        err?.message ||
+          "Failed to update membership."
+      );
+    },
+  });
+}
+
+
+
+export const useBankTransferPayments = () =>
+  useQuery({
+    queryKey: ["admin-bank-transfer-payments"],
+    queryFn:
+      adminService.getBankTransferPayments,
+  });
+
+export const useApproveBankTransferPayment =
+  () => {
+    const qc = useQueryClient();
+
+    return useMutation({
+      mutationFn:
+        adminService.approveBankTransferPayment,
+
+      onSuccess: () => {
+        toast.success(
+          "Payment approved successfully."
+        );
+
+        qc.invalidateQueries({
+          queryKey: [
+            "admin-bank-transfer-payments",
+          ],
+        });
+      },
+
+      onError: (err) => {
+        toast.error(
+          err.message ||
+            "Failed to approve payment."
+        );
+      },
+    });
+  };
+
+export const useRejectBankTransferPayment =
+  () => {
+    const qc = useQueryClient();
+
+    return useMutation({
+      mutationFn:
+        adminService.rejectBankTransferPayment,
+
+      onSuccess: () => {
+        toast.success(
+          "Payment rejected successfully."
+        );
+
+        qc.invalidateQueries({
+          queryKey: [
+            "admin-bank-transfer-payments",
+          ],
+        });
+      },
+
+      onError: (err) => {
+        toast.error(
+          err.message ||
+            "Failed to reject payment."
+        );
+      },
+    });
+  };
+
+ // ======================================
+// ADMIN LIVE
+// ======================================
+
+export const useAdminLive = () =>
+  useQuery({
+    queryKey: ["admin-live"],
+    queryFn: adminService.getAdminLive,
+  });
+
+export const useCurrentAdminLive = () =>
+  useQuery({
+    queryKey: ["admin-live-current"],
+    queryFn: adminService.getCurrentAdminLive,
+    refetchInterval: 10000,
+  });
+
+export const useAdminLiveStats = () =>
+  useQuery({
+    queryKey: ["admin-live-stats"],
+    queryFn: adminService.getAdminLiveStats,
+    refetchInterval: 10000,
+  });
+
+export const useCreateAdminLive = () => {
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: adminService.createAdminLive,
+
+    onSuccess: () => {
+      toast.success("Live stream created.");
+
+      qc.invalidateQueries({
+        queryKey: ["admin-live"],
+      });
+
+      qc.invalidateQueries({
+        queryKey: ["admin-live-current"],
+      });
+
+      qc.invalidateQueries({
+        queryKey: ["admin-live-stats"],
+      });
+    },
+
+    onError: (err) => {
+      toast.error(
+        err.message || "Unable to create live stream."
+      );
+    },
+  });
+};
+
+export const useEndAdminLive = () => {
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: adminService.endAdminLive,
+
+    onSuccess: () => {
+      toast.success("Live stream ended.");
+
+      qc.invalidateQueries({
+        queryKey: ["admin-live"],
+      });
+
+      qc.invalidateQueries({
+        queryKey: ["admin-live-current"],
+      });
+
+      qc.invalidateQueries({
+        queryKey: ["admin-live-stats"],
+      });
+    },
+
+    onError: (err) => {
+      toast.error(
+        err.message || "Unable to end live stream."
+      );
+    },
+  });
+};

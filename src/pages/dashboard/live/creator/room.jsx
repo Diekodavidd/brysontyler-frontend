@@ -2,8 +2,11 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { io } from "socket.io-client";
-import { Room, RoomEvent } from "livekit-client";
-
+import {
+    Room,
+    RoomEvent,
+    Track
+} from "livekit-client";
 import {
   getLiveSession,
   joinLiveSession,
@@ -31,8 +34,15 @@ export default function CreatorLiveRoom() {
 
   const roomRef = useRef(null);
   const socketRef = useRef(null);
-  const videoRef = useRef(null);
+const videoRef = useRef(null);
 
+const setVideoRef = (el) => {
+    videoRef.current = el;
+
+    if (el) {
+        attachCamera();
+    }
+};
   const [loading, setLoading] = useState(true);
   const [ending, setEnding] = useState(false);
 
@@ -85,6 +95,26 @@ export default function CreatorLiveRoom() {
     };
   }, [id]);
 
+  useEffect(() => {
+    if (!loading) {
+        attachCamera();
+    }
+}, [loading]);
+const attachCamera = () => {
+    const room = roomRef.current;
+
+    if (!room || !videoRef.current) return;
+
+    const pub = room.localParticipant.getTrackPublication(
+        Track.Source.Camera
+    );
+
+    if (!pub?.track) return;
+
+    pub.track.attach(videoRef.current);
+
+    videoRef.current.play().catch(() => {});
+};
   const initializeRoom = async () => {
     try {
       setLoading(true);
@@ -111,14 +141,16 @@ export default function CreatorLiveRoom() {
 
       roomRef.current = room;
 
-      await room.connect(
-        LIVEKIT_URL,
-        token
-      );
+     
+room.on(RoomEvent.LocalTrackPublished, () => {
+    attachCamera();
+});
 
+await room.connect(LIVEKIT_URL, token);
       await room.localParticipant.setMicrophoneEnabled(true);
-      await room.localParticipant.setCameraEnabled(true);
+await room.localParticipant.setCameraEnabled(true);
 
+attachCamera();
       room
         .on(RoomEvent.TrackSubscribed, (track) => {
           if (
@@ -162,7 +194,11 @@ export default function CreatorLiveRoom() {
         }));
       });
 
-      setLoading(false);
+setLoading(false);
+
+setTimeout(() => {
+    attachCamera();
+}, 0);
     } catch (error) {
       console.error(error);
       toast.error("Unable to join live room.");
@@ -213,11 +249,13 @@ export default function CreatorLiveRoom() {
     try {
       const enabled = !cameraEnabled;
 
-      await roomRef.current?.localParticipant.setCameraEnabled(
-        enabled
-      );
+     await roomRef.current.localParticipant.setCameraEnabled(enabled);
 
-      setCameraEnabled(enabled);
+setCameraEnabled(enabled);
+
+if (enabled) {
+    attachCamera();
+}
 
       socketRef.current?.emit("creator:camera", {
         sessionId: id,
@@ -395,7 +433,7 @@ export default function CreatorLiveRoom() {
               <div className="rounded-[34px] overflow-hidden border border-white/5 bg-zinc-900">
 
                 <video
-                  ref={videoRef}
+    ref={setVideoRef}
                   autoPlay
                   playsInline
                   muted

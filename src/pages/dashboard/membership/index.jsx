@@ -68,11 +68,13 @@ const handleContinuePayment = () => {
         {
            onSuccess: ({ payment }) => {
 
-    if (selectedProvider === "paxum") {
-        navigate(`/dashboard/payment/card/${payment._id}`);
-    } else {
-        navigate(`/dashboard/payment/${payment._id}`);
-    }
+   if (selectedProvider === "paxum") {
+    navigate(`/dashboard/payment/card/${payment._id}`);
+} else if (selectedProvider === "bank_transfer") {
+    navigate(`/dashboard/payment/bank/${payment._id}`);
+} else {
+    navigate(`/dashboard/payment/${payment._id}`);
+}
 
     setShowPaymentModal(false);
 },
@@ -502,6 +504,26 @@ disabled={loadingPlan !== null || currentPlan === "ELITE"}
             </p>
           </div>
         </button>
+
+        <button
+    disabled={isCreatingPayment}
+    onClick={() => setSelectedProvider("bank_transfer")}
+    className={`w-full rounded-2xl p-5 border transition ${
+        selectedProvider === "bank_transfer"
+            ? "border-pink-500 bg-pink-500/10"
+            : "border-white/10 hover:border-white/20"
+    }`}
+>
+    <div className="text-left">
+        <h3 className="font-bold">
+            Bank Transfer
+        </h3>
+
+        <p className="text-sm text-zinc-400">
+            Manual transfer & upload receipt
+        </p>
+    </div>
+</button>
 
       </div>
 

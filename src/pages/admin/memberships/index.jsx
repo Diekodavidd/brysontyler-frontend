@@ -40,7 +40,7 @@ export default function MembershipPage() {
   );
 
   const elite = filtered.filter(
-    (m) => m.membership?.plan === "Elite"
+    (m) => m.membership?.plan === "ELITE"
   );
 
   if (isLoading) {

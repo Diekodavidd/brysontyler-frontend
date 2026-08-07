@@ -150,22 +150,22 @@ const newReleases = [...content]
 const rows = [
   {
     id: "all",
-    title: "All Videos",
+    title: "All Content",
     videos: content,
   },
   {
     id: "free",
-    title: "Free Videos",
+    title: "Free Videos/Images",
     videos: freeVideos,
   },
   {
     id: "vip",
-    title: "VIP Videos",
+    title: "VIP Videos/Images",
     videos: vipVideos,
   },
   {
     id: "elite",
-    title: "Elite Videos",
+    title: "Elite Videos/Images",
     videos: eliteVideos,
   },
 ];
