@@ -206,3 +206,6 @@ export const leaveAdminLiveSession = (id) =>
 
 export const endAdminLiveSession = (id) =>
   httpPost(`/admin/live/end/${id}`, {});
+
+export const deleteAdminLive = (id) =>
+  httpDelete(`/live/delete/${id}`);

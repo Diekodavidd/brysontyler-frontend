@@ -11,8 +11,9 @@ import {
   getAdminLiveSession,
   joinAdminLiveSession,
   leaveAdminLiveSession,
-  endAdminLiveSession,
 } from "@/services/admin.service";
+
+import { useEndAdminLive } from "@/hooks/useAdmin";
 
 import BroadcastControls from "./components/BroadcastControls";
 import LiveChat from "./components/LiveChat";
@@ -31,7 +32,7 @@ const LIVEKIT_URL =
 export default function AdminLiveRoom() {
   const { id } = useParams();
   const navigate = useNavigate();
-
+const endLive = useEndAdminLive();
   const roomRef = useRef(null);
   const socketRef = useRef(null);
   const videoRef = useRef(null);
@@ -465,28 +466,29 @@ if (enabled) {
     toast.success(`${viewer.name} banned.`);
   };
 
-  const handleEndStream = async () => {
-    try {
-      setEnding(true);
+const handleEnd = () => {
+  if (!stream?._id) {
+    toast.error("Stream information is unavailable.");
+    return;
+  }
 
-await endAdminLiveSession(id);
-      socketRef.current?.emit("stream:end", {
-        sessionId: id,
-      });
-
-      roomRef.current?.disconnect();
-
-      toast.success("Live stream ended.");
+  endLive.mutate(stream._id, {
+    onSuccess: () => {
+      setShowEndModal(false);
+      setIsLive(false);
 
       navigate("/admin/live");
-    } catch (err) {
-      console.error(err);
-      toast.error("Unable to end stream.");
-    } finally {
-      setEnding(false);
-      setShowEndModal(false);
-    }
-  };
+    },
+
+    onError: (error) => {
+      console.error("END ADMIN LIVE ERROR:", error);
+      console.error(
+        "Response:",
+        error?.response?.data
+      );
+    },
+  });
+};
 
   if (loading) {
     return (
@@ -600,17 +602,13 @@ await endAdminLiveSession(id);
 
       </div>
 
-      <EndStreamModal
-        open={showEndModal}
-        loading={ending}
-        viewers={viewers.length}
-        duration={duration}
-        earnings={earnings}
-        onCancel={() =>
-          setShowEndModal(false)
-        }
-        onConfirm={handleEndStream}
-      />
+     <EndStreamModal
+  open={showEndModal}
+  stream={stream}
+  loading={endLive.isPending}
+  onCancel={() => setShowEndModal(false)}
+  onConfirm={handleEnd}
+/>
     </>
   );
 }

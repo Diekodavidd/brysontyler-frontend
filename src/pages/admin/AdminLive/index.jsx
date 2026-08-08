@@ -7,7 +7,7 @@ import {
   useCurrentAdminLive,
   useAdminLiveStats,
   useCreateAdminLive,
-  useEndAdminLive,
+  useEndAdminLive,useDeleteAdminLive
 } from "@/hooks/useAdmin";
 
 import LiveStats from "./components/LiveStats";
@@ -32,7 +32,7 @@ export default function AdminLive() {
 
   const { data: statsRes } =
     useAdminLiveStats();
-
+const deleteLive = useDeleteAdminLive();
   const createLive =
     useCreateAdminLive();
 
@@ -66,15 +66,27 @@ export default function AdminLive() {
     });
   };
 
-  const handleEnd = () => {
-    if (!liveStream) return;
+ const handleEnd = () => {
+  if (!liveStream?._id) {
+    console.error("No live stream ID found.");
+    return;
+  }
 
-    endLive.mutate(liveStream._id, {
-      onSuccess: () => {
-        setShowEndModal(false);
-      },
-    });
-  };
+  console.log("ENDING ADMIN STREAM:", liveStream._id);
+
+  endLive.mutate(liveStream._id, {
+    onSuccess: (res) => {
+      console.log("ADMIN LIVE ENDED:", res);
+
+      setShowEndModal(false);
+    },
+
+    onError: (error) => {
+      console.error("END ADMIN LIVE ERROR:", error);
+      console.error("Response:", error?.response?.data);
+    },
+  });
+};
 
   if (isLoading) {
     return (
@@ -249,18 +261,18 @@ export default function AdminLive() {
                 <StreamCard
                   key={stream._id}
                   stream={stream}
-                  onResume={() =>
+                  onView={() =>
                     navigate(
                       `/admin/live/room/${stream._id}`
                     )
                   }
-                  onAnalytics={() =>
+                  onEdit={() =>
                     navigate(
                       `/admin/live/room/${stream._id}`
                     )
                   }
                   onDelete={() =>
-                    endLive.mutate(stream._id)
+                    deleteLive.mutate(stream._id)
                   }
                 />
 
@@ -282,15 +294,13 @@ export default function AdminLive() {
         onCreate={handleCreate}
       />
 
-      <EndStreamModal
-        open={showEndModal}
-        stream={liveStream}
-        loading={endLive.isPending}
-        onCancel={() =>
-          setShowEndModal(false)
-        }
-        onConfirm={handleEnd}
-      />
+     <EndStreamModal
+  open={showEndModal}
+  stream={liveStream}
+  loading={endLive.isPending}
+  onCancel={() => setShowEndModal(false)}
+  onConfirm={handleEnd}
+/>
     </>
   );
 }

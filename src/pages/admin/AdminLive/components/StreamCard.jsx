@@ -1,3 +1,4 @@
+
 import {
   Radio,
   CalendarDays,
@@ -14,7 +15,6 @@ import {
 export default function StreamCard({
   stream,
   onGoLive,
-  onEdit,
   onDelete,
   onView,
 }) {
@@ -31,6 +31,26 @@ export default function StreamCard({
   const status =
     statusStyles[stream.status] ||
     statusStyles.ended;
+
+  const coverImage =
+    stream.thumbnail ||
+    stream.creatorId?.profileImage ||
+    "/default-live-cover.jpg";
+
+  const displayDate =
+    stream.status === "scheduled"
+      ? stream.scheduledDate
+      : stream.startedAt;
+
+  const displayTime =
+    stream.status === "scheduled"
+      ? stream.scheduledTime
+      : stream.startedAt
+        ? new Date(stream.startedAt).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })
+        : null;
 
   return (
     <div className="rounded-[32px] overflow-hidden border border-white/5 bg-zinc-900 hover:border-yellow-500/30 transition">
@@ -128,14 +148,10 @@ export default function StreamCard({
             </div>
 
             <h3 className="mt-3 font-black">
-
-              {stream.date
-                ? new Date(
-                    stream.date
-                  ).toLocaleDateString()
-                : "--"}
-
-            </h3>
+  {displayDate
+    ? new Date(displayDate).toLocaleDateString()
+    : "--"}
+</h3>
 
           </div>
 
@@ -154,10 +170,8 @@ export default function StreamCard({
             </div>
 
             <h3 className="mt-3 font-black">
-
-              {stream.time || "--"}
-
-            </h3>
+  {displayTime || "--"}
+</h3>
 
           </div>
 
@@ -245,14 +259,7 @@ export default function StreamCard({
             <Eye size={18} />
           </button>
 
-          <button
-            onClick={() =>
-              onEdit?.(stream)
-            }
-            className="h-12 rounded-xl bg-zinc-800 hover:bg-zinc-700 flex items-center justify-center transition"
-          >
-            <Pencil size={18} />
-          </button>
+          
 
           <button
             onClick={() =>

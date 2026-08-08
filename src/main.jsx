@@ -12,7 +12,7 @@ import { BrysonLoader } from "@/components/ui/BrysonLoader";
 import 'react-toastify/dist/ReactToastify.css';
 
 createRoot(document.getElementById("root")).render( 
-   <StrictMode>
+  //  <StrictMode>
     <BrowserRouter>
       <Providers>
         <ToastContainer
@@ -32,5 +32,5 @@ createRoot(document.getElementById("root")).render(
         </Suspense>
       </Providers>
     </BrowserRouter>
-  </StrictMode>
+  // </StrictMode>
 );

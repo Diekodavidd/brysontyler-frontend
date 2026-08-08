@@ -490,7 +490,7 @@ export const useEndAdminLive = () => {
   const qc = useQueryClient();
 
   return useMutation({
-    mutationFn: adminService.endAdminLive,
+    mutationFn: adminService.endAdminLiveSession,
 
     onSuccess: () => {
       toast.success("Live stream ended.");
@@ -510,7 +510,90 @@ export const useEndAdminLive = () => {
 
     onError: (err) => {
       toast.error(
-        err.message || "Unable to end live stream."
+        err?.message || "Unable to end live stream."
+      );
+    },
+  });
+};
+
+export const useAdminLiveSession = (id) => {
+  return useQuery({
+    queryKey: ["admin-live-session", id],
+    queryFn: () => adminService.getAdminLiveSession(id),
+    enabled: !!id,
+  });
+};
+
+export const useJoinAdminLiveSession = () => {
+  return useMutation({
+    mutationFn: (id) =>
+      adminService.joinAdminLiveSession(id),
+  });
+};
+
+export const useLeaveAdminLiveSession = () => {
+  return useMutation({
+    mutationFn: (id) =>
+      adminService.leaveAdminLiveSession(id),
+  });
+};
+
+export const useEndAdminLiveSession = () => {
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id) =>
+      adminService.endAdminLiveSession(id),
+
+    onSuccess: () => {
+      toast.success("Live stream ended.");
+
+      qc.invalidateQueries({
+        queryKey: ["admin-live"],
+      });
+
+      qc.invalidateQueries({
+        queryKey: ["admin-live-current"],
+      });
+
+      qc.invalidateQueries({
+        queryKey: ["admin-live-stats"],
+      });
+    },
+
+    onError: (err) => {
+      toast.error(
+        err?.message || "Unable to end live stream."
+      );
+    },
+  });
+};
+
+export const useDeleteAdminLive = () => {
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: adminService.deleteAdminLive,
+
+    onSuccess: () => {
+      toast.success("Live stream deleted.");
+
+      qc.invalidateQueries({
+        queryKey: ["admin-live"],
+      });
+
+      qc.invalidateQueries({
+        queryKey: ["admin-live-current"],
+      });
+
+      qc.invalidateQueries({
+        queryKey: ["admin-live-stats"],
+      });
+    },
+
+    onError: (err) => {
+      toast.error(
+        err?.message || "Unable to delete live stream."
       );
     },
   });

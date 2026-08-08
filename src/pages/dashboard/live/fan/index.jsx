@@ -39,7 +39,13 @@ const liveCreators =
       .includes(search.toLowerCase())
   );
 }, [liveCreators, search]);
-
+const getCoverImage = (stream) => {
+  return (
+    stream?.thumbnail ||
+    stream?.creatorId?.profileImage ||
+    "/default-live-cover.jpg"
+  );
+};
   const featured = filtered[0];
 if (isLoading) {
   return (
@@ -144,13 +150,11 @@ value={filtered.length}
           }
         >
 
-          <img
-          src={
-  featured.thumbnail ||
-  "https://picsum.photos/1200/800"
-}
-            className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition duration-[2500ms]"
-          />
+     <img
+  src={getCoverImage(featured)}
+  alt={featured.title}
+  className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition duration-[2500ms]"
+/>
 
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
 
@@ -164,7 +168,7 @@ value={filtered.length}
 
               <Eye size={15} />
 
-(featured.viewers || 0).toLocaleString()
+{(featured.viewers || 0).toLocaleString()}
             </span>
 
           </div>
@@ -235,105 +239,97 @@ value={filtered.length}
 
         <div className="grid lg:grid-cols-3 gap-7">
 
-          {filtered.map((creator) => (
+       {filtered.map((stream) => (
+  <div
+    key={stream._id}
+    onClick={() =>
+      navigate(`/dashboard/live/${stream._id}`)
+    }
+    className="rounded-[30px] overflow-hidden bg-zinc-900 border border-white/5 hover:border-red-500/40 transition cursor-pointer group"
+  >
 
-            <div
-              key={creator._id}
-              onClick={() =>
-                navigate(`/dashboard/live/${creator._id}`)
-              }
-              className="rounded-[30px] overflow-hidden bg-zinc-900 border border-white/5 hover:border-red-500/40 transition cursor-pointer group"
-            >
+    <div className="relative h-64 overflow-hidden">
 
-              <div className="relative h-64 overflow-hidden">
+      <img
+        src={getCoverImage(stream)}
+        alt={stream.title}
+        className="w-full h-full object-cover group-hover:scale-110 transition duration-[1800ms]"
+      />
 
-                <img
-src={
-  creator.thumbnail ||
-  "https://picsum.photos/600/400"
-}                  className="w-full h-full object-cover group-hover:scale-110 transition duration-[1800ms]"
-                />
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
 
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+      <div className="absolute top-5 left-5 flex gap-3">
 
-                <div className="absolute top-5 left-5 flex gap-3">
+        <span className="bg-red-600 px-4 py-2 rounded-full text-xs font-black">
+          LIVE
+        </span>
 
-                  <span className="bg-red-600 px-4 py-2 rounded-full text-xs font-black">
-                    LIVE
-                  </span>
+        <span className="bg-black/50 backdrop-blur px-4 py-2 rounded-full text-xs flex items-center gap-2">
+          <Eye size={14} />
+          {(stream.viewers || 0).toLocaleString()}
+        </span>
 
-                  <span className="bg-black/50 backdrop-blur px-4 py-2 rounded-full text-xs flex items-center gap-2">
+      </div>
 
-                    <Eye size={14} />
+    </div>
 
-(creator.viewers || 0).toLocaleString()
-                  </span>
+    <div className="p-6">
 
-                </div>
+      <div className="flex items-center gap-2">
 
-              </div>
+        <h3 className="text-2xl font-black">
+          {stream.creatorId?.name}
+        </h3>
 
-              <div className="p-6">
+        {stream.creatorId?.isVerifiedCreator && (
+          <CheckCircle2
+            size={18}
+            className="fill-sky-400 text-sky-400"
+          />
+        )}
 
-                <div className="flex items-center gap-2">
+      </div>
 
-                  <h3 className="text-2xl font-black">
-{creator.creatorId?.name}                  </h3>
+      <p className="text-zinc-500 mt-3">
+        {stream.title}
+      </p>
 
-                  {creator.creatorId?.isVerifiedCreator && (
-                    <CheckCircle2
-                      size={18}
-                      className="fill-sky-400 text-sky-400"
-                    />
-                  )}
+      <div className="flex justify-between items-center mt-6">
 
-                </div>
+        <span className="text-yellow-400 font-bold">
+          {stream.category || "General"}
+        </span>
 
-                <p className="text-zinc-500 mt-3">
-                  {creator.title}
-                </p>
+        <span className="text-zinc-500 text-sm">
+          {new Date(stream.createdAt).toLocaleString()}
+        </span>
 
-                <div className="flex justify-between items-center mt-6">
+      </div>
 
-                  <span className="text-yellow-400 font-bold">
-{creator.category || "General"}                  </span>
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
 
-                  <span className="text-zinc-500 text-sm">
-{new Date(
-    creator.createdAt
-).toLocaleString()}                  </span>
+          joinLive(stream._id, {
+            onSuccess: ({ token, roomName }) => {
+              navigate(`/dashboard/live/${stream._id}`, {
+                state: {
+                  token,
+                  roomName,
+                },
+              });
+            },
+          });
+        }}
+        className="mt-8 w-full rounded-2xl bg-yellow-500 hover:bg-yellow-400 py-3 text-black font-black flex items-center justify-center gap-3"
+      >
+        <Play size={18} />
+        Watch Live
+      </button>
 
-                </div>
-
-                <button
-  onClick={(e) => {
-    e.stopPropagation();
-
-    joinLive(creator._id, {
-      onSuccess: ({ token, roomName }) => {
-        navigate(`/dashboard/live/${creator._id}`, {
-          state: {
-            token,
-            roomName,
-          },
-        });
-      },
-    });
-  }}
-  className="mt-8 w-full rounded-2xl bg-yellow-500 hover:bg-yellow-400 py-3 text-black font-black flex items-center justify-center gap-3"
->
-  <Play
-    size={16}
-    fill="currentColor"
-  />
-  Watch Live
-</button>
-
-              </div>
-
-            </div>
-
-          ))}
+    </div>
+  </div>
+))}
 
         </div>
 

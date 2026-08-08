@@ -104,52 +104,37 @@ export default function StreamInfo({ stream }) {
 
       {/* Body */}
 
-      <div className="p-8 grid lg:grid-cols-2 gap-6">
+     <div className="p-8 grid lg:grid-cols-2 gap-6">
 
-        {/* <InfoCard
-          icon={<CalendarDays />}
-          title="Date"
-          value={
-            stream.date
-              ? new Date(
-                  stream.date
-                ).toLocaleDateString()
-              : "--"
-          }
-        /> */}
+  <InfoCard
+    icon={<AccessIcon />}
+    title="Visibility"
+    value={access.label}
+    color={access.color}
+  />
 
-        {/* <InfoCard
-          icon={<Clock3 />}
-          title="Time"
-          value={stream.time || "--"}
-        /> */}
+  <InfoCard
+    icon={<Users />}
+    title="Live Viewers"
+    value={(stream.totalViewers || 0).toLocaleString()}
+    color="text-sky-400"
+  />
 
-        <InfoCard
-          icon={<AccessIcon />}
-          title="Visibility"
-          value={access.label}
-          color={access.color}
-        />
+  <InfoCard
+    icon={<Gift />}
+    title="Tips"
+    value={`$${stream.earnings || 0}`}
+    color="text-green-400"
+  />
 
-        <InfoCard
-          icon={<Users />}
-          title="Subscribers Watching"
-          value={
-            (
-              stream.subscriberViewers ||
-              0
-            ).toLocaleString()
-          }
-        />
+  <InfoCard
+    icon={<Eye />}
+    title="Total Views"
+    value={(stream.totalViews || 0).toLocaleString()}
+    color="text-yellow-400"
+  />
 
-        <InfoCard
-          icon={<Gift />}
-          title="Tips"
-          value={`$${stream.tips || 0}`}
-        />
-
-
-      </div>
+</div>
 
       {/* Tags */}
 
